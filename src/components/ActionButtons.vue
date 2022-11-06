@@ -1,0 +1,123 @@
+<template>
+  <div id="act-btn-cont">
+    <div> &nbsp;
+      <q-btn v-bind="btnAttrs" icon="home" title="menu" @click="goToMenu()"></q-btn>
+      <q-btn v-bind="btnAttrs">
+        File
+        <q-menu dark>
+          <q-list dense>
+            <!-- <q-item clickable v-close-popup disabled>Save</q-item> -->
+            <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item>
+            <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item>
+            <q-item clickable v-close-popup @click="eapi.openProjectInInkscape()">Open Inkscape</q-item>
+            <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item>
+            <!-- <q-item clickable v-close-popup @click="deleteAnim()" >Delete Anim</q-item> -->
+          </q-list>
+        </q-menu>
+      </q-btn>
+      <q-btn v-bind="btnAttrs" icon="slideshow" title="animator" @click="goToAnimEditor()"></q-btn>
+      <q-btn v-bind="btnAttrs" icon="code" title="code" @click="goToCode()"></q-btn>
+      <q-btn v-bind="btnAttrs" icon="bug_report" title="debug" disabled></q-btn>
+    </div>
+    <div style="text-align:center;">
+      <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
+      <q-btn v-bind="btnAttrs" @click="pauseOrPlayAnim()" title="play [F1]" v-if="!isPlayingAnim">
+        ▶
+      </q-btn>
+      <q-btn v-bind="btnAttrs" @click="pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
+      </q-btn>
+      <q-btn v-bind="btnAttrs" @click="createKeyFrame(svEl)" title="keyframe"><b>◆</b></q-btn>
+    </div>
+    <div style="position:absolute; display: flex; right:-.5em; ">
+      <div id="windowButtons" v-bind="btnAttrs">
+        <div icon="resize" style="margin-right:-5px" id="dragWindow" title="keyframe">
+          <q-btn v-bind="btnAttrs">⚓ </q-btn>
+        </div>
+      </div>
+      <q-btn style="color:red" v-bind="btnAttrs" title="close" @click="closeApp()">✖</q-btn>
+    </div>
+
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { exportToSvg } from 'src/modules/export_m';
+import { playAnim, pauseAnim, isPlayingAnim } from 'src/modules/anim_m';
+import { svEl } from 'src/modules/svel_m';
+import { createKeyFrame } from 'src/modules/keyframe_m';
+import { eapi } from 'src/modules/eapi_m';
+import { useRouter } from 'vue-router';
+import { StorageM } from 'src/modules/storage_m';
+import { ConfigM } from 'src/modules/config_m';
+
+const router = useRouter()
+
+function goToCode() {
+  router.push('/code')
+}
+
+function goToAnimEditor() {
+  router.push('/')
+}
+
+function goToMenu() {
+  router.push('/home')
+}
+
+function deleteAll() {
+  StorageM.clear()
+  location.reload()
+}
+
+// function deleteAnim() {
+//   StorageM.clear()
+//   StorageM.setFilePath(ConfigM.filePath)
+//   // StorageM.setCurrentProjectId(ConfigM.projectId)
+//   location.reload()
+// }
+
+async function importFile() {
+  await ConfigM.importFile()
+  router.push('/')
+
+  // ConfigM.newProjectId()
+  // ConfigM.filePath = await eapi.updateFilePath()
+  // svgIO.input()
+}
+
+const btnAttrs = {
+  size: "12px",
+  padding: "0 sm",
+  'no-caps': ''
+}
+
+const pauseOrPlayAnim = async () => isPlayingAnim.value ? await pauseAnim(svEl.value)
+  : await playAnim(svEl.value)
+
+window.addEventListener('keydown', (e) => { if (e.key === 'F1') pauseOrPlayAnim() })
+
+const closeApp = async () => await eapi.closeApp()
+
+</script>
+
+<style scoped>
+#act-btn-cont {
+  display: grid;
+  grid-template-columns: 70% auto;
+  width: 99%;
+  gap: 1%;
+  position: absolute;
+  top: 0;
+}
+
+#dragWindow {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+/* #windowButtons {
+  display: flex;
+  gap: .5em;
+} */
+</style>

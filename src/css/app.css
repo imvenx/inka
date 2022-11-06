@@ -1,0 +1,47 @@
+/* app global css */
+body {
+    background-color: grey;
+    overflow: hidden;
+  }
+  
+  /* a {
+    color: purple;
+    font-weight: 1000;
+  } */
+  
+  .stepStyle {
+    cursor: pointer;
+    font-size: .8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    width: 3em;
+    display: block;
+    min-width: 3em;
+    margin: 0 .2em;
+  }
+  
+  ::-webkit-scrollbar {
+    width: .5rem;
+    height: .5rem;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #ffffff00;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgb(0, 0, 0);
+    border-radius: 4px;
+    /* box-shadow: 0 0 5px black; IT WAS GLITCHING :( */
+    border: 1px solid teal;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(236, 26, 26);
+  }
+  
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
