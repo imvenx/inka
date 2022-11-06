@@ -18,6 +18,17 @@
       <q-btn v-bind="btnAttrs" icon="slideshow" title="animator" @click="goToAnimEditor()"></q-btn>
       <q-btn v-bind="btnAttrs" icon="code" title="code" @click="goToCode()"></q-btn>
       <q-btn v-bind="btnAttrs" icon="bug_report" title="debug" disabled></q-btn>
+      <q-btn v-bind="btnAttrs" icon="refresh" title="refresh [ctrl] + [shift] + [R]" @click="refresh()"></q-btn>
+      <div class="float-right">
+        <div class="float-left">
+          <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
+          <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
+          <input step="0.001" title="animation current time" type="number" class="timeInput" :value="currentTime">
+        </div>
+        <div class="float-right">
+          <input step="0.001" title="animation duration" type="number" class="timeInput" :value="duration">
+        </div>
+      </div>
     </div>
     <div style="text-align:center;">
       <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
@@ -36,13 +47,12 @@
       </div>
       <q-btn style="color:red" v-bind="btnAttrs" title="close" @click="closeApp()">✖</q-btn>
     </div>
-
   </div>
 </template>
 
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
-import { playAnim, pauseAnim, isPlayingAnim } from 'src/modules/anim_m';
+import { playAnim, pauseAnim, isPlayingAnim, currentTime, duration } from 'src/modules/anim_m';
 import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
@@ -51,6 +61,10 @@ import { StorageM } from 'src/modules/storage_m';
 import { ConfigM } from 'src/modules/config_m';
 
 const router = useRouter()
+
+// const selTime = async (t: number) => await selectTime(t)
+
+const refresh = () => location.reload()
 
 function goToCode() {
   router.push('/code')
@@ -120,4 +134,11 @@ const closeApp = async () => await eapi.closeApp()
   display: flex;
   gap: .5em;
 } */
+
+.timeInput {
+  width: 5rem;
+  height: 1.2rem;
+  background-color: black;
+  color: white;
+}
 </style>

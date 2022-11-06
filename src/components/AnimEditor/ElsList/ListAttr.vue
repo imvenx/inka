@@ -3,7 +3,7 @@
     &nbsp;<span v-for="d in el.depth">&nbsp;</span>
     <span>{{ el.showAttrs ? '▲' : '▼' }}</span>
     <q-icon name="folder" title="attributes" /> attrs
-    <q-icon name="add_circle_outline" title="add attribute" />
+    <!-- <q-icon name="add_circle_outline" title="add attribute" /> -->
   </div>
 
   <template v-if="el.showAttrs">
