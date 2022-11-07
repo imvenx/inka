@@ -15,12 +15,12 @@ import TimePicker from './TimePicker.vue';
 
 const cont = ref<HTMLDivElement>()
 const elsListWidth = ref()
-onMounted(() => {
-  elsListWidth.value = contWidth()
-  window.addEventListener('resize', () => elsListWidth.value = contWidth())
-})
+// onMounted(() => {
+//   elsListWidth.value = contWidth()
+//   window.addEventListener('resize', () => elsListWidth.value = contWidth())
+// })
 
-const contWidth = () => `width: ${cont?.value?.offsetWidth! - 3}px`
+// const contWidth = () => `width: ${cont?.value?.offsetWidth! - 3}px`
 
 </script>
 

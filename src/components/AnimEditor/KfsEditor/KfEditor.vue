@@ -1,6 +1,6 @@
 <template>
   <div ref="cont" id="kfCont">
-    <KfsLine :el="svEl" />
+    <!-- <KfsLine :el="svEl" /> -->
   </div>
 </template>
 

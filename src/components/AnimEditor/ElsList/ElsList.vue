@@ -41,7 +41,5 @@ watch(() => ConfigM.editorScroll.y, (val) => {
 
 ::-webkit-scrollbar {
   width: 0px;
-  background: transparent;
-  /* make scrollbar transparent */
 }
 </style>

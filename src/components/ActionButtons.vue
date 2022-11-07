@@ -9,8 +9,8 @@
             <!-- <q-item clickable v-close-popup disabled>Save</q-item> -->
             <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item>
             <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item>
-            <q-item clickable v-close-popup @click="eapi.openProjectInInkscape()">Open Inkscape</q-item>
-            <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item>
+            <q-item clickable v-close-popup @click="eapi.openProjectInInkscape()">Open frame editor</q-item>
+            <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
             <!-- <q-item clickable v-close-popup @click="deleteAnim()" >Delete Anim</q-item> -->
           </q-list>
         </q-menu>
@@ -23,10 +23,11 @@
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
           <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
-          <input step="0.001" title="animation current time" type="number" class="timeInput" :value="currentTime">
+          <input disabled step="0.001" title="animation current time" type="number" class="timeInput"
+            :value="currentTime">
         </div>
         <div class="float-right">
-          <input step="0.001" title="animation duration" type="number" class="timeInput" :value="duration">
+          <input disabled step="0.001" title="animation duration" type="number" class="timeInput" :value="duration">
         </div>
       </div>
     </div>
@@ -52,7 +53,7 @@
 
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
-import { playAnim, pauseAnim, isPlayingAnim, currentTime, duration } from 'src/modules/anim_m';
+import { isPlayingAnim, currentTime, duration, pauseOrPlayAnim } from 'src/modules/anim_m';
 import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
@@ -104,9 +105,6 @@ const btnAttrs = {
   padding: "0 sm",
   'no-caps': ''
 }
-
-const pauseOrPlayAnim = async () => isPlayingAnim.value ? await pauseAnim(svEl.value)
-  : await playAnim(svEl.value)
 
 window.addEventListener('keydown', (e) => { if (e.key === 'F1') pauseOrPlayAnim() })
 

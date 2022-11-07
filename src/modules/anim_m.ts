@@ -2,6 +2,7 @@ import { allowedEls } from "src/modules/constants";
 import { SvEl } from "src/models/models";
 import { computed, ref, Static } from "vue";
 import { svgIO } from "./svgIO_m";
+import { svEl } from "./svel_m";
 
 // #region Anim Module
 
@@ -32,6 +33,8 @@ const roundedCurrentTime = (a: Animation) =>
     Math.round((currentTime.value + a.currentTime!) % duration.value) / 1000
 
 const stopRefreshCurrentTimeInterval = () => clearInterval(currentTimeRefeshInterval)
+
+
 
 export async function playAnim(el: SvEl): Promise<void> {
     isPlayingAnim.value = true
@@ -123,6 +126,10 @@ async function updateAnimCurrentFrameLoop(el: SvEl) {
     // })
     // try { animation?.pause(); animation?.commitStyles() }
     // catch { console.log('Error trying to update el: ', el) }
+}
+
+export async function pauseOrPlayAnim() {
+    isPlayingAnim.value ? await pauseAnim(svEl.value) : await playAnim(svEl.value)
 }
 
 

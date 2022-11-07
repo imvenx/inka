@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { Vector2 } from "../models/Vector2";
 import { ConfigM } from "./config_m";
 
+
 const _currentProjectId = ref<string>(LocalStorage.getItem('currentProjectId') ?? 'Temp')
 const _get = (k: string): any => {
     const r = LocalStorage.getItem<any>(_currentProjectId.value)
@@ -17,6 +18,7 @@ const _gGet = LocalStorage.getItem
 const _gSet = LocalStorage.set
 
 export const StorageM = {
+    init: () => { if (ConfigM.inDebugMode) console.log('init storage module') },
     clear: () => LocalStorage.clear(),
 
     getAllProjects: (): any => {

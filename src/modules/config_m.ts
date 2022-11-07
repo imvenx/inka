@@ -13,7 +13,11 @@ const _inDebugMode = ref(true)
 
 const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
 
+const _timePickerZoom = ref(1)
+
 export const ConfigM = {
+    init: () => { if (ConfigM.inDebugMode) console.log('init config module') },
+
     get editorScroll() { return _editorScroll.value },
     set editorScroll(v: Vector2) { _editorScroll.value = v },
     initEditorScroll(cont: HTMLElement) { _initEditorScroll(cont) },
@@ -43,6 +47,9 @@ export const ConfigM = {
         StorageM.setCurrentProjectId(this.projectId)
     },
     newProjectId(): void { this.projectId = `id_${Date.now()}` },
+
+    get timePickerZoom() { return _timePickerZoom.value },
+    set timePickerZoom(v: number) { _timePickerZoom.value = v },
 }
 
 function _initEditorScroll(cont: HTMLElement) {
