@@ -31,7 +31,7 @@ watch(() => ConfigM.editorScroll.y, (val) => {
   white-space: nowrap;
   resize: horizontal;
   /* overflow: hidden; */
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   text-overflow: ellipsis;
   font-size: .8rem;
@@ -41,5 +41,6 @@ watch(() => ConfigM.editorScroll.y, (val) => {
 
 ::-webkit-scrollbar {
   width: 0px;
+  /* height: 0px; */
 }
 </style>

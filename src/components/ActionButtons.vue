@@ -33,10 +33,10 @@
     </div>
     <div style="text-align:center;">
       <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
-      <q-btn v-bind="btnAttrs" @click="pauseOrPlayAnim()" title="play [F1]" v-if="!isPlayingAnim">
+      <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="play [F1]" v-if="!AnimM.isPlayingAnim">
         ▶
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
+      <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="createKeyFrame(svEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
-import { isPlayingAnim, currentTime, duration, pauseOrPlayAnim } from 'src/modules/anim_m';
+import { currentTime, duration, AnimM } from 'src/modules/anim_m';
 import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
@@ -106,7 +106,7 @@ const btnAttrs = {
   'no-caps': ''
 }
 
-window.addEventListener('keydown', (e) => { if (e.key === 'F1') pauseOrPlayAnim() })
+window.addEventListener('keydown', (e) => { if (e.key === 'F1') AnimM.pauseOrPlayAnim() })
 
 const closeApp = async () => await eapi.closeApp()
 

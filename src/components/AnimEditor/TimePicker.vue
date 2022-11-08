@@ -1,9 +1,11 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';
-import { fps, currentTime, duration, } from 'src/modules/anim_m'
+import { currentTime, duration, } from 'src/modules/anim_m'
 import { ConfigM } from 'src/modules/config_m';
-
+import { computed } from '@vue/reactivity';
+import { AnimM } from 'src/modules/anim_m'
+import { svEl } from 'src/modules/svel_m';
 
 // const isSelected = (i: number): string => {
 //   return `color: ${currentTime.value === i * 1000 / fps.value ? 'red' : ''}`
@@ -21,12 +23,23 @@ import { ConfigM } from 'src/modules/config_m';
 const cont = ref<HTMLDivElement>()
 const scrollHorizontally = (e: WheelEvent) => cont.value?.scrollBy({ left: e.deltaY })
 
+const timePickerLinePos = computed(() => (currentTime.value * 10 * px.value - 0.25) + 'px')
+const selectTime = async (e: MouseEvent) => {
+  if (e.buttons !== 1) return
+  if (!cont.value) return
+  let pickedTime = (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft)
+    / px.value / 10 - 0.0050
+  if (pickedTime < 0) pickedTime = 0
+  await AnimM.selectTime(pickedTime, svEl.value)
+}
+
+const px = ref(80)
 </script>
 
 <template>
-  <div ref="cont" id="timePickerCont" @wheel="scrollHorizontally">&nbsp;
+  <div ref="cont" id="timePickerCont" @wheel="scrollHorizontally" @mousemove="selectTime" @mousedown="selectTime">&nbsp;
     <div id="timePickerLine">&nbsp;</div>
-    <span v-for="second in (duration / 100)" class="timeStep" :style="`left: ${second * 4}rem`">
+    <span v-for="second in (duration / 100)" class="timeStep" :style="`left: ${second * px}px`">
       <div style="transform-origin:0 0; transform:translate(-50%)">
         {{ second }}
       </div>
@@ -45,7 +58,7 @@ const scrollHorizontally = (e: WheelEvent) => cont.value?.scrollBy({ left: e.del
   position: absolute;
   background-color: cyan;
   width: .5rem;
-  left: 3.75rem;
+  left: v-bind(timePickerLinePos);
 }
 
 #timePickerCont {

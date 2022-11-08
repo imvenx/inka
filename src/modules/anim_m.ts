@@ -9,50 +9,86 @@ import { svEl } from "./svel_m";
 export const svgEl = () => document.querySelector('svg')
 export const svgElCont = svgEl()?.parentElement
 
-export const fps = ref(20)
+// const fps = ref(20)
 export const currentTime = ref(0)
 let currentTimeRefeshInterval: any = {}
 
 export const duration = ref(1000)
 export const offset = computed(() => currentTime.value / duration.value)
-export const steps = computed(() => duration.value / 1000 * fps.value + 1)
-export const isPlayingAnim = ref(false)
+// export const steps = computed(() => duration.value / 1000 * fps.value + 1)
+const _isPlayingAnim = ref(false)
 
+export const AnimM = {
+    get isPlayingAnim() { return _isPlayingAnim.value },
+    set isPlayingAnim(v: boolean) { _isPlayingAnim.value = v },
+    async pauseOrPlayAnim() {
+        this.isPlayingAnim ? await this.pauseAnim(svEl.value) : await this.playAnim(svEl.value)
+    },
+    async playAnim(svEl: SvEl): Promise<void> {
+        this.isPlayingAnim = true
+        await playAnimLoop(svEl)
+        // startRefreshCurrentTimeInterval()
+        requestAnimationFrame(startRefreshCurrentTime)
+    },
 
-function startRefreshCurrentTimeInterval() {
+    async pauseAnim(svEl: SvEl) {
+        // stopRefreshCurrentTimeInterval()
+        stopRefreshCurrentTime()
+        this.isPlayingAnim = false
+        await pauseAnimLoop(svEl)
+
+        const anim = svgEl()?.getAnimations()[0]
+        if (anim) currentTime.value = roundedCurrentTime(anim)
+        // (currentTime.value + svgEl()?.getAnimations()[0].currentTime!) % duration.value
+
+        await svgIO.output()
+    },
+
+    async selectTime(time: number, svEl: SvEl) {
+        // stopRefreshCurrentTime()
+        stopRefreshCurrentTime()
+        this.isPlayingAnim = false
+        currentTime.value = time
+        await updateAnimCurrentFrame(svEl)
+    }
+
+}
+
+// function startRefreshCurrentTimeInterval() {
+//     const el = svgEl()
+//     const x = el?.getAnimations()
+//     let a = {} as any
+//     if (x) a = x[x?.length - 1]
+//     currentTimeRefeshInterval = setInterval(() => {
+//         currentTime.value = roundedCurrentTime(a)
+//     }, 0)
+// }
+
+let requestAnimationFrameId: number
+function startRefreshCurrentTime() {
     const el = svgEl()
     const x = el?.getAnimations()
     let a = {} as any
     if (x) a = x[x?.length - 1]
-    currentTimeRefeshInterval = setInterval(() => {
-        currentTime.value = roundedCurrentTime(a)
-    }, 50)
+    currentTime.value = roundedCurrentTime(a)
+    requestAnimationFrameId = requestAnimationFrame(startRefreshCurrentTime)
 }
 
-const roundedCurrentTime = (a: Animation) =>
-    Math.round((currentTime.value + a.currentTime!) % duration.value) / 1000
-
-const stopRefreshCurrentTimeInterval = () => clearInterval(currentTimeRefeshInterval)
-
-
-
-export async function playAnim(el: SvEl): Promise<void> {
-    isPlayingAnim.value = true
-    await playAnimLoop(el)
-    startRefreshCurrentTimeInterval()
+function stopRefreshCurrentTime() {
+    window.cancelAnimationFrame(requestAnimationFrameId)
 }
 
-async function playAnimLoop(el: SvEl) {
-    el.children?.forEach(async (child) => await playAnimLoop(child))
-    if (!allowedEls.includes(el.tagName)) return
+async function playAnimLoop(svEl: SvEl) {
+    svEl.children?.forEach(async (child) => await playAnimLoop(child))
+    if (!allowedEls.includes(svEl.tagName)) return
 
     // TODO: instead of access document.getById should be svgContainer.getById or smt else
-    const domEl = document.getElementById(el.id)
+    const domEl = document.getElementById(svEl.id)
     const anim = domEl?.getAnimations()[0]
     const eff = (anim?.effect as KeyframeEffect)
-    if (eff) { eff.setKeyframes(el.kfs); anim?.play() }
+    if (eff) { eff.setKeyframes(svEl.kfs); anim?.play() }
     else {
-        domEl?.animate(el.kfs, {
+        domEl?.animate(svEl.kfs, {
             duration: duration.value,
             delay: -currentTime.value,
             iterations: Infinity,
@@ -60,63 +96,61 @@ async function playAnimLoop(el: SvEl) {
     }
 }
 
-export async function pauseAnim(el: SvEl) {
-    stopRefreshCurrentTimeInterval()
-    isPlayingAnim.value = false
-    await pauseAnimLoop(el)
+async function pauseAnimLoop(svEl: SvEl) {
+    svEl.children?.forEach(async (child: SvEl) => await pauseAnimLoop(child))
+    if (!allowedEls.includes(svEl.tagName)) return
 
-    const anim = svgEl()?.getAnimations()[0]
-    if (anim) currentTime.value = roundedCurrentTime(anim)
-    // (currentTime.value + svgEl()?.getAnimations()[0].currentTime!) % duration.value
-
-    await svgIO.output()
-}
-
-async function pauseAnimLoop(el: SvEl) {
-    el.children?.forEach(async (child: SvEl) => await pauseAnimLoop(child))
-    if (!allowedEls.includes(el.tagName)) return
-
-    const domEl = document.getElementById(el.id)
+    const domEl = document.getElementById(svEl.id)
     domEl?.getAnimations().forEach(anim => {
         try {
             anim?.pause();
             // if (el.tagName != 'svg') // ???? 
             anim?.commitStyles();
         }
-        catch { console.log('Error trying to pause el', el) }
+        catch { console.log('Error trying to pause el', svEl) }
     })
 }
 
-export async function selectTime(i: number, svEl: SvEl) {
-    currentTime.value = (i / fps.value)
-    await updateAnimCurrentFrame(svEl)
-}
+const roundedCurrentTime = (a: Animation) =>
+    Math.round((currentTime.value + a.currentTime!) % duration.value) / 1000
 
-async function updateAnimCurrentFrame(el: SvEl) {
-    stopRefreshCurrentTimeInterval()
-    isPlayingAnim.value = false
-    await updateAnimCurrentFrameLoop(el)
+// const stopRefreshCurrentTimeInterval = () => clearInterval(currentTimeRefeshInterval)
+
+
+async function updateAnimCurrentFrame(svEl: SvEl) {
+    await updateAnimCurrentFrameLoop(svEl)
     await svgIO.output()
 }
 
-async function updateAnimCurrentFrameLoop(el: SvEl) {
-    el.children?.forEach(async (child: SvEl) => await updateAnimCurrentFrameLoop(child))
-    if (!allowedEls.includes(el.tagName)) return
+async function updateAnimCurrentFrameLoop(svEl: SvEl) {
+    svEl.children?.forEach(async (child: SvEl) => await updateAnimCurrentFrameLoop(child))
+    if (!allowedEls.includes(svEl.tagName)) return
 
-    const domEl = document.getElementById(el.id)
-    const anim = domEl?.getAnimations()[0]
-    if (!anim) domEl?.animate(el.kfs, {
-        duration: duration.value,
-        iterations: Infinity
-    }).pause()
+    const domEl = document.getElementById(svEl.id)
+    let anim = domEl?.getAnimations()[0]
+    if (!anim) {
+        anim = domEl?.animate(svEl.kfs, {
+            duration: duration.value,
+            iterations: Infinity,
+            delay: -currentTime.value * 1000
+            // delay: currentTime.value === duration.value
+            //     ? -currentTime.value + 1 : -currentTime.value
+        })
+        anim?.pause()
+        anim?.commitStyles()
+        return
+    }
     const eff = (anim?.effect as KeyframeEffect)
     if (eff) {
         eff.updateTiming({
-            delay: currentTime.value === duration.value
-                ? -currentTime.value + 1 : -currentTime.value
+            delay: -currentTime.value * 1000
+            // delay: currentTime.value === duration.value
+            //     ? -currentTime.value + 1 : -currentTime.value
         })
-        anim?.commitStyles()
     }
+    anim.pause()
+    anim?.commitStyles()
+
     // else {
     // let animation = domEl?.animate(el.kfs, {
     //     duration: duration.value,
@@ -128,9 +162,6 @@ async function updateAnimCurrentFrameLoop(el: SvEl) {
     // catch { console.log('Error trying to update el: ', el) }
 }
 
-export async function pauseOrPlayAnim() {
-    isPlayingAnim.value ? await pauseAnim(svEl.value) : await playAnim(svEl.value)
-}
 
 
 //#endregion
