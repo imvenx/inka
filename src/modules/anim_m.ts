@@ -4,17 +4,12 @@ import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
 import { svEl } from "./svel_m";
 
-// #region Anim Module
-
-export const svgEl = () => document.querySelector('svg')
+export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
 
-// const fps = ref(20)
 const _currentTime = ref(0)
 
 const _duration = ref(1)
-// export const offset = computed(() => currentTime.value / duration.value)
-// export const steps = computed(() => duration.value / 1000 * fps.value + 1)
 const _isPlayingAnim = ref(false)
 
 export const AnimM = {
@@ -94,7 +89,6 @@ async function pauseAnimLoop(svEl: SvEl) {
     domEl?.getAnimations().forEach(anim => {
         try {
             anim?.pause();
-            // if (el.tagName != 'svg') // ???? 
             anim?.commitStyles();
         }
         catch { console.log('Error trying to pause el', svEl) }
@@ -120,8 +114,6 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
             duration: AnimM.duration * 1000,
             iterations: Infinity,
             delay: -AnimM.currentTime * 1000
-            // delay: currentTime.value === duration.value
-            //     ? -currentTime.value + 1 : -currentTime.value
         })
         anim?.pause()
         anim?.commitStyles()
@@ -131,24 +123,9 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
     if (eff) {
         eff.updateTiming({
             delay: -AnimM.currentTime * 1000
-            // delay: currentTime.value === duration.value
-            //     ? -currentTime.value + 1 : -currentTime.value
         })
     }
     anim.pause()
     anim?.commitStyles()
 
-    // else {
-    // let animation = domEl?.animate(el.kfs, {
-    //     duration: duration.value,
-    //     delay: currentTime.value === duration.value
-    //         ? -currentTime.value + 1 : -currentTime.value,
-    //     iterations: Infinity
-    // })
-    // try { animation?.pause(); animation?.commitStyles() }
-    // catch { console.log('Error trying to update el: ', el) }
 }
-
-
-
-//#endregion

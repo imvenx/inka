@@ -4,10 +4,11 @@ import { Vector2 } from "../models/Vector2"
 import { svgIO } from "./svgIO_m"
 import { eapi } from "./eapi_m"
 
+const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
+
 const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
 
 const _filePath = ref<string>(StorageM.getFilePath())
-// watch(_filePath, () => StorageM.setFilePath(_filePath.value))
 
 const _inDebugMode = ref(true)
 
@@ -50,6 +51,10 @@ export const ConfigM = {
 
     get timePickerZoom() { return _timePickerZoom.value },
     set timePickerZoom(v: number) { _timePickerZoom.value = v },
+
+    get zoomPx() { return _zoomPx.value },
+    set zoomPx(v: number) { _zoomPx.value = v; StorageM.setZoomPxTimePicker(v) },
+
 }
 
 function _initEditorScroll(cont: HTMLElement) {

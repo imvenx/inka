@@ -1,17 +1,15 @@
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { computed } from '@vue/reactivity';
 import { AnimM } from 'src/modules/anim_m'
 import { svEl } from 'src/modules/svel_m';
-import { StorageM } from 'src/modules/storage_m';
+import { ConfigM } from 'src/modules/config_m';
 
 const numDecimals = 10
-const zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
-
-watch(zoomPx, (v) => StorageM.setZoomPxTimePicker(v))
 
 const cont = ref<HTMLDivElement>()
+
 const scrollHorizontally = (e: WheelEvent) => {
   if (e.ctrlKey) {
     zoomTime(e)
@@ -20,38 +18,32 @@ const scrollHorizontally = (e: WheelEvent) => {
   cont.value?.scrollBy({ left: e.deltaY })
 }
 
-const zoomTime = (e: WheelEvent) => zoomPx.value -= e.deltaY / 10
+const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / 10
 
 const timePickerLinePos = computed(() =>
-  (AnimM.currentTime * numDecimals * zoomPx.value - 0.25) + 'px')
+  (AnimM.currentTime * numDecimals * ConfigM.zoomPx - 0.25) + 'px')
 
 const selectTime = async (e: MouseEvent) => {
   if (e.buttons !== 1) return
   if (!cont.value) return
   let pickedTime = (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft)
-    / zoomPx.value / numDecimals - 0.0050
+    / ConfigM.zoomPx / numDecimals - 0.0050
   if (pickedTime < 0) pickedTime = 0
   if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
   await AnimM.selectTime(pickedTime, svEl.value)
 }
-
 </script>
 
 <template>
   <div ref="cont" id="timePickerCont" @wheel="scrollHorizontally" @mousemove="selectTime" @mousedown="selectTime">&nbsp;
     <div id="timePickerLine">&nbsp;</div>
-    <span v-for="timeStep in (AnimM.duration * numDecimals)" class="timeStep" :style="`left: ${timeStep * zoomPx}px`">
+    <span v-for="timeStep in (AnimM.duration * numDecimals)" class="timeStep"
+      :style="`left: ${timeStep * ConfigM.zoomPx}px`">
       <div style="transform-origin:0 0; transform:translate(-50%); ">
         {{ timeStep / numDecimals }}
       </div>
     </span>
   </div>
-  <!-- <div ref="cont" id="time-picker">
-    <div v-for="(step, i) in steps" @click="selectTime(i, svEl)" class="stepStyle" :style="[isSelected(i)]">
-      {{ i / fps }}
-    </div>
-    <div class="stepStyle" style="visibility:hidden"></div>
-  </div> -->
 </template>
 
 <style scoped>

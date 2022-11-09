@@ -1,4 +1,8 @@
 <template>
+  <text x="64" y="15">◆</text>
+  <template v-if="!isAttrContainer">
+  </template>
+
 
   <!-- <template v-if="!isAttrContainer">
     <div style="display:flex">
@@ -28,10 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-import { svRound } from 'src/modules/utils_m';
-import { duration } from 'src/modules/anim_m';
 import { ref } from 'vue';
-import AttrKf from './AttrKf.vue';
 import { SvEl } from 'src/models/models';
 
 const props = defineProps<{ el: SvEl, isAttrContainer?: boolean }>()

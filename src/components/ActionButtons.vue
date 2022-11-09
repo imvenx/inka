@@ -10,8 +10,8 @@
             <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item>
             <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item>
             <q-item clickable v-close-popup @click="eapi.openProjectInInkscape()">Open frame editor</q-item>
-            <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
-            <!-- <q-item clickable v-close-popup @click="deleteAnim()" >Delete Anim</q-item> -->
+            <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item>
+            <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
           </q-list>
         </q-menu>
       </q-btn>
