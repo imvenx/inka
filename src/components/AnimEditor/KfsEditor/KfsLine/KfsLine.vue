@@ -1,6 +1,6 @@
 <template>
 
-  <template v-if="!isAttrContainer">
+  <!-- <template v-if="!isAttrContainer">
     <div style="display:flex">
       <div v-for="(step, i) in steps" class="kf stepStyle">{{ kf(i) ? '◆' : '-' }}</div>
     </div>
@@ -24,12 +24,12 @@
         </div>
       </template>
     </template>
-  </template>
+  </template> -->
 </template>
 
 <script lang="ts" setup>
 import { svRound } from 'src/modules/utils_m';
-import { duration, fps, steps } from 'src/modules/anim_m';
+import { duration } from 'src/modules/anim_m';
 import { ref } from 'vue';
 import AttrKf from './AttrKf.vue';
 import { SvEl } from 'src/models/models';
@@ -40,12 +40,12 @@ const props = defineProps<{ el: SvEl, isAttrContainer?: boolean }>()
 // const kf = (id: string, i: number) =>
 //   keyframes(id)?.find(x => svRound(x.offset!) === svRound(i / fps / duration * 1000))
 
-const kf = (i: number) =>
-  props.el?.kfs?.find(x => x?.offset === stepToMs(i))
+// const kf = (i: number) =>
+//   props.el?.kfs?.find(x => x?.offset === stepToMs(i))
 
 
 
-const stepToMs = (i: number) => svRound(i / fps.value / duration.value * 1000)
+// const stepToMs = (i: number) => svRound(i / fps.value / duration.value * 1000)
 
 // const attrKf = (kf: any, key: string) => {
 //   try { return kf[key] } catch { console.log('Error trying to convert attr to kf') }

@@ -23,11 +23,10 @@
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
           <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
-          <input disabled step="0.001" title="animation current time" type="number" class="timeInput"
-            :value="currentTime">
+          <input step="0.01" title="animation current time" type="number" class="timeInput" v-model="AnimM.currentTime">
         </div>
         <div class="float-right">
-          <input disabled step="0.001" title="animation duration" type="number" class="timeInput" :value="duration">
+          <input step="0.01" title="animation duration" type="number" class="timeInput" v-model="AnimM.duration">
         </div>
       </div>
     </div>
@@ -53,7 +52,7 @@
 
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
-import { currentTime, duration, AnimM } from 'src/modules/anim_m';
+import { AnimM } from 'src/modules/anim_m';
 import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';

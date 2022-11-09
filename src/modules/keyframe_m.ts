@@ -1,14 +1,15 @@
 import { allowedAttrs, allowedEls } from "src/modules/constants";
 import { SvEl } from "src/models/models";
-import { offset } from "./anim_m";
 import { StorageM } from "./storage_m";
+import { AnimM } from "./anim_m";
 
 export async function createKeyFrame(el: SvEl): Promise<any> {
     // try {
     el.children?.forEach(async (child) => await createKeyFrame(child));
     if (!allowedEls.includes(el.tagName)) return
 
-    let kf = el?.kfs?.find(x => x?.offset === offset.value);
+    let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTime);
+    // let kf = el?.kfs?.find(x => x?.offset === offset.value);
     if (kf) {
         el.kfs[el.kfs.indexOf(kf)] = await attrsToKfs(document.getElementById(el.id) ?? {} as any);
     }
@@ -64,7 +65,8 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
                 // else if (attr === 'stdDeviation') console.log(attr)
                 else r1[attr] = el?.getAttribute(attr);
 
-                r1['offset'] = offset.value;
+                // r1['offset'] = offset.value;
+                r1['offset'] = AnimM.currentTime;
             }
         });
         return r1;

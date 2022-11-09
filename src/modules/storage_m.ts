@@ -51,4 +51,7 @@ export const StorageM = {
 
     // getDynamically: (k: string): any => get(k),
     // setDynamically: (k: string, v: any) => set(k, v),
+
+    getZoomPxTimePicker: (): any => _get('zoomPxTimePicker'),
+    setZoomPxTimePicker: (v: any) => _set('zoomPxTimePicker', v),
 }
