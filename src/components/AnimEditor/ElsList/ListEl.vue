@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { SvEl } from 'src/models/models';
-import { ConfigM } from 'src/modules/config_m';
+import { ConfigM, rowHeight } from 'src/modules/config_m';
 import { StorageM } from 'src/modules/storage_m';
 import { onMounted, ref } from 'vue';
 import ListAttr from './ListAttr.vue';
@@ -57,6 +57,7 @@ function toggleCollapse() {
   /* border-bottom: 1px solid black; */
   user-select: none;
   background-color: rgb(137, 192, 54);
+  /* height: v-bind(rowHeight + 'px'); */
 }
 
 .list-el:hover {

@@ -1,17 +1,59 @@
 <template>
-  <svg width="100%" height="100%" ref="cont" id="kfCont">
-    <KfsLine :el="svEl" />
+  <svg id="svgCont">
+    <foreignObject ref="foreignObjCont" width="100%" height="100%" id="foreignObjCont">
+      <div :style="`width:${timePickerWidth}px; padding-bottom: ${timeSideOffsetPx}px`">
+        <KfsLine :el="svEl" />
+      </div>
+      <div id="timeLine" :style="`left:${timePickerLinePos}px; top:${ConfigM.editorScroll.y}px`">
+      </div>
+    </foreignObject>
+    <!-- <g :transform="`translate(${timePickerLinePos})`"> -->
+    <!-- <line :x1="timePickerLinePos" y1="0" :x2="timePickerLinePos" y2="100%" id="timeLine" /> -->
+    <!-- </g> -->
+    <!-- <rect :x="rect?.x" :y="rect?.y" :height="rect?.height" :width="rect?.width" fill="darkcyan" /> -->
+
   </svg>
+
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import KfsLine from './KfsLine/KfsLine.vue';
+import KfsLine from './KfsLine/ElKfsLine/ElKfsLine.vue';
 import { svEl } from 'src/modules/svel_m';
-import { ConfigM } from 'src/modules/config_m';
+import { ConfigM, timeSideOffsetPx, timePickerWidth } from 'src/modules/config_m';
 
-const cont = ref<HTMLDivElement>()
-onMounted(() => { if (cont.value) ConfigM.initEditorScroll(cont.value) })
+const foreignObjCont = ref<HTMLDivElement>()
+
+onMounted(() => {
+  if (foreignObjCont.value) ConfigM.initEditorScroll(foreignObjCont.value)
+  // const elsListCont = document.getElementById('els-list-cont') as HTMLDivElement
+
+  // elsListCont?.addEventListener('click', (e: Event) => updateHeight())
+  // updateHeight()
+})
+
+const timePickerLinePos = ConfigM.timePickerLinePos
+
+// function updateHeight() {
+//   const elsListCont = document.getElementById('els-list-cont')
+//   const height = elsListCont?.scrollHeight
+//   if (svgCont.value) svgCont.value.style.height = height + 'px'
+// }
+
+
+// const rect = ref<SVGRect>()
+// onMounted(() => {
+//   rect.value = svgCont.value?.createSVGRect()
+//   if (!rect.value) return
+//   rect.value.x = 0
+//   rect.value.y = 0
+//   rect.value.height = 50
+//   rect.value.width = 500
+//   console.log(svgCont.value?.getEnclosureList(rect.value, null))
+// })
+
+// <span v-for="deciSecond in (AnimM.duration * ConfigM.numDecimals)" class="timeStep"
+//       :style="`left: ${deciSecond * ConfigM.zoomPx}px`">
 
 // function selectionBox(e: MouseEvent) {
 //   if (e.buttons === 1) {
@@ -26,14 +68,23 @@ onMounted(() => { if (cont.value) ConfigM.initEditorScroll(cont.value) })
 </script>
 
 <style scoped>
-#kfCont {
-  overflow: scroll;
-  box-shadow: inset 1px 1px 10px black;
+#svgCont {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: rgb(60, 60, 60);
+
 }
 
+#foreignObjCont {
+  overflow: overlay;
+}
 
-
-/* .kf {
-  height: 1rem;
-} */
+#timeLine {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.37);
+  position: absolute;
+  height: 100%;
+  user-select: none;
+  pointer-events: none;
+}
 </style>

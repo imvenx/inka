@@ -40,11 +40,12 @@ export const AnimM = {
         await svgIO.output()
     },
 
-    async selectTime(time: number, svEl: SvEl) {
+    async selectTime(time: number, svEl: SvEl, output = true) {
         stopRefreshCurrentTime()
         this.isPlayingAnim = false
         this.currentTime = Math.round(time * 1000) / 1000
         await updateAnimCurrentFrame(svEl)
+        if (output) await svgIO.output()
     }
 
 }
@@ -100,7 +101,6 @@ const roundedCurrentTime = (a: Animation) =>
 
 async function updateAnimCurrentFrame(svEl: SvEl) {
     await updateAnimCurrentFrameLoop(svEl)
-    await svgIO.output()
 }
 
 async function updateAnimCurrentFrameLoop(svEl: SvEl) {
