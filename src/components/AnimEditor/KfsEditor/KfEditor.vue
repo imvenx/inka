@@ -94,15 +94,11 @@ const timePickerLinePos = ConfigM.timePickerLinePos
   left: 0px;
   width: 100%;
   height: 100%;
-
   pointer-events: none;
-  /* to make clicks pass through */
-
   box-shadow: 0 0 10px #000000 inset;
 }
 
 #box_content {
-  background-color: #0ef83f;
   height: 100%;
 }
 

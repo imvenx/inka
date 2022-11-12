@@ -1,5 +1,5 @@
 <template>
-  <div id="cont" ref="cont">
+  <div id="animatorCont" ref="cont">
     <div class="corner"></div>
     <TimePicker />
     <ElsList />
@@ -25,7 +25,7 @@ const cont = ref<HTMLDivElement>()
 </script>
 
 <style scoped>
-#cont {
+#animatorCont {
   border: 1px solid black;
   box-shadow: 0 0 5px black;
   height: 89vh;

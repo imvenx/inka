@@ -1,7 +1,7 @@
 <template>
   <div class="elKfsLineCont">
     <svg width="100%" :height="rowHeight">
-      <ElKf v-for="kf in el.kfs" :kf="kf" />
+      <ElKf v-for="kf in el.kfs" :el="el" :kf="kf" />
     </svg>
   </div>
   <template v-if="el.isUncollapsed">
@@ -21,6 +21,7 @@ import ElKf from './ElKf.vue';
 import { rowHeight } from 'src/modules/config_m';
 import AttrsKfsLine from '../AttrsKfsLine/AttrsKfsLine.vue';
 import AttrKfsLine from '../AttrKfsLine/AttrKfsLine.vue';
+import { deleteKf } from 'src/modules/keyframe_m';
 
 const props = defineProps<{ el: SvEl }>()
 

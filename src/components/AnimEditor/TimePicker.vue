@@ -79,7 +79,7 @@ watch(() => ConfigM.editorScroll.x, (val) => {
   overflow-x: auto;
   overflow-y: hidden;
   font-weight: 1000;
-  font-size: .7rem;
+  font-size: .55rem;
   user-select: none;
   /* margin-left: .5em; */
   /* border-left: .5em solid black; */
