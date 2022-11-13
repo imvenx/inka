@@ -44,8 +44,7 @@ const selectTime = async (e: MouseEvent) => {
 
 async function refreshOutputInterval(t: number) {
   clearTimeout(outputTimeout)
-  outputTimeout = setTimeout(async () =>
-    await AnimM.selectTime(t, svEl.value), 50)
+  outputTimeout = setTimeout(async () => await AnimM.selectTime(t, svEl.value), 50)
 }
 
 onMounted(() => {
@@ -75,7 +74,7 @@ watch(() => ConfigM.editorScroll.x, (val) => {
 #timePickerCont {
   position: relative;
   display: inline-flex;
-  background-color: darkcyan;
+  background-color: rgb(81, 160, 81);
   overflow-x: auto;
   overflow-y: hidden;
   font-weight: 1000;

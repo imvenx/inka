@@ -23,6 +23,7 @@ export const AnimM = {
     async pauseOrPlayAnim() {
         this.isPlayingAnim ? await this.pauseAnim(svEl.value) : await this.playAnim(svEl.value)
     },
+
     async playAnim(svEl: SvEl): Promise<void> {
         this.isPlayingAnim = true
         await playAnimLoop(svEl)
@@ -70,13 +71,15 @@ async function playAnimLoop(svEl: SvEl) {
 
     // TODO: instead of access document.getById should be svgContainer.getById or smt else
     const domEl = document.getElementById(svEl.id)
-    const anim = domEl?.getAnimations()[0]
+    let anim = domEl?.getAnimations()[0]
     const eff = (anim?.effect as KeyframeEffect)
-    if (eff) { eff.setKeyframes(svEl.kfs); anim?.play() }
+    if (eff && anim) {
+        eff.setKeyframes(svEl.kfs);
+        anim?.play()
+    }
     else {
-        domEl?.animate(svEl.kfs, {
+        anim = domEl?.animate(svEl.kfs, {
             duration: AnimM.duration * 1000,
-            delay: -AnimM.currentTime,
             iterations: Infinity,
         })
     }
@@ -88,11 +91,8 @@ async function pauseAnimLoop(svEl: SvEl) {
 
     const domEl = document.getElementById(svEl.id)
     domEl?.getAnimations().forEach(anim => {
-        try {
-            anim?.pause();
-            anim?.commitStyles();
-        }
-        catch { console.log('Error trying to pause el', svEl) }
+        anim.pause();
+        anim.commitStyles();
     })
 }
 
@@ -113,19 +113,13 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
         anim = domEl?.animate(svEl.kfs, {
             duration: AnimM.duration * 1000,
             iterations: Infinity,
-            delay: -AnimM.currentTime * 1000
         })
         anim?.pause()
         anim?.commitStyles()
         return
     }
+    anim.currentTime = AnimM.currentTime * 1000
     const eff = (anim?.effect as KeyframeEffect)
-    if (eff) {
-        eff.updateTiming({
-            delay: -AnimM.currentTime * 1000
-        })
-    }
     anim.pause()
     anim?.commitStyles()
-
 }

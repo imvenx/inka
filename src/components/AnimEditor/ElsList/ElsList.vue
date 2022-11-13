@@ -30,7 +30,6 @@ watch(() => ConfigM.editorScroll.y, (val) => {
 #els-list-cont {
   /* border-right: 1px solid black; */
   white-space: nowrap;
-  resize: horizontal;
   /* overflow: hidden; */
   overflow-x: hidden;
   overflow-y: auto;

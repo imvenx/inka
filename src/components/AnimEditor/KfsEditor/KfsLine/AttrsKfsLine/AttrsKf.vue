@@ -20,7 +20,7 @@ const kfPos = computed(() =>
 
 <style scoped>
 .attrsKfDiv {
-    background-color: darkcyan;
+    background-color: grey;
     height: 10px;
 }
 

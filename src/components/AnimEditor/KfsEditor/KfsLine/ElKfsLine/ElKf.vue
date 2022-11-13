@@ -23,7 +23,6 @@ const kfPos = computed(() =>
 
 <style scoped>
 .elKfDiv {
-    background-color: rgb(0, 77, 77);
     height: 10px;
 }
 

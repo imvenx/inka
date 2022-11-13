@@ -31,7 +31,7 @@ const kfPos = computed(() =>
 }
 
 .attrKf {
-    stroke: darkcyan;
+    stroke: black;
     fill: transparent;
 }
 
