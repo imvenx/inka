@@ -1,5 +1,5 @@
 <template>
-  <div ref="cont" id="timePickerCont" @wheel="scrollHorizontally" @mousemove="selectTime" @mousedown="selectTime">
+  <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousemove="selectTime" @mousedown="selectTime">
     <div id="offsetDiv"></div>&nbsp;
     <div id="timePickerLine">&nbsp;</div>
     <span v-for="deciSecond in (AnimM.duration * ConfigM.numDecimals)" class="timeStep"
@@ -22,10 +22,17 @@ const cont = ref<HTMLDivElement>()
 
 const timePickerLinePos = ConfigM.timePickerLinePos
 
-const scrollHorizontally = (e: WheelEvent) => {
+function onWheel(e: WheelEvent) {
   if (e.ctrlKey) { zoomTime(e); return }
-  cont.value?.scrollBy({ left: e.deltaY })
+  // scrollHorizontally(e.deltaY)
 }
+
+// function scrollHorizontally(deltaY: number) {
+//   if (cont.value && cont.value.scrollLeft >= cont.value.scrollWidth + deltaY) {
+//     cont.value.scrollTo({ left: cont.value.scrollWidth })
+//   }
+//   cont.value?.scrollBy({ left: deltaY })
+// }
 
 const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDecimals
 
@@ -94,11 +101,11 @@ watch(() => ConfigM.editorScroll.x, (val) => {
 
 #offsetRight {
   position: absolute;
-  transform-origin: 0 0;
-  transform: translate(-200%);
+  /* transform-origin: 0 0; */
+  transform: translate(-100%);
   border: 1px solid transparent;
   width: 0;
-  height: 150%;
+  margin: 0;
 }
 
 ::-webkit-scrollbar {
