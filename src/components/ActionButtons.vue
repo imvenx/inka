@@ -79,7 +79,7 @@ function goToMenu() {
 }
 
 function deleteAll() {
-  if (!confirm("Are you sure you want to delete all your projects?",)) return
+  if (!confirm("Are you sure you want to delete all your projects?")) return
   StorageM.clear()
   location.reload()
 }
