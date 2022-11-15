@@ -45,6 +45,7 @@ export const AnimM = {
         stopRefreshCurrentTime()
         this.isPlayingAnim = false
         this.currentTime = Math.round(time * 1000) / 1000
+        if (this.currentTime >= this.duration) this.currentTime -= 0.001
         await updateAnimCurrentFrame(svEl)
         if (output) await svgIO.output()
     }

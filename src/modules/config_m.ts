@@ -7,9 +7,7 @@ import { AnimM } from "./anim_m"
 
 export const timePickerWidth = computed(() => AnimM.duration * ConfigM.numDecimals * ConfigM.zoomPx
     + (timeSideOffsetPx * 2))
-
 export const timeSideOffsetPx = 10
-
 const _timePickerLinePos = computed<number>(() =>
     (Math.round(AnimM.currentTime * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
 const _numDecimals = 10

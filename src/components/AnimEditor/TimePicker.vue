@@ -47,6 +47,8 @@ const selectTime = async (e: MouseEvent) => {
   if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
   await AnimM.selectTime(pickedTime, svEl.value, false)
   await refreshOutputInterval(pickedTime)
+
+  window.addEventListener('mousemove', selectTime, { once: true })
 }
 
 async function refreshOutputInterval(t: number) {
@@ -91,6 +93,10 @@ watch(() => ConfigM.editorScroll.x, (val) => {
   /* border-left: .5em solid black; */
   /* box-shadow: -.5em 0 0 rgb(0, 58, 58); */
 }
+
+/* #timePickerCont:hover {
+  font-size: 1rem;
+} */
 
 .timeStep {
   position: absolute;
