@@ -19,7 +19,11 @@ export const AnimM = {
     set currentTime(v: number) { _currentTime.value = v },
 
     get duration() { return _duration.value },
-    set duration(v: number) { _duration.value = v; StorageM.setDuration(v) },
+    set duration(v: number) {
+        _duration.value = v;
+        StorageM.setDuration(v);
+        updateAnimDurationLoop(svEl.value)
+    },
 
     get isPlayingAnim() { return _isPlayingAnim.value },
     set isPlayingAnim(v: boolean) { _isPlayingAnim.value = v },
@@ -79,6 +83,7 @@ async function playAnimLoop(svEl: SvEl) {
     if (eff && anim) {
         eff.setKeyframes(svEl.kfs);
         anim?.play()
+        eff.updateTiming({ duration: AnimM.duration * 1000 })
     }
     else {
         anim = domEl?.animate(svEl.kfs, {
@@ -122,7 +127,16 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
         return
     }
     anim.currentTime = AnimM.currentTime * 1000
-    const eff = (anim?.effect as KeyframeEffect)
     anim.pause()
     anim?.commitStyles()
+}
+
+function updateAnimDurationLoop(svEl: SvEl) {
+    svEl.children?.forEach(async (child: SvEl) => await updateAnimDurationLoop(child))
+    if (!allowedEls.includes(svEl.tagName)) return
+
+    const domEl = document.getElementById(svEl.id)
+    let anim = domEl?.getAnimations()[0]
+    const eff = (anim?.effect as KeyframeEffect)
+    eff.updateTiming({ duration: AnimM.duration * 1000 })
 }

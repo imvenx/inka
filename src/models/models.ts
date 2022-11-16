@@ -1,18 +1,3 @@
-// export interface SvEl {
-//     id: string
-//     name: string
-//     tagName: string
-//     isCollapsed: boolean
-//     children: SvEl[]
-// }
-
-// export interface IListEl {
-//     icon: string
-//     name: string
-//     isCollapsed: boolean
-//     keyframes: [{ key: string, value: string }]
-// }
-
 export interface SvEl {
     attrs: KeyVal[]
     children?: SvEl[]

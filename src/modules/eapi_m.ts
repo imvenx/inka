@@ -1,3 +1,4 @@
+// Electron API 
 const _eapi = (window as any).eapi
 
 export const eapi = {
