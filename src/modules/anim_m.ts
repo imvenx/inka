@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
 import { svEl } from "./svel_m";
 import { StorageM } from "./storage_m";
+import { updateKfs } from "./keyframe_m";
 
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
@@ -11,8 +12,11 @@ export const svgElCont = svgEl()?.parentElement
 const _currentTime = ref(0)
 
 const _duration = ref(StorageM.getDuration())
+let _oldDuration = _duration.value
+
 const _isPlayingAnim = ref(false)
 
+const _recalculateKfsOnChangeDuration = ref(true)
 
 export const AnimM = {
     get currentTime() { return _currentTime.value },
@@ -21,6 +25,7 @@ export const AnimM = {
     get duration() { return _duration.value },
     set duration(v: number) {
         if (v <= 0) v = 0.1
+        _oldDuration = _duration.value
         _duration.value = v;
         StorageM.setDuration(v);
         updateAnimDurationLoop(svEl.value)
@@ -48,6 +53,9 @@ export const AnimM = {
 
         await svgIO.output()
     },
+
+    get recalculateKfsOnChangeDuration() { return _recalculateKfsOnChangeDuration.value },
+    set recalculateKfsOnChangeDuration(v: boolean) { _recalculateKfsOnChangeDuration.value = v },
 
     async selectTime(time: number, svEl: SvEl) {
         stopRefreshCurrentTime()
@@ -138,7 +146,28 @@ function updateAnimDurationLoop(svEl: SvEl) {
 
     const domEl = document.getElementById(svEl.id)
     let anim = domEl?.getAnimations()[0]
-    if (!anim) return
-    const eff = (anim?.effect as KeyframeEffect)
-    eff.updateTiming({ duration: AnimM.duration * 1000 })
+
+    if (AnimM.recalculateKfsOnChangeDuration) {
+        svEl.kfs.forEach(kf => {
+            kf.offset! /= AnimM.duration / _oldDuration
+            if (kf.offset! > 1) kf.offset = 1
+        })
+        updateKfs(svEl.id, svEl.kfs)
+    }
+
+
+    if (!anim) {
+        anim = domEl?.animate(svEl.kfs, {
+            duration: AnimM.duration * 1000,
+            iterations: Infinity,
+        })
+        anim?.pause()
+    }
+    else {
+        const eff = (anim?.effect as KeyframeEffect)
+        eff.updateTiming({ duration: AnimM.duration * 1000 })
+        eff.setKeyframes(svEl.kfs)
+    }
+
+
 }

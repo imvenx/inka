@@ -23,11 +23,27 @@
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
           <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
-          <input step="0.01" title="animation current time" type="number" class="timeInput" @change="selectTime()"
-            v-model="AnimM.currentTime">
+          <input min="0.01" step="0.01" title="animation current time" type="number" class="timeInput"
+            @change="selectTime()" v-model="AnimM.currentTime">
         </div>
         <div class="float-right">
-          <input step="0.1" title="animation duration" type="number" class="timeInput" v-model="AnimM.duration">
+          <input min="0.1" step="0.1" title="animation duration" type="number" class="timeInput"
+            v-model="AnimM.duration">
+          <q-btn v-bind="btnAttrs" icon="settings" title="time settings">
+            <q-menu dark>
+              <q-list dense>
+                <q-item clickable title="enable this to prevent slow down or speed up your 
+                  animation when changing the duration">
+                  <q-item-section avatar>
+                    <input id="recalculate" type="checkbox" v-model="AnimM.recalculateKfsOnChangeDuration" />
+                  </q-item-section>
+                  <q-item-section>
+                    <label for="recalculate">Recalculate kfs time on change duration</label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </div>
       </div>
     </div>

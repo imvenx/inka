@@ -22,6 +22,10 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
 
 }
 
+export function updateKfs(elId: string, kf: Keyframe[]) {
+    StorageM.setKfs(elId, kf)
+}
+
 export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     if (offset === null || offset === undefined) {
         console.log('csSvg: error offset undefined'); return
