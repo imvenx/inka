@@ -31,14 +31,14 @@
             v-model="AnimM.duration">
           <q-btn v-bind="btnAttrs" icon="settings" title="time settings">
             <q-menu dark>
-              <q-list dense>
-                <q-item clickable title="enable this to prevent slow down or speed up your 
+              <q-list dense tag="label">
+                <q-item tag="label" clickable v-ripple title="enable this to prevent slow down or speed up your 
                   animation when changing the duration">
-                  <q-item-section avatar>
+                  <q-item-section side>
                     <input id="recalculate" type="checkbox" v-model="AnimM.recalculateKfsOnChangeDuration" />
                   </q-item-section>
                   <q-item-section>
-                    <label for="recalculate">Recalculate kfs time on change duration</label>
+                    <q-label>Recalculate kfs time on change duration</q-label>
                   </q-item-section>
                 </q-item>
               </q-list>
