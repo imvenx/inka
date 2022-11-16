@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${kfPos}, 2)`" @click="deleteKf(el, kf.offset)">
+    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @click="deleteKf(el, kf.offset)">
         <g transform="rotate(45)">
             <rect class="elKf" width="10" height="10" />
             <foreignObject width="10" height="10">
@@ -9,15 +9,11 @@
     </g>
 </template>
 <script lang="ts" setup>
-import { computed } from '@vue/reactivity';
 import { SvEl } from 'src/models/models';
-import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
 import { deleteKf } from 'src/modules/keyframe_m';
+import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ el: SvEl, kf: Keyframe }>()
-
-const kfPos = computed(() =>
-    props.kf.offset! * ConfigM.zoomPx * ConfigM.numDecimals + timeSideOffsetPx)
 
 </script>
 

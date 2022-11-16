@@ -8,7 +8,7 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
     el.children?.forEach(async (child) => await createKeyFrame(child));
     if (!allowedEls.includes(el.tagName)) return
 
-    let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTime);
+    let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTime / AnimM.duration);
     // let kf = el?.kfs?.find(x => x?.offset === offset.value);
     if (kf) {
         el.kfs[el.kfs.indexOf(kf)] = await attrsToKfs(document.getElementById(el.id) ?? {} as any);
@@ -80,7 +80,7 @@ async function attrsToKfs(el: Element) {
             else r1[attr] = el?.getAttribute(attr);
 
             // r1['offset'] = offset.value;
-            r1['offset'] = AnimM.currentTime;
+            r1['offset'] = AnimM.currentTime / AnimM.duration;
         }
     });
     return r1;

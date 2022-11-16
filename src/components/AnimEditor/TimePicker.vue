@@ -18,42 +18,28 @@ import { AnimM } from 'src/modules/anim_m'
 import { svEl } from 'src/modules/svel_m';
 import { ConfigM, timePickerWidth, timeSideOffsetPx } from 'src/modules/config_m';
 
-const cont = ref<HTMLDivElement>()
+const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 
 const timePickerLinePos = ConfigM.timePickerLinePos
 
-function onWheel(e: WheelEvent) {
-  if (e.ctrlKey) { zoomTime(e); return }
-  // scrollHorizontally(e.deltaY)
-}
-
-// function scrollHorizontally(deltaY: number) {
-//   if (cont.value && cont.value.scrollLeft >= cont.value.scrollWidth + deltaY) {
-//     cont.value.scrollTo({ left: cont.value.scrollWidth })
-//   }
-//   cont.value?.scrollBy({ left: deltaY })
-// }
+function onWheel(e: WheelEvent) { if (e.ctrlKey) { zoomTime(e); return } }
 
 const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDecimals
 
-let outputTimeout = {} as any
 const selectTime = async (e: MouseEvent) => {
   if (e.buttons !== 1) return
-  if (!cont.value) return
-  let pickedTime = (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
-    - timeSideOffsetPx)
-    / ConfigM.zoomPx / ConfigM.numDecimals
+  let pickedTime = getPickedTime(e)
+
   if (pickedTime < 0) pickedTime = 0
   if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
-  await AnimM.selectTime(pickedTime, svEl.value, false)
-  await refreshOutputInterval(pickedTime)
+  await AnimM.selectTime(pickedTime, svEl.value)
 
   window.addEventListener('mousemove', selectTime, { once: true })
 }
 
-async function refreshOutputInterval(t: number) {
-  clearTimeout(outputTimeout)
-  outputTimeout = setTimeout(async () => await AnimM.selectTime(t, svEl.value), 50)
+function getPickedTime(e: MouseEvent): number {
+  return (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
+    - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
 }
 
 onMounted(() => {

@@ -4,6 +4,8 @@ import { allowedEls } from "./constants"
 import { eapi } from "./eapi_m"
 import { getSvEls, svEl, svgString } from "./svel_m"
 
+let outputTimeout = {} as any
+
 export const svgIO = {
     async input(): Promise<void> {
         /* TODO: Investigate why input is sometimes called after output, (probably watcher 
@@ -23,10 +25,13 @@ export const svgIO = {
         svEl.value = _svEl
     },
     async output(): Promise<void> {
-        const _svgEl = svgEl()?.cloneNode(true) as Element
-        if (!_svgEl) return
-        let newFile = (await cssToSvg(_svgEl))?.outerHTML
-        await eapi.updateFile(newFile)
+        clearTimeout(outputTimeout)
+        outputTimeout = setTimeout(async () => {
+            const _svgEl = svgEl()?.cloneNode(true) as Element
+            if (!_svgEl) return
+            let newFile = (await cssToSvg(_svgEl))?.outerHTML
+            await eapi.updateFile(newFile)
+        }, 50)
     }
 }
 

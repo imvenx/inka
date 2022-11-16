@@ -3,20 +3,23 @@ import { SvEl } from "src/models/models";
 import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
 import { svEl } from "./svel_m";
+import { StorageM } from "./storage_m";
 
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
 
 const _currentTime = ref(0)
 
-const _duration = ref(1)
+const _duration = ref(StorageM.getDuration())
 const _isPlayingAnim = ref(false)
+
 
 export const AnimM = {
     get currentTime() { return _currentTime.value },
     set currentTime(v: number) { _currentTime.value = v },
+
     get duration() { return _duration.value },
-    set duration(v: number) { _duration.value = v },
+    set duration(v: number) { _duration.value = v; StorageM.setDuration(v) },
 
     get isPlayingAnim() { return _isPlayingAnim.value },
     set isPlayingAnim(v: boolean) { _isPlayingAnim.value = v },
@@ -41,15 +44,14 @@ export const AnimM = {
         await svgIO.output()
     },
 
-    async selectTime(time: number, svEl: SvEl, output = true) {
+    async selectTime(time: number, svEl: SvEl) {
         stopRefreshCurrentTime()
         this.isPlayingAnim = false
         this.currentTime = Math.round(time * 1000) / 1000
         if (this.currentTime >= this.duration) this.currentTime -= 0.001
         await updateAnimCurrentFrame(svEl)
-        if (output) await svgIO.output()
+        await svgIO.output()
     }
-
 }
 
 let requestAnimationFrameId: number

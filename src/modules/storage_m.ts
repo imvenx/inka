@@ -29,6 +29,9 @@ export const StorageM = {
         return Object.entries(all)
     },
 
+    getDuration: (): number => _get('duration') ?? 1,
+    setDuration: (v: number) => _set('duration', v),
+
     getEditorScroll: (): Vector2 => _get('editorScroll') ?? new Vector2,
     setEditorScroll: (v: Vector2) => _set('editorScroll', v),
 

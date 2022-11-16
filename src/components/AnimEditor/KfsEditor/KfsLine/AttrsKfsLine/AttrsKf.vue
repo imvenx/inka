@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${kfPos}, 2)`">
+    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`">
         <g transform="rotate(45)">
             <rect class="attrsKf" width="10" height="10" />
             <foreignObject width="10" height="10">
@@ -11,11 +11,10 @@
 <script lang="ts" setup>
 import { computed } from '@vue/reactivity';
 import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
+import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ kf: Keyframe }>()
 
-const kfPos = computed(() =>
-    props.kf.offset! * ConfigM.zoomPx * ConfigM.numDecimals + timeSideOffsetPx)
 </script>
 
 <style scoped>

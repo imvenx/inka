@@ -23,7 +23,8 @@
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
           <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
-          <input step="0.01" title="animation current time" type="number" class="timeInput" v-model="AnimM.currentTime">
+          <input step="0.01" title="animation current time" type="number" class="timeInput" @change="selectTime()"
+            v-model="AnimM.currentTime">
         </div>
         <div class="float-right">
           <input step="0.01" title="animation duration" type="number" class="timeInput" v-model="AnimM.duration">
@@ -62,21 +63,13 @@ import { ConfigM } from 'src/modules/config_m';
 
 const router = useRouter()
 
-// const selTime = async (t: number) => await selectTime(t)
+function selectTime() { AnimM.selectTime(AnimM.currentTime, svEl.value) }
 
 const refresh = () => location.reload()
 
-function goToCode() {
-  router.push('/code')
-}
-
-function goToAnimEditor() {
-  router.push('/')
-}
-
-function goToMenu() {
-  router.push('/home')
-}
+function goToCode() { router.push('/code') }
+function goToAnimEditor() { router.push('/') }
+function goToMenu() { router.push('/home') }
 
 function deleteAll() {
   if (!confirm("Are you sure you want to delete all your projects?")) return
