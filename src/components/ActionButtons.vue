@@ -27,7 +27,7 @@
             v-model="AnimM.currentTime">
         </div>
         <div class="float-right">
-          <input step="0.01" title="animation duration" type="number" class="timeInput" v-model="AnimM.duration">
+          <input step="0.1" title="animation duration" type="number" class="timeInput" v-model="AnimM.duration">
         </div>
       </div>
     </div>

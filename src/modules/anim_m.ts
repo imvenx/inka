@@ -20,6 +20,7 @@ export const AnimM = {
 
     get duration() { return _duration.value },
     set duration(v: number) {
+        if (v <= 0) v = 0.1
         _duration.value = v;
         StorageM.setDuration(v);
         updateAnimDurationLoop(svEl.value)
@@ -137,6 +138,7 @@ function updateAnimDurationLoop(svEl: SvEl) {
 
     const domEl = document.getElementById(svEl.id)
     let anim = domEl?.getAnimations()[0]
+    if (!anim) return
     const eff = (anim?.effect as KeyframeEffect)
     eff.updateTiming({ duration: AnimM.duration * 1000 })
 }

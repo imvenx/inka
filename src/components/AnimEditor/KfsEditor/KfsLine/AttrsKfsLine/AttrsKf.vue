@@ -9,8 +9,6 @@
     </g>
 </template>
 <script lang="ts" setup>
-import { computed } from '@vue/reactivity';
-import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
 import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ kf: Keyframe }>()

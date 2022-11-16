@@ -2,7 +2,7 @@
   <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousemove="selectTime" @mousedown="selectTime">
     <div id="offsetDiv"></div>&nbsp;
     <div id="timePickerLine">&nbsp;</div>
-    <span v-for="deciSecond in (AnimM.duration * ConfigM.numDecimals)" class="timeStep"
+    <span v-for="deciSecond in Math.round(AnimM.duration * ConfigM.numDecimals)" class="timeStep"
       :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
       <div>
         {{ deciSecond / ConfigM.numDecimals }}
