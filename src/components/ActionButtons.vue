@@ -38,7 +38,7 @@
                     <input id="recalculate" type="checkbox" v-model="AnimM.recalculateKfsOnChangeDuration" />
                   </q-item-section>
                   <q-item-section>
-                    <q-label>Recalculate kfs time on change duration</q-label>
+                    <q-item-label>Recalculate kfs time on change duration</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
