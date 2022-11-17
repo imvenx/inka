@@ -10,8 +10,8 @@
             <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item>
             <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item>
             <q-item clickable v-close-popup @click="eapi.openProjectInInkscape()">Open frame editor</q-item>
-            <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
-            <!-- <q-item clickable v-close-popup @click="deleteAnim()" >Delete Anim</q-item> -->
+            <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item>
+            <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
           </q-list>
         </q-menu>
       </q-btn>
@@ -23,20 +23,36 @@
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
           <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
-          <input disabled step="0.001" title="animation current time" type="number" class="timeInput"
-            :value="currentTime">
+          <input min="0.01" step="0.01" title="animation current time" type="number" class="timeInput"
+            @change="selectTime()" v-model="AnimM.currentTime">
         </div>
         <div class="float-right">
-          <input disabled step="0.001" title="animation duration" type="number" class="timeInput" :value="duration">
+          <input min="0.1" step="0.1" title="animation duration" type="number" class="timeInput"
+            v-model="AnimM.duration">
+          <q-btn v-bind="btnAttrs" icon="settings" title="time settings">
+            <q-menu dark>
+              <q-list dense tag="label">
+                <q-item tag="label" clickable v-ripple title="enable this to prevent slow down or speed up your 
+                  animation when changing the duration">
+                  <q-item-section side>
+                    <input id="recalculate" type="checkbox" v-model="AnimM.recalculateKfsOnChangeDuration" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Recalculate kfs time on change duration</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </div>
       </div>
     </div>
     <div style="text-align:center;">
       <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
-      <q-btn v-bind="btnAttrs" @click="pauseOrPlayAnim()" title="play [F1]" v-if="!isPlayingAnim">
+      <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="play [F1]" v-if="!AnimM.isPlayingAnim">
         ▶
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
+      <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="createKeyFrame(svEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
@@ -53,7 +69,7 @@
 
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
-import { isPlayingAnim, currentTime, duration, pauseOrPlayAnim } from 'src/modules/anim_m';
+import { AnimM } from 'src/modules/anim_m';
 import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
@@ -63,23 +79,16 @@ import { ConfigM } from 'src/modules/config_m';
 
 const router = useRouter()
 
-// const selTime = async (t: number) => await selectTime(t)
+function selectTime() { AnimM.selectTime(AnimM.currentTime, svEl.value) }
 
 const refresh = () => location.reload()
 
-function goToCode() {
-  router.push('/code')
-}
-
-function goToAnimEditor() {
-  router.push('/')
-}
-
-function goToMenu() {
-  router.push('/home')
-}
+function goToCode() { router.push('/code') }
+function goToAnimEditor() { router.push('/') }
+function goToMenu() { router.push('/home') }
 
 function deleteAll() {
+  if (!confirm("Are you sure you want to delete all your projects?")) return
   StorageM.clear()
   location.reload()
 }
@@ -106,7 +115,7 @@ const btnAttrs = {
   'no-caps': ''
 }
 
-window.addEventListener('keydown', (e) => { if (e.key === 'F1') pauseOrPlayAnim() })
+window.addEventListener('keydown', (e) => { if (e.key === 'F1') AnimM.pauseOrPlayAnim() })
 
 const closeApp = async () => await eapi.closeApp()
 

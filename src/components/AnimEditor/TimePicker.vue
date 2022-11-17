@@ -1,69 +1,118 @@
+<template>
+  <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousemove="selectTime" @mousedown="selectTime">
+    <div id="offsetDiv"></div>&nbsp;
+    <div id="timePickerLine">&nbsp;</div>
+    <span v-for="deciSecond in Math.round(AnimM.duration * ConfigM.numDecimals)" class="timeStep"
+      :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
+      <div>
+        {{ deciSecond / ConfigM.numDecimals }}
+      </div>
+    </span>
+    <span id="offsetRight" :style="`left: ${timePickerWidth}px`"></span>
+  </div>
+</template>
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';
-import { fps, currentTime, duration, } from 'src/modules/anim_m'
-import { ConfigM } from 'src/modules/config_m';
+import { AnimM } from 'src/modules/anim_m'
+import { svEl } from 'src/modules/svel_m';
+import { ConfigM, timePickerWidth, timeSideOffsetPx } from 'src/modules/config_m';
 
+const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 
-// const isSelected = (i: number): string => {
-//   return `color: ${currentTime.value === i * 1000 / fps.value ? 'red' : ''}`
-// }
+const timePickerLinePos = ConfigM.timePickerLinePos
 
-// const cont = ref<HTMLDivElement>()
-// watch(() => ConfigM.editorScroll.x, (val) => {
-//   cont.value?.scrollTo({ left: val })
-// })
+function onWheel(e: WheelEvent) { if (e.ctrlKey) { zoomTime(e); return } }
 
-// onMounted(() => {
-// cont.value?.scrollTo({ left: ConfigM.editorScroll.x })
-// })
+const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDecimals
 
-const cont = ref<HTMLDivElement>()
-const scrollHorizontally = (e: WheelEvent) => cont.value?.scrollBy({ left: e.deltaY })
+const selectTime = async (e: MouseEvent) => {
+  if (e.buttons !== 1) return
+  let pickedTime = getPickedTime(e)
+
+  if (pickedTime < 0) pickedTime = 0
+  if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
+  await AnimM.selectTime(pickedTime, svEl.value)
+
+  window.addEventListener('mousemove', selectTime, { once: true })
+}
+
+function getPickedTime(e: MouseEvent): number {
+  return (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
+    - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
+}
+
+onMounted(() => {
+  cont.value?.scrollTo({ left: ConfigM.editorScroll.x })
+  cont.value?.addEventListener("scroll", (e: Event) => {
+    ConfigM.editorScroll.x = cont.value?.scrollLeft ?? 0
+  })
+})
+
+watch(() => ConfigM.editorScroll.x, (val) => {
+  cont.value?.scrollTo({ left: val })
+})
 
 </script>
-
-<template>
-  <div ref="cont" id="timePickerCont" @wheel="scrollHorizontally">&nbsp;
-    <div id="timePickerLine">&nbsp;</div>
-    <span v-for="second in (duration / 100)" class="timeStep" :style="`left: ${second * 4}rem`">
-      <div style="transform-origin:0 0; transform:translate(-50%)">
-        {{ second }}
-      </div>
-    </span>
-  </div>
-  <!-- <div ref="cont" id="time-picker">
-    <div v-for="(step, i) in steps" @click="selectTime(i, svEl)" class="stepStyle" :style="[isSelected(i)]">
-      {{ i / fps }}
-    </div>
-    <div class="stepStyle" style="visibility:hidden"></div>
-  </div> -->
-</template>
 
 <style scoped>
 #timePickerLine {
   position: absolute;
-  background-color: cyan;
+  background-color: aquamarine;
+  /* border: 1px solid lightblue; */
   width: .5rem;
-  left: 3.75rem;
+  left: v-bind(timePickerLinePos + 'px');
+  /* transform-origin: 0 0; */
+  transform: translate(-50%);
 }
 
 #timePickerCont {
   position: relative;
   display: inline-flex;
-  background-color: darkcyan;
+  background-color: rgb(81, 160, 81);
   overflow-x: auto;
   overflow-y: hidden;
   font-weight: 1000;
+  font-size: .55rem;
   user-select: none;
+  /* margin-left: .5em; */
+  /* border-left: .5em solid black; */
+  /* box-shadow: -.5em 0 0 rgb(0, 58, 58); */
 }
+
+/* #timePickerCont:hover {
+  font-size: 1rem;
+} */
 
 .timeStep {
   position: absolute;
+  transform-origin: 0 0;
+  transform: translate(-50%);
+  /* padding: 0 v-bind(timeSideOffsetPx + 'px'); */
+}
+
+#offsetRight {
+  position: absolute;
+  /* transform-origin: 0 0; */
+  transform: translate(-100%);
+  border: 1px solid transparent;
+  width: 0;
+  margin: 0;
 }
 
 ::-webkit-scrollbar {
   height: 0px;
+}
+
+#offsetDiv {
+  background-color: rgb(0, 80, 80);
+  width: v-bind(timeSideOffsetPx + 'px');
+  z-index: 10;
+  user-select: none;
+}
+
+#offsetDiv:hover {
+  background-color: rgba(214, 214, 214, 0.753);
 }
 
 /* #time-picker {

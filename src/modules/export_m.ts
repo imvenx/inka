@@ -1,6 +1,6 @@
 import { allowedAttrs, allowedEls } from "src/modules/constants"
 import { SvEl } from "src/models/models"
-import { duration, svgEl } from "./anim_m"
+import { AnimM, svgEl } from "./anim_m"
 import { svEl } from "./svel_m"
 import { eapi } from "./eapi_m"
 
@@ -27,7 +27,7 @@ function getExportAnimString(el: SvEl) {
         res += ` 
     #${el.id} { 
         animation-name: myanim${el.id};
-        animation-duration: ${duration.value / 1000}s; 
+        animation-duration: ${AnimM.duration}s; 
         animation-iteration-count: infinite;
         animation-timing-function: linear;
     }

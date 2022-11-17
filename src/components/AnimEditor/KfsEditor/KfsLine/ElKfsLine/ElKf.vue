@@ -1,0 +1,42 @@
+<template>
+    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @click="deleteKf(el, kf.offset)">
+        <g transform="rotate(45)">
+            <rect class="elKf" width="10" height="10" />
+            <foreignObject width="10" height="10">
+                <div class="elKfDiv" :title="kf.offset?.toString()"></div>
+            </foreignObject>
+        </g>
+    </g>
+</template>
+<script lang="ts" setup>
+import { SvEl } from 'src/models/models';
+import { deleteKf } from 'src/modules/keyframe_m';
+import { kfPos } from '../kf_shared';
+
+const props = defineProps<{ el: SvEl, kf: Keyframe }>()
+
+</script>
+
+<style scoped>
+.elKfDiv {
+    height: 10px;
+}
+
+.elKfDiv:hover {
+    background-color: cyan;
+    height: 10px;
+    cursor: pointer;
+}
+
+.elKf {
+    stroke: black;
+}
+
+.elKf:hover {
+    fill: cyan
+}
+
+div:hover {
+    color: white
+}
+</style>

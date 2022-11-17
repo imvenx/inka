@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ConfigM } from 'src/modules/config_m';
+import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
 import { svEl } from 'src/modules/svel_m';
 import { onMounted, ref, watch } from 'vue'
 import ListEl from './ListEl.vue';
@@ -17,6 +17,7 @@ onMounted(() => {
   cont.value?.addEventListener("scroll", (e: Event) => {
     ConfigM.editorScroll.y = cont.value?.scrollTop ?? 0
   })
+
 })
 
 watch(() => ConfigM.editorScroll.y, (val) => {
@@ -29,17 +30,17 @@ watch(() => ConfigM.editorScroll.y, (val) => {
 #els-list-cont {
   /* border-right: 1px solid black; */
   white-space: nowrap;
-  resize: horizontal;
   /* overflow: hidden; */
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   text-overflow: ellipsis;
   font-size: .8rem;
   background-color: rgb(81, 160, 81);
-  padding-bottom: 1rem;
+  padding-bottom: v-bind(timeSideOffsetPx + 'px');
 }
 
 ::-webkit-scrollbar {
   width: 0px;
+  /* height: 0px; */
 }
 </style>

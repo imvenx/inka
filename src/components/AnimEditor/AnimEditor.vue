@@ -1,8 +1,8 @@
 <template>
-  <div id="cont" ref="cont">
+  <div id="animatorCont" ref="cont">
     <div class="corner"></div>
     <TimePicker />
-    <ElsList :style="elsListWidth" />
+    <ElsList />
     <KfEditor />
   </div>
 </template>
@@ -14,7 +14,7 @@ import KfEditor from './KfsEditor/KfEditor.vue';
 import TimePicker from './TimePicker.vue';
 
 const cont = ref<HTMLDivElement>()
-const elsListWidth = ref()
+// const elsListWidth = ref()
 // onMounted(() => {
 //   elsListWidth.value = contWidth()
 //   window.addEventListener('resize', () => elsListWidth.value = contWidth())
@@ -25,7 +25,7 @@ const elsListWidth = ref()
 </script>
 
 <style scoped>
-#cont {
+#animatorCont {
   border: 1px solid black;
   box-shadow: 0 0 5px black;
   height: 89vh;
