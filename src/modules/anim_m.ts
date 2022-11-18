@@ -54,6 +54,11 @@ export const AnimM = {
         await svgIO.output()
     },
 
+    async refreshAnim(svEl: SvEl): Promise<void> {
+        await refreshAnimLoop(svEl)
+    },
+
+
     get recalculateKfsOnChangeDuration() { return _recalculateKfsOnChangeDuration.value },
     set recalculateKfsOnChangeDuration(v: boolean) { _recalculateKfsOnChangeDuration.value = v },
 
@@ -112,6 +117,27 @@ async function pauseAnimLoop(svEl: SvEl) {
         anim.commitStyles();
     })
 }
+
+
+async function refreshAnimLoop(svEl: SvEl) {
+    svEl.children?.forEach(async (child) => await refreshAnimLoop(child))
+    if (!allowedEls.includes(svEl.tagName)) return
+
+    const domEl = document.getElementById(svEl.id)
+    let anim = domEl?.getAnimations()[0]
+    const eff = (anim?.effect as KeyframeEffect)
+    if (eff && anim) {
+        eff.setKeyframes(svEl.kfs);
+        eff.updateTiming({ duration: AnimM.duration * 1000 })
+    }
+    else {
+        anim = domEl?.animate(svEl.kfs, {
+            duration: AnimM.duration * 1000,
+            iterations: Infinity,
+        })
+    }
+}
+
 
 const roundedCurrentTime = (a: Animation) =>
     Math.round((AnimM.currentTime + a.currentTime!) % (AnimM.duration * 1000)) / 1000

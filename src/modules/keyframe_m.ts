@@ -2,6 +2,7 @@ import { allowedAttrs, allowedEls } from "src/modules/constants";
 import { SvEl } from "src/models/models";
 import { StorageM } from "./storage_m";
 import { AnimM } from "./anim_m";
+import { svEl } from "./svel_m";
 
 export async function createKeyFrame(el: SvEl): Promise<any> {
     // try {
@@ -22,7 +23,7 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
 
 }
 
-export function updateKfs(elId: string, kf: Keyframe[]) {
+export async function updateKfs(elId: string, kf: Keyframe[]) {
     StorageM.setKfs(elId, kf)
 }
 
@@ -36,6 +37,8 @@ export async function deleteKf(el: SvEl, offset: number | null | undefined) {
 
     el.kfs = el.kfs.filter(x => x.offset !== offset)
     StorageM.setKfs(el.id, el.kfs)
+
+    if (AnimM.isPlayingAnim) await AnimM.refreshAnim(svEl.value)
 }
 
 async function attrsToKfs(el: Element) {
