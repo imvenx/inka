@@ -6,6 +6,7 @@ import { eapi } from "./eapi_m"
 
 export async function exportToSvg() {
     let _svgEl = svgEl()
+    await AnimM.selectTime(0, svEl.value)
     if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
     let animStr = getExportAnimString(svEl.value)
