@@ -3,6 +3,7 @@
 node_modules
 
 mysvgexport.svg
+cssvg_projects
 
 # Quasar core related directories
 .quasar
