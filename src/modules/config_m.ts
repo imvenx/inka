@@ -20,6 +20,7 @@ const _filePath = ref<string>(StorageM.getFilePath())
 const _inDebugMode = ref(true)
 
 const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
+const _projectName = ref(StorageM.getProjectName() ?? `new_project`)
 
 const _timePickerZoom = ref(1)
 
@@ -57,6 +58,11 @@ export const ConfigM = {
     set projectId(v: string) {
         _projectId.value = v
         StorageM.setCurrentProjectId(this.projectId)
+    },
+    get projectName() { return _projectName.value },
+    set projectName(v: string) {
+        _projectName.value = v
+        StorageM.setProjectName(this.projectName)
     },
     newProjectId(): void { this.projectId = `id_${Date.now()}` },
 

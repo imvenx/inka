@@ -19,6 +19,20 @@
       <q-btn v-bind="btnAttrs" icon="code" title="code" @click="goToCode()"></q-btn>
       <q-btn v-bind="btnAttrs" icon="bug_report" title="debug" disabled></q-btn>
       <q-btn v-bind="btnAttrs" icon="refresh" title="refresh [ctrl] + [shift] + [R]" @click="refresh()"></q-btn>
+      <q-btn v-bind="btnAttrs" icon="article" title="project">
+        <q-menu dark>
+          <q-list dense tag="label">
+            <q-item tag="label" clickable v-ripple>
+              <q-item-section>
+                <q-item-label>Project Name</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <input id="recalculate" type="text" v-model="ConfigM.projectName" />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
       <div class="float-right">
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
@@ -38,11 +52,11 @@
               <q-list dense tag="label">
                 <q-item tag="label" clickable v-ripple
                   title="enable this to prevent slow down or speed up your animation when changing the duration">
-                  <q-item-section side>
-                    <input id="recalculate" type="checkbox" v-model="AnimM.recalculateKfsOnChangeDuration" />
-                  </q-item-section>
                   <q-item-section>
                     <q-item-label>Recalculate kfs time on change duration</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <input id="recalculate" type="checkbox" v-model="AnimM.recalculateKfsOnChangeDuration" />
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -102,9 +116,7 @@ function applyModifyDuration(e: InputEvent) {
 
 function goToCode() { router.push('/code') }
 function goToAnimEditor() { router.push('/') }
-function goToMenu() {
-  router.push('/home')
-}
+function goToMenu() { router.push('/home') }
 
 function deleteAll() {
   if (!confirm("Are you sure you want to delete all your projects?")) return

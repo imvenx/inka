@@ -18,6 +18,7 @@
             </q-input>
           </div>
           <q-item class="home-item" v-for=" proj in projs" clickable @click="loadProject(proj[0], proj[1].filePath)">
+            <b>{{ proj[1].projectName ?? 'no_name' }}</b> &nbsp;&nbsp;➡
             {{ proj[1].filePath }}
           </q-item>
         </q-list>

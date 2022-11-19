@@ -44,6 +44,9 @@ export const StorageM = {
     getCurrentProjectId: (): any => _gGet('currentProjectId'),
     setCurrentProjectId: (v: any) => { _gSet('currentProjectId', v); _currentProjectId.value = v },
 
+    getProjectName: (): any => _get('projectName'),
+    setProjectName: (v: any) => { _set('projectName', v) },
+
     // getProjectId: (): any => _get('ProjectId'),
     // setProjectId: (v: any) => _set('ProjectId', v),
 
