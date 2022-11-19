@@ -102,7 +102,9 @@ function applyModifyDuration(e: InputEvent) {
 
 function goToCode() { router.push('/code') }
 function goToAnimEditor() { router.push('/') }
-function goToMenu() { router.push('/home') }
+function goToMenu() {
+  router.push('/home')
+}
 
 function deleteAll() {
   if (!confirm("Are you sure you want to delete all your projects?")) return

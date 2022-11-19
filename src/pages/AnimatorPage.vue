@@ -9,7 +9,18 @@
 
 <script setup lang="ts">
 import AnimEditor from "src/components/AnimEditor/AnimEditor.vue";
+import { onBeforeMount } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import AnimViewer from "../components/AnimViewer.vue";
+const route = useRoute()
+const router = useRouter()
+onBeforeMount(() => {
+  if (route.query.refreshApp) {
+    location.replace('/')
+  }
+
+})
+
 
 </script>
 

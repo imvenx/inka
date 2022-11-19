@@ -44,7 +44,7 @@ const searchStr = ref('')
 
 const loadProject = async (id: string, path: string) => {
   await ConfigM.loadProject(id, path)
-  router.push('/')
+  router.push({ path: '/', query: { refreshApp: true } as any })
 }
 </script>
 
