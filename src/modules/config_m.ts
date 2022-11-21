@@ -4,6 +4,8 @@ import { Vector2 } from "../models/Vector2"
 import { svgIO } from "./svgIO_m"
 import { eapi } from "./eapi_m"
 import { AnimM } from "./anim_m"
+import { useRouter } from "vue-router"
+import { createProjectParams } from "app/public/sharedModels"
 
 export const timePickerWidth = computed(() => AnimM.duration * ConfigM.numDecimals * ConfigM.zoomPx
     + (timeSideOffsetPx * 2))
@@ -15,11 +17,10 @@ const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
 
 const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
 
-const _filePath = ref<string>(StorageM.getFilePath())
 
 const _inDebugMode = ref(true)
 
-const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
+// const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
 const _projectName = ref(StorageM.getProjectName() ?? `new_project`)
 
 const _timePickerZoom = ref(1)
@@ -33,38 +34,30 @@ export const ConfigM = {
     set editorScroll(v: Vector2) { _editorScroll.value = v },
     initEditorScroll(cont: HTMLElement) { _initEditorScroll(cont) },
 
-    get filePath() { return _filePath.value },
-    set filePath(v: string) {
-        _filePath.value = v
-        StorageM.setFilePath(v)
-    },
-    async importFile() {
-        ConfigM.newProjectId()
-        ConfigM.filePath = await eapi.updateFilePath()
-        await svgIO.input()
-    },
-    async loadProject(id: string, filePath: string) {
-        this.projectId = id
-        this.filePath = await eapi.updateFilePath(filePath)
-        await svgIO.input()
-    },
+
+
+    // async loadProject(id: string, filePath: string) {
+    //     this.projectId = id
+    //     // this.filePath = await eapi.updateFilePath(filePath)
+    //     await svgIO.input()
+    // },
 
     get inDebugMode() { return _inDebugMode.value },
     set inDebugMode(v: boolean) { _inDebugMode.value = v },
 
     get numDecimals() { return _numDecimals },
 
-    get projectId() { return _projectId.value },
-    set projectId(v: string) {
-        _projectId.value = v
-        StorageM.setCurrentProjectId(this.projectId)
-    },
+    // get projectId() { return _projectId.value },
+    // set projectId(v: string) {
+    //     _projectId.value = v
+    //     StorageM.setCurrentProjectId(this.projectId)
+    // },
     get projectName() { return _projectName.value },
     set projectName(v: string) {
         _projectName.value = v
         StorageM.setProjectName(this.projectName)
     },
-    newProjectId(): void { this.projectId = `id_${Date.now()}` },
+    // newProjectId(): void { this.projectId = `id_${Date.now()}` },
 
     get timePickerZoom() { return _timePickerZoom.value },
     set timePickerZoom(v: number) { _timePickerZoom.value = v },

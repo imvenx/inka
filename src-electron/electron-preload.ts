@@ -9,15 +9,22 @@
  *
  * Example (injects window.myAPI.doAThing() into renderer thread):
  */
+import { createProjectParams, loadProjectParams, saveProjectParams, updateTempSvgParams } from 'app/public/sharedModels'
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('eapi', {
-  getSvg: (filePath: string): Promise<string> => ipcRenderer.invoke('getSvg', filePath),
-  updateFile: (newFile: string) => ipcRenderer.invoke('updateFile', newFile),
-  updateFilePath: (path: string) => ipcRenderer.invoke('updateFilePath', path),
-  exportSvg: (fileStr: string) => ipcRenderer.invoke('exportSvg', fileStr),
+  createProject: (p: createProjectParams) => ipcRenderer.invoke('createProject', p),
+  loadProject: (p: loadProjectParams) => ipcRenderer.invoke('loadProject', p),
+  saveProject: (p: saveProjectParams) => ipcRenderer.invoke('saveProject', p),
+  getTempSvg: () => ipcRenderer.invoke('getTempSvg'),
+  updateTempSvg: (p: updateTempSvgParams) => ipcRenderer.invoke('updateTempSvg', p),
+  // getSvg: (filePath: string): Promise<string> => ipcRenderer.invoke('getSvg', filePath),
+  // updateFile: (newFile: string) => ipcRenderer.invoke('updateFile', newFile),
+  // updateFilePath: (path: string) => ipcRenderer.invoke('updateFilePath', path),
+  // exportSvg: (fileStr: string) => ipcRenderer.invoke('exportSvg', fileStr),
   openProjectInInkscape: () => ipcRenderer.invoke('openProjectInInkscape'),
   closeApp: () => ipcRenderer.invoke('closeApp'),
+  // writeProject: (folder: string, path: string, data: string) => ipcRenderer.invoke('writeProject', folder, path, data),
 
   updatedSvg: (callback: any) => ipcRenderer.on('updatedSvg', callback),
 

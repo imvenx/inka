@@ -6,11 +6,12 @@
         File
         <q-menu dark>
           <q-list dense>
-            <!-- <q-item clickable v-close-popup disabled>Save</q-item> -->
-            <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item>
-            <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item>
-            <q-item clickable v-close-popup @click="eapi.openProjectInInkscape()">Open frame editor</q-item>
-            <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item>
+            <q-item clickable v-close-popup @click="loadProject()">Load</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.saveProject()">Save</q-item>
+            <!-- <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item> -->
+            <!-- <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item> -->
+            <q-item clickable v-close-popup @click="ProjectM.openProjectInInkscape()">Open in Inkscape</q-item>
+            <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
             <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
           </q-list>
         </q-menu>
@@ -24,15 +25,24 @@
           <q-list dense tag="label">
             <q-item tag="label" clickable v-ripple>
               <q-item-section>
-                <q-item-label>Project Name</q-item-label>
+                <q-item-label>project name</q-item-label>
               </q-item-section>
               <q-item-section side>
                 <input id="recalculate" type="text" v-model="ConfigM.projectName" />
               </q-item-section>
             </q-item>
+            <q-item tag="label" clickable v-ripple>
+              <q-item-section>
+                <q-item-label>file path</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                {{ StorageM.getCurrentFilePath() }}
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-menu>
       </q-btn>
+      {{ ConfigM.projectName }}
       <div class="float-right">
         <div class="float-left">
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
@@ -92,11 +102,20 @@ import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
 import { useRouter } from 'vue-router';
-import { StorageM } from 'src/modules/storage_m';
 import { ConfigM } from 'src/modules/config_m';
 import { ref } from 'vue';
+import { ProjectM } from 'src/modules/project_m';
+import { StorageM } from 'src/modules/storage_m';
 
 const router = useRouter()
+async function loadProject() {
+  const success = await ProjectM.loadProject()
+  console.log(success)
+  if (success) {
+    router.push({ path: '/', query: { refreshApp: true } } as any)
+    location.reload()
+  }
+}
 
 function selectTime() { AnimM.selectTime(AnimM.currentTime, svEl.value) }
 
@@ -118,11 +137,11 @@ function goToCode() { router.push('/code') }
 function goToAnimEditor() { router.push('/') }
 function goToMenu() { router.push('/home') }
 
-function deleteAll() {
-  if (!confirm("Are you sure you want to delete all your projects?")) return
-  StorageM.clear()
-  location.reload()
-}
+// function deleteAll() {
+//   if (!confirm("Are you sure you want to delete all your projects?")) return
+//   StorageM.clear()
+//   location.reload()
+// }
 
 // function deleteAnim() {
 //   StorageM.clear()
@@ -131,14 +150,15 @@ function deleteAll() {
 //   location.reload()
 // }
 
-async function importFile() {
-  await ConfigM.importFile()
-  router.push('/')
+// async function importFile() {
+//   // const success = await ConfigM.importFile()
+//   // if (success) 
+//   router.push('/')
 
-  // ConfigM.newProjectId()
-  // ConfigM.filePath = await eapi.updateFilePath()
-  // svgIO.input()
-}
+//   // ConfigM.newProjectId()
+//   // ConfigM.filePath = await eapi.updateFilePath()
+//   // svgIO.input()
+// }
 
 const btnAttrs = {
   size: "12px",

@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, } from 'electron';
 import path from 'path';
-import os from 'os';
+import os, { tmpdir } from 'os';
 import { screen } from 'electron';
 
 // needed in case process is undefined under Linux
@@ -13,7 +13,7 @@ try {
 } catch (e) { console.log('Error trying to open devtools') }
 
 
-let mainWindow: BrowserWindow | undefined;
+export let mainWindow: BrowserWindow | undefined;
 
 function createWindow() {
   /**
@@ -51,23 +51,35 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = undefined;
   });
+
 }
 
-let filePath = ''
+// let filePath = ''
+// const projectsFolderPath = 'cssvg_projects'
+// export const tempFilePath = () => `${projectsFolderPath}/temp.svg`
 
 app.whenReady().then(async () => {
   createWindow()
-  ipcMain.handle('getSvg', ({ }, fp) => getSvg(fp))
-  ipcMain.handle('updateFile', ({ }, newFile: string) => updateFile(newFile))
-  ipcMain.handle('updateFilePath', ({ }, path: string) => updateFilePath(path))
-  ipcMain.handle('exportSvg', ({ }, fileStr: string) => exportSvg(fileStr))
-  ipcMain.handle('openProjectInInkscape', () => openProjectInInkscape())
+  ipcMain.handle('createProject', ({ }, p) => projectH.createProject(p))
+  ipcMain.handle('loadProject', ({ }, p) => projectH.loadProject(p))
+  ipcMain.handle('saveProject', ({ }, p) => projectH.saveProject(p))
+
+  ipcMain.handle('getTempSvg', ({ }) => projectH.getTempSvg())
+  ipcMain.handle('updateTempSvg', ({ }, p) => projectH.updateTempSvg(p))
+  // ipcMain.handle('getSvg', ({ }, fp) => getSvg(fp))
+  // ipcMain.handle('updateFile', ({ }, newFile: string) => updateFile(newFile))
+  // ipcMain.handle('updateFilePath', ({ }, path: string) => updateFilePath(path))
+  // ipcMain.handle('exportSvg', ({ }, fileStr: string) => exportSvg(fileStr))
+  ipcMain.handle('openProjectInInkscape', () => projectH.openProjectInInkscape())
   ipcMain.handle('closeApp', () => closeApp())
+  // ipcMain.handle('writeProject', ({ }, folder: string, fileName: string, data: string) => writeProject(folder, fileName, data))
 
   // filePath = (await dialog.showOpenDialog({ properties: ['openFile'] })).filePaths[0]
-  // mainWindow?.webContents.send('updatedSvg')
+  mainWindow?.webContents.send('updatedSvg')
 
+  // createDirectoryIfDontExist(projectsFolderPath)
 });
+
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
@@ -81,62 +93,71 @@ app.on('activate', () => {
   }
 });
 
-import { readFileSync, unwatchFile, watchFile, writeFile, open } from 'fs'
+import { readFileSync, unwatchFile, watchFile, writeFile, mkdir, readFile, writeFileSync } from 'fs'
 import { exec } from 'child_process';
+import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams } from 'app/public/sharedModels';
+import { projectH } from './handlers/project_h';
 
 
-async function getSvg(fp: string = ''): Promise<string> {
-  if (!fp) return ''
-  await updateFilePath(fp)
 
-  // if (!filePath) watchFile(fp, { interval: 200 }, () => {
-  //   mainWindow?.webContents.send('updatedSvg')
-  // })
+// async function getSvg(fp: string = ''): Promise<string> {
+//   if (!fp) return ''
+//   await updateFilePath(fp)
 
-  // filePath = fp
+//   // if (!filePath) watchFile(fp, { interval: 200 }, () => {
+//   //   mainWindow?.webContents.send('updatedSvg')
+//   // })
 
-  // mainWindow?.webContents.send('updatedSvg')
-  const file = readFileSync(filePath, 'utf-8')
-  // return { file, filePath }
-  return file
-}
+//   // filePath = fp
 
-let skipRefresh = false
+//   // mainWindow?.webContents.send('updatedSvg')
+//   const file = readFileSync(filePath, 'utf-8')
+//   // return { file, filePath }
+//   return file
+// }
 
-async function updateFile(newFile: string) {
-  skipRefresh = true
-  writeFile(filePath, newFile, (err) => err ? console.log(err) : '')
-  exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
-}
+// let skipRefresh = false
+
+// async function updateFile(newFile: string) {
+//   skipRefresh = true
+//   writeFile(filePath, newFile, (err) => err ? console.log(err) : '')
+//   exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
+// }
+
+// async function updateFilePath(fp: string = ''): Promise<string> {
+//   if (filePath) unwatchFile(filePath)
+
+//   if (fp) filePath = fp
+//   else filePath = (await dialog.showOpenDialog({ properties: ['openFile'] })).filePaths[0]
+
+//   watchFile(filePath, { interval: 200 }, () => {
+//     !skipRefresh ? mainWindow?.webContents.send('updatedSvg') : skipRefresh = false
+//   })
+//   return filePath
+// }
+
+// function exportSvg(fileStr: string) {
+//   writeFile('./mysvgexport.svg', fileStr, (e) => e ? console.log(e) : '')
+// }
 
 
-async function updateFilePath(fp: string = ''): Promise<string> {
-  if (filePath) unwatchFile(filePath)
 
-  if (fp) filePath = fp
-  else filePath = (await dialog.showOpenDialog({ properties: ['openFile'] })).filePaths[0]
-
-  watchFile(filePath, { interval: 200 }, () => {
-    !skipRefresh ? mainWindow?.webContents.send('updatedSvg') : skipRefresh = false
-  })
-  return filePath
-}
-
-function exportSvg(fileStr: string) {
-  writeFile('./mysvgexport.svg', fileStr, (e) => e ? console.log(e) : '')
-}
-
-
-async function openProjectInInkscape() {
-  function getCommandLine() {
-    switch (process.platform) {
-      case 'darwin': return 'open ';
-      case 'win32': return 'start ';
-      // case 'win64': return 'start';
-      default: return 'xdg-open ';
-    }
-  }
-  exec(getCommandLine() + filePath, (e) => console.log(e))
-}
 
 async function closeApp() { mainWindow?.close() }
+
+// function createDirectoryIfDontExist(path: string) {
+//   mkdir(path, (err) => {
+//     if (err) {
+//       if (err.code != 'EEXIST') {
+//         console.log(err)
+//         return err
+//       }
+//     }
+//   })
+// }
+
+// function saveProject() {
+//   dialog.showSaveDialog(mainWindow!, { title: 'Save File', defaultPath: projectsFolderPath })
+// }
+
+

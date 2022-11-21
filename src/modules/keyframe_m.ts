@@ -35,6 +35,7 @@ export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     el.children?.forEach(async (child) => await deleteKf(child, offset));
     if (!allowedEls.includes(el.tagName)) return
 
+    // TODO: delete instead of filter, because this is leaving {} empty objects on the file
     el.kfs = el.kfs.filter(x => x.offset !== offset)
     StorageM.setKfs(el.id, el.kfs)
 

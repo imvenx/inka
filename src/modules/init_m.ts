@@ -1,3 +1,4 @@
+import { useRouter } from "vue-router"
 import { ConfigM } from "./config_m"
 import { eapi } from "./eapi_m"
 import { StorageM } from "./storage_m"
@@ -11,7 +12,12 @@ export async function initApp() {
     ConfigM.init()
     //#endregion
 
-    await svgIO.input()
+    // if (!ConfigM.filePath) {
+    //     useRouter().push('home')
+    //     return
+    // }
+    // await svgIO.input()
+    // await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
     await eapi.updatedSvg(async () => await svgIO.input())
     // if (!ConfigM.filePath) useRouter().push('/home')
     // TODO: CHECK IF ID ALREADY EXISTS
