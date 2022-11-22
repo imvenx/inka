@@ -149,14 +149,16 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
     if (!allowedEls.includes(svEl.tagName)) return
 
     const domEl = document.getElementById(svEl.id)
-    let anim = domEl?.getAnimations()[0]
+    if (!domEl) return
+    let anim = domEl.getAnimations()[0]
     if (!anim) {
-        anim = domEl?.animate(svEl.kfs, {
+        anim = domEl.animate(svEl.kfs, {
             duration: AnimM.duration * 1000,
             iterations: Infinity,
         })
-        anim?.pause()
-        anim?.commitStyles()
+        anim.currentTime = AnimM.currentTime * 1000
+        anim.pause()
+        anim.commitStyles()
         return
     }
     anim.currentTime = AnimM.currentTime * 1000
@@ -169,6 +171,7 @@ function updateAnimDurationLoop(svEl: SvEl) {
     if (!allowedEls.includes(svEl.tagName)) return
 
     const domEl = document.getElementById(svEl.id)
+    if (!domEl) return
     let anim = domEl?.getAnimations()[0]
 
     if (AnimM.recalculateKfsOnChangeDuration) {
