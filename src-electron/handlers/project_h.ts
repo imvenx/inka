@@ -8,15 +8,11 @@ import { mainWindow } from "../electron-main"
 const appPrefix = 'cssvg';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
 const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
+let skipRefresh = false // Prevents undesired refresh on output
 
-try {
-  watchFile(tempFilePath(), { interval: 200 }, () => {
-    mainWindow?.webContents.send('updatedSvg')
-  })
-} catch { }
+try { watchTempSvg() } catch { }
 
 export const projectH = {
-
   async createProject({ doImportSvg }: createProjectParams) {
     let data = svgTemplate
     if (doImportSvg) {
@@ -35,7 +31,6 @@ export const projectH = {
     writeTempSvg(data)
     return true
   },
-
   async loadProject({ filePath }: loadProjectParams = {}): Promise<loadProjectResult> {
     if (!filePath) {
       filePath = (dialog.showOpenDialogSync(mainWindow!, {
@@ -57,7 +52,6 @@ export const projectH = {
 
     return { data: project, filePath: filePath }
   },
-
   async saveProject({ filePath, data }: saveProjectParams): Promise<string> {
     if (!filePath) {
       filePath = dialog.showSaveDialogSync(mainWindow!, {
@@ -78,11 +72,9 @@ export const projectH = {
     writeFileSync(`${filePath}.json`, JSON.stringify(data), { encoding: 'utf-8' })
     return filePath
   },
-
   getTempSvg(): string {
     return readFileSync(tempFilePath(), { encoding: 'utf-8' })
   },
-
   async openProjectInInkscape() {
     function getCommandLine() {
       switch (process.platform) {
@@ -94,10 +86,11 @@ export const projectH = {
     }
     exec(getCommandLine() + tempFilePath(), (e) => e ? console.log(e) : '')
   },
-
   async updateTempSvg({ data }: updateTempSvgParams) {
+    skipRefresh = true
     try {
-      writeFileSync(tempFilePath(), data, { encoding: 'utf-8' })
+      await writeFile(tempFilePath(), data, () => { })
+      // await writeFile(tempFilePath(), data, { encoding: 'utf-8' })
       refreshInkscapeUI()
     } catch {
       writeTempSvg(data)
@@ -117,11 +110,7 @@ async function writeTempSvg(data: string) {
   refreshInkscapeUI()
 
   unwatchFile(tempFilePath())
-  watchFile(tempFilePath(), { interval: 200 }, () => {
-    // !skipRefresh ?
-    mainWindow?.webContents.send('updatedSvg')
-    //  : skipRefresh = false
-  })
+  watchTempSvg()
 }
 
 
@@ -135,6 +124,12 @@ async function writeTempSvg(data: string) {
 //     }
 //   })
 // }
+
+function watchTempSvg() {
+  watchFile(tempFilePath(), { interval: 200 }, () => {
+    !skipRefresh ? mainWindow?.webContents.send('updatedSvg') : skipRefresh = false
+  })
+}
 
 const svgTemplate = `
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
