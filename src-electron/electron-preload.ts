@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('eapi', {
   // getSvg: (filePath: string): Promise<string> => ipcRenderer.invoke('getSvg', filePath),
   // updateFile: (newFile: string) => ipcRenderer.invoke('updateFile', newFile),
   // updateFilePath: (path: string) => ipcRenderer.invoke('updateFilePath', path),
-  // exportSvg: (fileStr: string) => ipcRenderer.invoke('exportSvg', fileStr),
+  exportSvg: (fileStr: string) => ipcRenderer.invoke('exportSvg', fileStr),
   openProjectInInkscape: () => ipcRenderer.invoke('openProjectInInkscape'),
   closeApp: () => ipcRenderer.invoke('closeApp'),
   // writeProject: (folder: string, path: string, data: string) => ipcRenderer.invoke('writeProject', folder, path, data),

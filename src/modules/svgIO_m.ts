@@ -28,8 +28,10 @@ export const svgIO = {
             if (!_svgEl) return
             let newFile = (await cssToSvg(_svgEl))?.outerHTML
             await eapi.updateTempSvg({ data: newFile })
-        }, 200)
+        }, 50)
     },
+
+    // TODO: use abortController on updateTempSvg on project handler instead of timeout on frontend
     clearOutputTimeout() { clearTimeout(outputTimeout) }
 }
 

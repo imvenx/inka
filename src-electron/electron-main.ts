@@ -69,7 +69,7 @@ app.whenReady().then(async () => {
   // ipcMain.handle('getSvg', ({ }, fp) => getSvg(fp))
   // ipcMain.handle('updateFile', ({ }, newFile: string) => updateFile(newFile))
   // ipcMain.handle('updateFilePath', ({ }, path: string) => updateFilePath(path))
-  // ipcMain.handle('exportSvg', ({ }, fileStr: string) => exportSvg(fileStr))
+  ipcMain.handle('exportSvg', ({ }, fileStr: string) => exportSvg(fileStr))
   ipcMain.handle('openProjectInInkscape', () => projectH.openProjectInInkscape())
   ipcMain.handle('closeApp', () => closeApp())
   // ipcMain.handle('writeProject', ({ }, folder: string, fileName: string, data: string) => writeProject(folder, fileName, data))
@@ -136,9 +136,9 @@ import { projectH } from './handlers/project_h';
 //   return filePath
 // }
 
-// function exportSvg(fileStr: string) {
-//   writeFile('./mysvgexport.svg', fileStr, (e) => e ? console.log(e) : '')
-// }
+function exportSvg(fileStr: string) {
+  writeFile('./mysvgexport.svg', fileStr, (e) => e ? console.log(e) : '')
+}
 
 
 

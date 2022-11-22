@@ -1,7 +1,7 @@
 import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams, updateTempSvgParams } from "app/public/sharedModels"
 import { exec } from "child_process"
 import { dialog } from "electron"
-import { mkdirSync, readFileSync, unwatchFile, watchFile, writeFile, writeFileSync } from "fs"
+import { promises as p, unwatchFile, watchFile } from "fs"
 import { tmpdir } from "os"
 import { mainWindow } from "../electron-main"
 
@@ -9,6 +9,7 @@ const appPrefix = 'cssvg';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
 const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
 let skipRefresh = false // Prevents undesired refresh on output
+let abortController: AbortController
 
 try { watchTempSvg() } catch { }
 
@@ -25,7 +26,7 @@ export const projectH = {
           ]
         })).filePaths[0]
       if (!importedFilePath) return false
-      data = readFileSync(importedFilePath, 'utf-8')
+      data = await p.readFile(importedFilePath, 'utf-8')
     }
 
     writeTempSvg(data)
@@ -43,7 +44,7 @@ export const projectH = {
     if (!filePath) return {}
     if (!filePath.includes('.json')) filePath += '.json'
 
-    let projectStr = readFileSync(filePath, { encoding: 'utf-8' })
+    let projectStr = await p.readFile(filePath, { encoding: 'utf-8' })
     if (!projectStr) return {}
     let project = JSON.parse(projectStr) as any
 
@@ -69,11 +70,11 @@ export const projectH = {
     if (!data.svgFile) return ''
 
     filePath = filePath.replace('.json', '')
-    writeFileSync(`${filePath}.json`, JSON.stringify(data), { encoding: 'utf-8' })
+    await p.writeFile(`${filePath}.json`, JSON.stringify(data), { encoding: 'utf-8' })
     return filePath
   },
-  getTempSvg(): string {
-    return readFileSync(tempFilePath(), { encoding: 'utf-8' })
+  async getTempSvg(): Promise<string> {
+    return await p.readFile(tempFilePath(), { encoding: 'utf-8' })
   },
   async openProjectInInkscape() {
     function getCommandLine() {
@@ -89,8 +90,7 @@ export const projectH = {
   async updateTempSvg({ data }: updateTempSvgParams) {
     skipRefresh = true
     try {
-      await writeFile(tempFilePath(), data, () => { })
-      // await writeFile(tempFilePath(), data, { encoding: 'utf-8' })
+      await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
       refreshInkscapeUI()
     } catch {
       writeTempSvg(data)
@@ -99,13 +99,15 @@ export const projectH = {
 }
 
 
-function refreshInkscapeUI() {
-  exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
+async function refreshInkscapeUI() {
+  await exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
 }
 
 async function writeTempSvg(data: string) {
-  try { mkdirSync(tempDirectoryPath()) } catch { }
-  writeFileSync(tempFilePath(), data, { encoding: 'utf-8' })
+  try {
+    await p.mkdir(tempDirectoryPath())
+    await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
+  } catch { }
 
   refreshInkscapeUI()
 
