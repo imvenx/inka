@@ -18,6 +18,7 @@ export async function initApp() {
     // }
     // await svgIO.input()
     // await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
+    await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
     await eapi.updatedSvg(async () => await svgIO.input())
     // if (!ConfigM.filePath) useRouter().push('/home')
     // TODO: CHECK IF ID ALREADY EXISTS
