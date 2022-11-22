@@ -38,6 +38,7 @@ export const AnimM = {
     },
 
     async playAnim(svEl: SvEl): Promise<void> {
+        svgIO.clearOutputTimeout()
         this.isPlayingAnim = true
         await playAnimLoop(svEl)
         requestAnimationFrame(startRefreshCurrentTime)
@@ -57,7 +58,6 @@ export const AnimM = {
     async refreshAnim(svEl: SvEl): Promise<void> {
         await refreshAnimLoop(svEl)
     },
-
 
     get recalculateKfsOnChangeDuration() { return _recalculateKfsOnChangeDuration.value },
     set recalculateKfsOnChangeDuration(v: boolean) { _recalculateKfsOnChangeDuration.value = v },
@@ -118,7 +118,6 @@ async function pauseAnimLoop(svEl: SvEl) {
     })
 }
 
-
 async function refreshAnimLoop(svEl: SvEl) {
     svEl.children?.forEach(async (child) => await refreshAnimLoop(child))
     if (!allowedEls.includes(svEl.tagName)) return
@@ -137,7 +136,6 @@ async function refreshAnimLoop(svEl: SvEl) {
         })
     }
 }
-
 
 const roundedCurrentTime = (a: Animation) =>
     Math.round((AnimM.currentTime + a.currentTime!) % (AnimM.duration * 1000)) / 1000

@@ -1,5 +1,4 @@
 import { svgEl } from "./anim_m"
-import { ConfigM } from "./config_m"
 import { allowedEls } from "./constants"
 import { eapi } from "./eapi_m"
 import { getSvEls, svEl, svgString } from "./svel_m"
@@ -29,8 +28,9 @@ export const svgIO = {
             if (!_svgEl) return
             let newFile = (await cssToSvg(_svgEl))?.outerHTML
             await eapi.updateTempSvg({ data: newFile })
-        }, 50)
-    }
+        }, 200)
+    },
+    clearOutputTimeout() { clearTimeout(outputTimeout) }
 }
 
 export async function cssToSvg(_el: Element): Promise<Element> {
