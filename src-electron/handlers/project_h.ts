@@ -92,7 +92,24 @@ export const projectH = {
     } catch {
       writeTempSvg(data)
     }
+  },
+
+  async exportSvg(fileStr: string) {
+    try {
+      const exportPath = dialog.showSaveDialogSync(mainWindow!, {
+        properties: ['showOverwriteConfirmation'],
+        title: 'Export path',
+        filters: [
+          { name: 'json', extensions: ['json'] },
+        ]
+      })
+      if (!exportPath) return
+      await p.writeFile(`${exportPath}.svg`, fileStr)
+    } catch {
+      console.log('error on export')
+    }
   }
+
 }
 
 async function refreshInkscapeUI() {
