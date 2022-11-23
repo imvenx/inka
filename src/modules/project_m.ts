@@ -1,5 +1,6 @@
 import { createProjectParams, loadProjectParams } from "app/public/sharedModels"
 import { ref } from "vue"
+import { svgEl } from "./anim_m"
 import { ConfigM } from "./config_m"
 import { eapi } from "./eapi_m"
 import { StorageM } from "./storage_m"
@@ -15,12 +16,7 @@ export const ProjectM = {
                 return false
         }
         const success = await eapi.createProject(params)
-        if (success) {
-            // ConfigM.newProjectId()
-            // ConfigM.filePath = await eapi.updateFilePath()
-            // svgIO.input()
-        }
-        StorageM.clearProject()
+        if (success) StorageM.clearProject()
         return success
     },
 
@@ -36,9 +32,11 @@ export const ProjectM = {
     },
 
     async saveProject() {
+        const data = StorageM.getProject()
+        data.svgFile = svgEl()?.outerHTML
         const filePath = await eapi.saveProject({
             filePath: StorageM.getCurrentFilePath(),
-            data: StorageM.getProject()
+            data: data
         })
         if (!filePath) return
         StorageM.setCurrentFilePath(filePath)

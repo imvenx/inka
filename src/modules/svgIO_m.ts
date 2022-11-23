@@ -10,7 +10,6 @@ export const svgIO = {
         /* TODO: Investigate why input is sometimes called after output, (probably watcher 
          problem on electron-main) */
         const svgData = await eapi.getTempSvg()
-
         const svgContainer = document.createElement('div')
         svgContainer.innerHTML = svgData
         let svg = svgContainer.children[0] as SVGElement

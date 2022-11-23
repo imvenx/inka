@@ -9,7 +9,6 @@ const appPrefix = 'cssvg';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
 const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
 let skipRefresh = false // Prevents undesired refresh on output
-let abortController: AbortController
 
 try { watchTempSvg() } catch { }
 
@@ -28,7 +27,6 @@ export const projectH = {
       if (!importedFilePath) return false
       data = await p.readFile(importedFilePath, 'utf-8')
     }
-
     writeTempSvg(data)
     return true
   },
@@ -65,8 +63,7 @@ export const projectH = {
       if (!filePath) return ''
     }
 
-    if (!data) data = {}
-    data.svgFile = this.getTempSvg()
+    if (!data) return ''
     if (!data.svgFile) return ''
 
     filePath = filePath.replace('.json', '')
@@ -98,34 +95,20 @@ export const projectH = {
   }
 }
 
-
 async function refreshInkscapeUI() {
   await exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
 }
 
 async function writeTempSvg(data: string) {
-  try {
-    await p.mkdir(tempDirectoryPath())
-    await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
-  } catch { }
+  try { await p.mkdir(tempDirectoryPath()) }
+  catch (e: any) { e.code == 'EEXIST' ? '' : console.log(e) }
 
+  await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
   refreshInkscapeUI()
 
   unwatchFile(tempFilePath())
   watchTempSvg()
 }
-
-
-// function createDirectoryIfDontExist(path: string) {
-//   mkdir(path, (err) => {
-//     if (err) {
-//       if (err.code != 'EEXIST') {
-//         console.log(err)
-//         return err
-//       }
-//     }
-//   })
-// }
 
 function watchTempSvg() {
   watchFile(tempFilePath(), { interval: 200 }, () => {
