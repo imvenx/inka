@@ -110,7 +110,6 @@ import { StorageM } from 'src/modules/storage_m';
 const router = useRouter()
 async function loadProject() {
   const success = await ProjectM.loadProject()
-  console.log(success)
   if (success) {
     router.push({ path: '/', query: { refreshApp: true } } as any)
     location.reload()

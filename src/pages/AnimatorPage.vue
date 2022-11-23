@@ -17,10 +17,7 @@ import AnimViewer from "../components/AnimViewer.vue";
 const route = useRoute()
 const mount = ref(!route.query.refreshApp)
 onBeforeMount(() => {
-  if (route.query.refreshApp) {
-    location.replace('/')
-    return
-  }
+  if (route.query.refreshApp) { location.replace(''); return }
   svgIO.input()
 })
 

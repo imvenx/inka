@@ -36,6 +36,7 @@ export const StorageM = {
 
     getRecentFilePaths: (): string[] => _gGet('recentFilePaths') ?? [],
     addToRecentFilePaths: (v: string) => {
+        if (v === "") return
         v = v.replace('.json', '')
         let recentFilePaths = StorageM.getRecentFilePaths()
         recentFilePaths = recentFilePaths.filter(x => x !== v)

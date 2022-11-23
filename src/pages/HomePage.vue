@@ -45,14 +45,14 @@ const recentFilePaths = StorageM.getRecentFilePaths()
 
 async function createProject(doImportSvg = false) {
   const success = await ProjectM.createProject({ doImportSvg: doImportSvg })
-  if (success) router.push({ path: '/', query: { refreshApp: true } } as any)
+  if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 
 const searchStr = ref('')
 
 const loadProject = async (path: string) => {
   const success = await ProjectM.loadProject({ filePath: path })
-  if (success) router.push({ path: '/', query: { refreshApp: true } as any })
+  if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 </script>
 
