@@ -47,7 +47,7 @@ export const projectH = {
     let project = JSON.parse(projectStr) as any
 
     writeTempSvg(project.svgFile)
-    delete project.svgFile
+    // delete project.svgFile
 
     return { data: project, filePath: filePath }
   },

@@ -6,6 +6,7 @@ import { eapi } from "./eapi_m"
 
 export async function exportToSvg() {
     let _svgEl = svgEl()
+    const lastTime = AnimM.currentTime
     await AnimM.selectTime(0, svEl.value)
     if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
@@ -14,6 +15,7 @@ export async function exportToSvg() {
     clone.innerHTML += `
 <style> ${animStr} </style>`
     await eapi.exportSvg(clone.outerHTML)
+    await AnimM.selectTime(lastTime, svEl.value)
 }
 
 function getExportAnimString(el: SvEl) {

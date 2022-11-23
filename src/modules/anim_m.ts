@@ -5,6 +5,7 @@ import { svgIO } from "./svgIO_m";
 import { svEl } from "./svel_m";
 import { StorageM } from "./storage_m";
 import { updateKfs } from "./keyframe_m";
+import { ConfigM } from "./config_m";
 
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement

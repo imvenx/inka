@@ -1,20 +1,20 @@
-import { createProjectParams, loadProjectParams } from "app/public/sharedModels"
-import { ref } from "vue"
-import { svgEl } from "./anim_m"
-import { ConfigM } from "./config_m"
+import { createProjectParams, loadProjectParams, saveProjectParams } from "app/public/sharedModels"
+import { AnimM, svgEl } from "./anim_m"
 import { eapi } from "./eapi_m"
 import { StorageM } from "./storage_m"
-import { svgIO } from "./svgIO_m"
+import { svEl } from "./svel_m"
 
-const saved = false
-// const _filePath = ref<string>(StorageM.getCurrentFilePath())
+// let _hasUnsavedChanges = false
 
 export const ProjectM = {
+    // get hasUnsavedChanges() { return _hasUnsavedChanges },
+    // set hasUnsavedChanges(v: boolean) { _hasUnsavedChanges = v },
+
     async createProject(params: createProjectParams): Promise<boolean> {
-        if (!saved) {
-            if (!confirm('There are unsaved changes that will be lost, do you still want to continue?'))
-                return false
-        }
+        // if (!this.hasUnsavedChanges) {
+        if (!confirm('There may be unsaved changes, do you still want to continue?'))
+            return false
+        // }
         const success = await eapi.createProject(params)
         if (success) StorageM.clearProject()
         return success
@@ -24,6 +24,8 @@ export const ProjectM = {
 
 
     async loadProject(p?: loadProjectParams): Promise<boolean> {
+        if (!confirm('There may be unsaved changes, do you still want to continue?'))
+            return false
         const { data, filePath } = await eapi.loadProject(p)
         if (!data || !filePath) return false
         StorageM.setProject(data)
@@ -32,19 +34,28 @@ export const ProjectM = {
     },
 
     async saveProject() {
-        const data = StorageM.getProject()
-        data.svgFile = svgEl()?.outerHTML
-        const filePath = await eapi.saveProject({
-            filePath: StorageM.getCurrentFilePath(),
-            data: data
-        })
+        const filePath = await eapi.saveProject(await getProjectToSave())
         if (!filePath) return
         StorageM.setCurrentFilePath(filePath)
     },
-
-    // get filePath() { return _filePath.value },
-    // set filePath(v: string) {
-    //     _filePath.value = v
-    //     StorageM.setCurrentFilePath(v)
-    // },
 }
+
+async function getProjectToSave(): Promise<saveProjectParams> {
+    const project = StorageM.getProject()
+    const lastTime = AnimM.currentTime
+    await AnimM.selectTime(0, svEl.value)
+    project.svgFile = svgEl()?.outerHTML
+    await AnimM.selectTime(lastTime, svEl.value)
+    return {
+        data: project,
+        filePath: StorageM.getCurrentFilePath(),
+    }
+}
+
+// async function isProjectUnsaved() {
+//     const a = await getProjectToSave()
+//     const b = await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
+//     console.log(a, b)
+// }
+
+// isProjectUnsaved()
