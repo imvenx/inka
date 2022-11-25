@@ -1,5 +1,5 @@
 export class createProjectParams {
-    doImportSvg = false
+    doImportSvg?= false
 }
 
 export class saveProjectParams {

@@ -22,10 +22,9 @@ export const ProjectM = {
 
     async openProjectInInkscape() { eapi.openProjectInInkscape() },
 
-
     async loadProject(p?: loadProjectParams): Promise<boolean> {
-        if (!confirm('There may be unsaved changes, do you still want to continue?'))
-            return false
+        if (!confirm('There may be unsaved changes, do you still want to continue?')) return false
+
         const { data, filePath } = await eapi.loadProject(p)
         if (!data || !filePath) return false
         StorageM.setProject(data)
@@ -38,6 +37,17 @@ export const ProjectM = {
         if (!filePath) return
         StorageM.setCurrentFilePath(filePath)
     },
+
+    async getTempSvg() {
+        let tempSvg = await await eapi.getTempSvg()
+        if (!tempSvg) {
+            if (StorageM.getCurrentFilePath())
+                await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
+            else await eapi.createProject({ doImportSvg: false })
+        }
+        tempSvg = await await eapi.getTempSvg()
+        return tempSvg
+    }
 }
 
 async function getProjectToSave(): Promise<saveProjectParams> {

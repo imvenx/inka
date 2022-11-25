@@ -1,6 +1,8 @@
 import { svgEl } from "./anim_m"
 import { allowedEls } from "./constants"
 import { eapi } from "./eapi_m"
+import { ProjectM } from "./project_m"
+import { StorageM } from "./storage_m"
 import { getSvEls, svEl, svgString } from "./svel_m"
 
 let outputTimeout = {} as any
@@ -9,7 +11,8 @@ export const svgIO = {
     async input(): Promise<void> {
         /* TODO: Investigate why input is sometimes called after output, (probably watcher 
          problem on electron-main) */
-        const svgData = await eapi.getTempSvg()
+        let svgData = await ProjectM.getTempSvg()
+
         const svgContainer = document.createElement('div')
         svgContainer.innerHTML = svgData
         let svg = svgContainer.children[0] as SVGElement

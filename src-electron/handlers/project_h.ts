@@ -71,7 +71,8 @@ export const projectH = {
     return filePath
   },
   async getTempSvg(): Promise<string> {
-    return await p.readFile(tempFilePath(), { encoding: 'utf-8' })
+    try { return await p.readFile(tempFilePath(), { encoding: 'utf-8' }) }
+    catch { return '' }
   },
   async openProjectInInkscape() {
     function getCommandLine() {
