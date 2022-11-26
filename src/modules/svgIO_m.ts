@@ -1,7 +1,8 @@
 import { svgEl } from "./anim_m"
-import { ConfigM } from "./config_m"
 import { allowedEls } from "./constants"
 import { eapi } from "./eapi_m"
+import { ProjectM } from "./project_m"
+import { StorageM } from "./storage_m"
 import { getSvEls, svEl, svgString } from "./svel_m"
 
 let outputTimeout = {} as any
@@ -10,18 +11,16 @@ export const svgIO = {
     async input(): Promise<void> {
         /* TODO: Investigate why input is sometimes called after output, (probably watcher 
          problem on electron-main) */
-        const file = await eapi.getSvg(ConfigM.filePath) ?? {}
-        if (!file) return
+        let svgData = await ProjectM.getTempSvg()
 
-        let svgContainer = document.createElement('div')
-        svgContainer.innerHTML = file
+        const svgContainer = document.createElement('div')
+        svgContainer.innerHTML = svgData
         let svg = svgContainer.children[0] as SVGElement
 
         svg.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
         const _svEl = getSvEls(svg)
-
-        svgString.value = file
+        svgString.value = svgData
         svEl.value = _svEl
     },
     async output(): Promise<void> {
@@ -30,9 +29,12 @@ export const svgIO = {
             const _svgEl = svgEl()?.cloneNode(true) as Element
             if (!_svgEl) return
             let newFile = (await cssToSvg(_svgEl))?.outerHTML
-            await eapi.updateFile(newFile)
+            await eapi.updateTempSvg({ data: newFile })
         }, 50)
-    }
+    },
+
+    // TODO: use abortController on updateTempSvg on project handler instead of timeout on frontend
+    clearOutputTimeout() { clearTimeout(outputTimeout) }
 }
 
 export async function cssToSvg(_el: Element): Promise<Element> {

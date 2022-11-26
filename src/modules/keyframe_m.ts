@@ -7,12 +7,14 @@ import { svEl } from "./svel_m";
 export async function createKeyFrame(el: SvEl): Promise<any> {
     // try {
     el.children?.forEach(async (child) => await createKeyFrame(child));
-    if (!allowedEls.includes(el.tagName)) return
+    if (!allowedEls.includes(el.tagName) || elHasNotAllowedAttrs(el)) return
 
     let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTime / AnimM.duration);
-    // let kf = el?.kfs?.find(x => x?.offset === offset.value);
     if (kf) {
-        el.kfs[el.kfs.indexOf(kf)] = await attrsToKfs(document.getElementById(el.id) ?? {} as any);
+        el.attrs
+        const kfs = await attrsToKfs(document.getElementById(el.id) ?? {} as any)
+        // if(Object.entries(kfs).length <= 0) return
+        el.kfs[el.kfs.indexOf(kf)] = kfs;
     }
     else el?.kfs?.push(await attrsToKfs(document.getElementById(el.id) ?? {} as any));
 
@@ -35,15 +37,17 @@ export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     el.children?.forEach(async (child) => await deleteKf(child, offset));
     if (!allowedEls.includes(el.tagName)) return
 
+    // TODO: delete instead of filter, because this is leaving {} empty objects on the file
     el.kfs = el.kfs.filter(x => x.offset !== offset)
     StorageM.setKfs(el.id, el.kfs)
 
-    if (AnimM.isPlayingAnim) await AnimM.refreshAnim(svEl.value)
+    await AnimM.refreshAnim(svEl.value)
 }
 
 async function attrsToKfs(el: Element) {
     let r1: any = {}
 
+    // if (elHasNotAllowedAttrs(el)) return
     // try {
     el?.getAttributeNames().forEach((attr: any) => {
         if (allowedAttrs.includes(attr)) {
@@ -92,4 +96,8 @@ async function attrsToKfs(el: Element) {
     });
     return r1;
     // } catch { console.log('Error on trying to get attr to kf on el:', el) }
+}
+
+function elHasNotAllowedAttrs(el: SvEl): boolean {
+    return el?.attrs.filter(v => allowedAttrs.includes(v.key)).length <= 0
 }

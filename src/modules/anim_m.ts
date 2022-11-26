@@ -5,6 +5,7 @@ import { svgIO } from "./svgIO_m";
 import { svEl } from "./svel_m";
 import { StorageM } from "./storage_m";
 import { updateKfs } from "./keyframe_m";
+import { ConfigM } from "./config_m";
 
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
@@ -38,6 +39,7 @@ export const AnimM = {
     },
 
     async playAnim(svEl: SvEl): Promise<void> {
+        svgIO.clearOutputTimeout()
         this.isPlayingAnim = true
         await playAnimLoop(svEl)
         requestAnimationFrame(startRefreshCurrentTime)
@@ -57,7 +59,6 @@ export const AnimM = {
     async refreshAnim(svEl: SvEl): Promise<void> {
         await refreshAnimLoop(svEl)
     },
-
 
     get recalculateKfsOnChangeDuration() { return _recalculateKfsOnChangeDuration.value },
     set recalculateKfsOnChangeDuration(v: boolean) { _recalculateKfsOnChangeDuration.value = v },
@@ -118,7 +119,6 @@ async function pauseAnimLoop(svEl: SvEl) {
     })
 }
 
-
 async function refreshAnimLoop(svEl: SvEl) {
     svEl.children?.forEach(async (child) => await refreshAnimLoop(child))
     if (!allowedEls.includes(svEl.tagName)) return
@@ -138,7 +138,6 @@ async function refreshAnimLoop(svEl: SvEl) {
     }
 }
 
-
 const roundedCurrentTime = (a: Animation) =>
     Math.round((AnimM.currentTime + a.currentTime!) % (AnimM.duration * 1000)) / 1000
 
@@ -151,14 +150,16 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
     if (!allowedEls.includes(svEl.tagName)) return
 
     const domEl = document.getElementById(svEl.id)
-    let anim = domEl?.getAnimations()[0]
+    if (!domEl) return
+    let anim = domEl.getAnimations()[0]
     if (!anim) {
-        anim = domEl?.animate(svEl.kfs, {
+        anim = domEl.animate(svEl.kfs, {
             duration: AnimM.duration * 1000,
             iterations: Infinity,
         })
-        anim?.pause()
-        anim?.commitStyles()
+        anim.currentTime = AnimM.currentTime * 1000
+        anim.pause()
+        anim.commitStyles()
         return
     }
     anim.currentTime = AnimM.currentTime * 1000
@@ -171,6 +172,7 @@ function updateAnimDurationLoop(svEl: SvEl) {
     if (!allowedEls.includes(svEl.tagName)) return
 
     const domEl = document.getElementById(svEl.id)
+    if (!domEl) return
     let anim = domEl?.getAnimations()[0]
 
     if (AnimM.recalculateKfsOnChangeDuration) {

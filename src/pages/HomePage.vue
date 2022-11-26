@@ -8,18 +8,25 @@
         </q-item> -->
 
 
-          <div style="display:grid; grid-template-columns: 25% 25% 50%;">
-            <q-btn disable class="home-item" icon="add">New</q-btn>
-            <q-btn class="home-item" icon="download" @click="importFile()">Import</q-btn>
-            <q-input disable style="padding: 0 1em" dark dense class="home-item" color="teal" v-model="searchStr">
+          <div style="display:flex">
+            <q-btn class="home-item" icon="add" @click="createProject()">New</q-btn>
+            <q-btn class="home-item" icon="download" @click="createProject(true)">New from SVG</q-btn>
+            <q-input disable style="padding: 0 1em .5em 1em" dark dense class="home-item" color="teal"
+              v-model="searchStr">
               <template v-slot:prepend>
                 <q-icon color="teal" name="search" />
               </template>
             </q-input>
           </div>
-          <q-item class="home-item" v-for=" proj in projs" clickable @click="loadProject(proj[0], proj[1].filePath)">
-            {{ proj[1].filePath }}
+          <q-item class="home-item" v-for=" filePath in recentFilePaths" clickable @click="loadProject(filePath)">
+            {{ filePath }}
+            <!-- <b>{{ proj[1].projectName ?? 'no_name' }}</b> &nbsp;&nbsp;➡
+            {{ proj[1].filePath }} -->
           </q-item>
+          <!-- <q-item class="home-item" v-for=" proj in projs" clickable @click="loadProject(proj[0], proj[1].filePath)">
+            <b>{{ proj[1].projectName ?? 'no_name' }}</b> &nbsp;&nbsp;➡
+            {{ proj[1].filePath }}
+          </q-item> -->
         </q-list>
       </div>
     </div>
@@ -27,24 +34,25 @@
 </template>
 
 <script setup lang="ts">
-import { ConfigM } from 'src/modules/config_m';
+import { ProjectM } from 'src/modules/project_m';
 import { StorageM } from 'src/modules/storage_m';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const projs = StorageM.getAllProjects()
+// const projs = StorageM.getAllProjects()
+const recentFilePaths = StorageM.getRecentFilePaths()
 
-const importFile = async () => {
-  await ConfigM.importFile()
-  router.push('/')
+async function createProject(doImportSvg = false) {
+  const success = await ProjectM.createProject({ doImportSvg: doImportSvg })
+  if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 
 const searchStr = ref('')
 
-const loadProject = async (id: string, path: string) => {
-  await ConfigM.loadProject(id, path)
-  router.push('/')
+const loadProject = async (path: string) => {
+  const success = await ProjectM.loadProject({ filePath: path })
+  if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 </script>
 
