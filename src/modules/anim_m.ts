@@ -135,6 +135,7 @@ async function refreshAnimLoop(svEl: SvEl) {
             duration: AnimM.duration * 1000,
             iterations: Infinity,
         })
+        anim?.pause()
     }
 }
 
@@ -152,19 +153,17 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
     const domEl = document.getElementById(svEl.id)
     if (!domEl) return
     let anim = domEl.getAnimations()[0]
+
     if (!anim) {
         anim = domEl.animate(svEl.kfs, {
             duration: AnimM.duration * 1000,
             iterations: Infinity,
         })
-        anim.currentTime = AnimM.currentTime * 1000
-        anim.pause()
-        anim.commitStyles()
-        return
     }
     anim.currentTime = AnimM.currentTime * 1000
     anim.pause()
-    anim?.commitStyles()
+    anim.commitStyles()
+
 }
 
 function updateAnimDurationLoop(svEl: SvEl) {

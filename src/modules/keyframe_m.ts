@@ -3,6 +3,50 @@ import { SvEl } from "src/models/models";
 import { StorageM } from "./storage_m";
 import { AnimM } from "./anim_m";
 import { svEl } from "./svel_m";
+import { ref } from "vue";
+import { E } from "app/dist/electron/UnPackaged/assets/index.e82d9342";
+
+const _showKfMenu = ref(false)
+const _selectedKfs = ref<Keyframe[]>()
+
+export const KfsM = {
+    get showKfMenu() { return _showKfMenu.value },
+    set showKfMenu(v: boolean) { _showKfMenu.value = v },
+
+    async updateKf(el: SvEl, offset: number, newOffset: number) {
+        if (offset === null || offset === undefined) {
+            console.log('csSvg: error offset undefined'); return
+        }
+
+        el.children?.forEach(async (child) => await this.updateKf(child, offset, newOffset));
+        if (!allowedEls.includes(el.tagName)) return
+
+        const kfToEdit = el.kfs.find(x => x.offset === offset)
+        if (!kfToEdit) return
+        if (newOffset < 0) newOffset = 0
+        if (newOffset > 1) newOffset = 1
+        kfToEdit.offset = newOffset
+
+        window.addEventListener('mouseup', async () => {
+            el?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset);
+            StorageM.setKfs(el.id, el.kfs)
+            await AnimM.refreshAnim(el)
+        }, { once: true })
+    }
+}
+
+export async function selectKf() {
+
+}
+
+export async function unselectKf() {
+
+}
+
+export async function unselectAllKfs() {
+
+}
+
 
 export async function createKeyFrame(el: SvEl): Promise<any> {
     // try {
@@ -28,6 +72,8 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
 export async function updateKfs(elId: string, kf: Keyframe[]) {
     StorageM.setKfs(elId, kf)
 }
+
+
 
 export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     if (offset === null || offset === undefined) {

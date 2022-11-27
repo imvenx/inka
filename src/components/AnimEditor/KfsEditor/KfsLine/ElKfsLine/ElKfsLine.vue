@@ -21,10 +21,9 @@ import ElKf from './ElKf.vue';
 import { rowHeight } from 'src/modules/config_m';
 import AttrsKfsLine from '../AttrsKfsLine/AttrsKfsLine.vue';
 import AttrKfsLine from '../AttrKfsLine/AttrKfsLine.vue';
-import { deleteKf } from 'src/modules/keyframe_m';
+import { deleteKf, KfsM } from 'src/modules/keyframe_m';
 
 const props = defineProps<{ el: SvEl }>()
-
 </script>
 
 <style scoped>
