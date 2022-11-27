@@ -4,7 +4,6 @@ import { StorageM } from "./storage_m";
 import { AnimM } from "./anim_m";
 import { svEl } from "./svel_m";
 import { ref } from "vue";
-import { E } from "app/dist/electron/UnPackaged/assets/index.e82d9342";
 
 const _showKfMenu = ref(false)
 const _selectedKfs = ref<Keyframe[]>()
