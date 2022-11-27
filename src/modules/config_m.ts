@@ -9,14 +9,16 @@ import { createProjectParams } from "app/public/sharedModels"
 
 export const timePickerWidth = computed(() => AnimM.duration * ConfigM.numDecimals * ConfigM.zoomPx
     + (timeSideOffsetPx * 2))
+
 export const timeSideOffsetPx = 10
+
 const _timePickerLinePos = computed<number>(() =>
     (Math.round(AnimM.currentTime * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
+
 const _numDecimals = 10
 const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
 
 const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
-
 
 const _inDebugMode = ref(true)
 
