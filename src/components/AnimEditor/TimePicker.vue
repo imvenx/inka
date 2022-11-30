@@ -1,5 +1,5 @@
 <template>
-  <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousemove="selectTime" @mousedown="selectTime">
+  <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousedown="selectTime">
     <div id="offsetDiv"></div>&nbsp;
     <div id="timePickerLine">&nbsp;</div>
     <span v-for="deciSecond in Math.round(AnimM.duration * ConfigM.numDecimals)" class="timeStep"
@@ -37,8 +37,8 @@ const selectTime = async (e: MouseEvent) => {
   window.addEventListener('mousemove', selectTime, { once: true })
 }
 
-function getPickedTime(e: MouseEvent): number {
-  return (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
+function getPickedTime({ clientX }: MouseEvent): number {
+  return (clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
     - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
 }
 
