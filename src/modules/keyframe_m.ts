@@ -1,9 +1,9 @@
-import { allowedAttrs, allowedEls } from "src/modules/constants";
-import { SvEl } from "src/models/models";
-import { StorageM } from "./storage_m";
-import { AnimM } from "./anim_m";
-import { ref } from "vue";
-import { SvElM } from "./svel_m";
+import { allowedAttrs, allowedEls } from "src/modules/constants"
+import { SvEl } from "src/models/models"
+import { StorageM } from "./storage_m"
+import { AnimM } from "./anim_m"
+import { ref } from "vue"
+import { SvElM } from "./svel_m"
 
 const _showKfMenu = ref(false)
 const _selectedKfs = ref<Keyframe[]>()
@@ -14,7 +14,8 @@ export const KfsM = {
 
     async updateKf(el: SvEl, offset: number, newOffset: number) {
         if (offset === null || offset === undefined) {
-            console.log('csSvg: error offset undefined'); return
+            console.log('csSvg: error offset undefined')
+            return
         }
 
         el.children?.forEach(async (child) => await this.updateKf(child, offset, newOffset));
@@ -53,16 +54,15 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
     el.children?.forEach(async (child) => await createKeyFrame(child));
     if (!allowedEls.includes(el.tagName) || elHasNotAllowedAttrs(el)) return
 
-    let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTime / AnimM.duration);
+    let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTime / AnimM.duration)
     if (kf) {
-        el.attrs
         const kfs = await attrsToKfs(document.getElementById(el.id) ?? {} as any)
         // if(Object.entries(kfs).length <= 0) return
-        el.kfs[el.kfs.indexOf(kf)] = kfs;
+        el.kfs[el.kfs.indexOf(kf)] = kfs
     }
-    else el?.kfs?.push(await attrsToKfs(document.getElementById(el.id) ?? {} as any));
+    else el?.kfs?.push(await attrsToKfs(document.getElementById(el.id) ?? {} as any))
 
-    el?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset);
+    el?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
     StorageM.setKfs(el.id, el.kfs)
 
     // } catch (e) { console.log('Error trying to create kf on el:', el, e) }
@@ -104,12 +104,12 @@ async function attrsToKfs(el: Element) {
                 else r1[attr] = _attr
             }
             else if (attr === 'width' || attr === 'height') {
-                r1[attr] = el?.getAttribute(attr) + 'px';
+                r1[attr] = el?.getAttribute(attr) + 'px'
             }
             else if (attr === 'style') {
-                const styles = el.getAttribute(attr)?.split(';');
+                const styles = el.getAttribute(attr)?.split(';')
                 styles?.forEach(styleStr => {
-                    const style = styleStr.split(':');
+                    const style = styleStr.split(':')
                     r1[style[0]] = style[1];
                 });
             }
@@ -119,7 +119,7 @@ async function attrsToKfs(el: Element) {
                 // transform-box: fill-box;
                 // transform-origin: center;
                 // r1[attr] = el.getAttribute(attr)?.replace(')', 'deg)')
-                const m = (el as any).transform.baseVal.consolidate().matrix;
+                const m = (el as any).transform.baseVal.consolidate().matrix
                 r1[attr] = `matrix(
             ${m.a.toFixed(5)},
             ${m.b.toFixed(5)},
@@ -129,18 +129,18 @@ async function attrsToKfs(el: Element) {
             ${m.f.toFixed(5)})`;
             }
             else if (attr === 'd') {
-                r1[attr] = `path("${el?.getAttribute(attr)}")`;
+                r1[attr] = `path("${el?.getAttribute(attr)}")`
             }
             else if (attr.includes('sodipodi:')) { }
 
             // else if (attr === 'stdDeviation') console.log(attr)
-            else r1[attr] = el?.getAttribute(attr);
+            else r1[attr] = el?.getAttribute(attr)
 
             // r1['offset'] = offset.value;
             r1['offset'] = AnimM.currentTime / AnimM.duration;
         }
-    });
-    return r1;
+    })
+    return r1
     // } catch { console.log('Error on trying to get attr to kf on el:', el) }
 }
 
