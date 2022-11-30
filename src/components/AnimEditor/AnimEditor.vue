@@ -1,19 +1,24 @@
 <template>
   <div id="animatorCont" ref="cont">
     <div class="corner"></div>
-    <TimePicker />
+    <TimePicker @wheel="onWheel" />
     <ElsList />
-    <KfEditor />
+    <KfEditor @wheel="onWheel" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ConfigM } from 'src/modules/config_m';
 import { onMounted, ref } from 'vue';
 import ElsList from './ElsList/ElsList.vue';
 import KfEditor from './KfsEditor/KfEditor.vue';
 import TimePicker from './TimePicker.vue';
 
 const cont = ref<HTMLDivElement>()
+
+function onWheel(e: WheelEvent) { if (e.ctrlKey) { zoomTime(e); return } }
+const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDecimals
+
 // const elsListWidth = ref()
 // onMounted(() => {
 //   elsListWidth.value = contWidth()

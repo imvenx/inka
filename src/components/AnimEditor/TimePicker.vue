@@ -1,5 +1,5 @@
 <template>
-  <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousedown="selectTime">
+  <div ref="cont" id="timePickerCont" @mousedown="selectTime">
     <div id="offsetDiv"></div>&nbsp;
     <div id="timePickerLine">&nbsp;</div>
     <span v-for="deciSecond in Math.round(AnimM.duration * ConfigM.numDecimals)" class="timeStep"
@@ -22,9 +22,7 @@ const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 
 const timePickerLinePos = ConfigM.timePickerLinePos
 
-function onWheel(e: WheelEvent) { if (e.ctrlKey) { zoomTime(e); return } }
 
-const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDecimals
 
 const selectTime = async (e: MouseEvent) => {
   if (e.buttons !== 1) return
