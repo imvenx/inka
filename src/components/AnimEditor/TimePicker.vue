@@ -2,6 +2,9 @@
   <div ref="cont" id="timePickerCont" @mousedown="selectTime">
     <div id="offsetDiv"></div>&nbsp;
     <div id="timePickerLine">&nbsp;</div>
+    <span class="timeStep" :style="`left: ${timeSideOffsetPx}px`" style="z-index:999">
+      <div>0</div>
+    </span>
     <span v-for="deciSecond in Math.round(AnimM.duration * ConfigM.numDecimals)" class="timeStep"
       :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
       <div>
