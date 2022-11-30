@@ -7,15 +7,15 @@ import { SvElM } from "./svel_m"
 export async function exportToSvg() {
     let _svgEl = svgEl()
     const lastTime = AnimM.currentTime
-    await AnimM.selectTime(0, SvElM.svEl)
+    await AnimM.selectTime(0, SvElM.rootSvEl)
     if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
-    let animStr = getExportAnimString(SvElM.svEl)
+    let animStr = getExportAnimString(SvElM.rootSvEl)
     let clone = _svgEl.cloneNode(true) as HTMLElement
     clone.innerHTML += `
 <style> ${animStr} </style>`
     await eapi.exportSvg(clone.outerHTML)
-    await AnimM.selectTime(lastTime, SvElM.svEl)
+    await AnimM.selectTime(lastTime, SvElM.rootSvEl)
 }
 
 function getExportAnimString(el: SvEl) {

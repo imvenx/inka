@@ -4,7 +4,6 @@ import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
 import { StorageM } from "./storage_m";
 import { updateKfs } from "./keyframe_m";
-import { ConfigM } from "./config_m";
 import { SvElM } from "./svel_m";
 
 export const svgEl = () => document.getElementById('svg5')
@@ -29,13 +28,13 @@ export const AnimM = {
         _oldDuration = _duration.value
         _duration.value = v;
         StorageM.setDuration(v);
-        updateAnimDurationLoop(SvElM.svEl)
+        updateAnimDurationLoop(SvElM.rootSvEl)
     },
 
     get isPlayingAnim() { return _isPlayingAnim.value },
     set isPlayingAnim(v: boolean) { _isPlayingAnim.value = v },
     async pauseOrPlayAnim() {
-        this.isPlayingAnim ? await this.pauseAnim(SvElM.svEl) : await this.playAnim(SvElM.svEl)
+        this.isPlayingAnim ? await this.pauseAnim(SvElM.rootSvEl) : await this.playAnim(SvElM.rootSvEl)
     },
 
     async playAnim(svEl: SvEl): Promise<void> {
@@ -139,6 +138,7 @@ async function refreshAnimLoop(svEl: SvEl) {
     }
 }
 
+// TODO: THIS SHOULD GO INSIDE THE SETTER OF CURRENT TIME TO PREVENT REPEAT CODE
 const roundedCurrentTime = (a: Animation) =>
     Math.round((AnimM.currentTime + a.currentTime!) % (AnimM.duration * 1000)) / 1000
 

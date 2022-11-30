@@ -8,15 +8,17 @@ export abstract class SvElM {
     public static get svgString() { return this._svgString.value }
     public static set svgString(value) { this._svgString.value = value }
 
-    private static _svEl = ref<SvEl>({} as SvEl)
-    public static get svEl() { return SvElM._svEl.value }
-    public static set svEl(value) { SvElM._svEl.value = value }
+    private static _rootSvEl = ref<SvEl>({} as SvEl)
+    public static get rootSvEl() { return this._rootSvEl.value }
+    public static set rootSvEl(value) { this._rootSvEl.value = value }
 
-    static findSvElById(svEl: SvEl, id: string) {
-
+    static async getSvElById(svEl: SvEl, id: string): Promise<SvEl | void> {
+        if (!allowedEls.includes(svEl.tagName)) return
+        if (svEl.id === id) return svEl
+        svEl.children?.forEach(async (child) => await this.getSvElById(child, svEl.id))
     }
 
-    static getSvEls(el: Element): SvEl {
+    static async getSvEls(el: Element): Promise<SvEl> {
         let _svEl: SvEl
         const uncollapsed = StorageM.getUncollapsed()
         const showAttrs = StorageM.getShowAttrs()

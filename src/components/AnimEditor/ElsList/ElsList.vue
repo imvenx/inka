@@ -1,6 +1,6 @@
 <template>
   <div ref="cont" id="els-list-cont">
-    <ListEl :el="SvElM.svEl" />
+    <ListEl :el="SvElM.rootSvEl" />
   </div>
 </template>
 

@@ -39,7 +39,7 @@
             </q-list>
           </q-menu> -->
           <div :style="`width:${timePickerWidth}px; padding-bottom: ${timeSideOffsetPx}px`">
-            <KfsLine :el="SvElM.svEl" />
+            <KfsLine :el="SvElM.rootSvEl" />
           </div>
           <div id="timeLine" :style="`left:${timePickerLinePos}px; top:${ConfigM.editorScroll.y}px`">
           </div>

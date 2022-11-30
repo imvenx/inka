@@ -82,7 +82,7 @@
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="createKeyFrame(SvElM.svEl)" title="keyframe"><b>◆</b></q-btn>
+      <q-btn v-bind="btnAttrs" @click="createKeyFrame(SvElM.rootSvEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
     <div style="position:absolute; display: flex; right:-.5em; ">
       <div id="windowButtons" v-bind="btnAttrs">
@@ -116,7 +116,7 @@ async function loadProject() {
   }
 }
 
-function selectTime() { AnimM.selectTime(AnimM.currentTime, SvElM.svEl) }
+function selectTime() { AnimM.selectTime(AnimM.currentTime, SvElM.rootSvEl) }
 
 const refresh = () => location.reload()
 

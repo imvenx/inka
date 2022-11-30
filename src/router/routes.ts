@@ -11,15 +11,6 @@ const routes: RouteRecordRaw[] = [
       { path: '/code', name: 'code', component: () => import('src/pages/CodePage.vue') },
     ],
   },
-  //  {
-  //   path: '/home',
-  //   component: () => import('layouts/MainLayout.vue'),
-  //   children: [{ path: '', component: () => import('src/pages/HomePage.vue') }],
-  // }, {
-  //   path: '/code',
-  //   component: () => import('layouts/MainLayout.vue'),
-  //   children: [{ path: '', component: () => import('src/pages/CodePage.vue') }],
-  // },
-];
+]
 
-export default routes;
+export default routes

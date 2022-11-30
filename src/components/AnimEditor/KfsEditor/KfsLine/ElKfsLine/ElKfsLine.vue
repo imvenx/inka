@@ -8,7 +8,7 @@
     <AttrsKfsLine :kfs="el.kfs" />
 
     <template v-if="el.showAttrs">
-      <AttrKfsLine v-for="attr in el.attrs" :kfs="el.kfs" />
+      <AttrKfsLine v-for="attr in el.attrs" :kfs="getAttrKfs(el.kfs, attr.key)" />
     </template>
 
     <ElKfsLine v-for="child in el.children" :el="child" />
@@ -23,6 +23,10 @@ import AttrsKfsLine from '../AttrsKfsLine/AttrsKfsLine.vue';
 import AttrKfsLine from '../AttrKfsLine/AttrKfsLine.vue';
 
 const props = defineProps<{ el: SvEl }>()
+
+function getAttrKfs(kfs: Keyframe[], attrName: string): Keyframe[] {
+  return kfs.map(x => x = { offset: x.offset, [attrName]: x[attrName] })
+}
 </script>
 
 <style scoped>

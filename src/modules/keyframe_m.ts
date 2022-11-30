@@ -87,7 +87,7 @@ export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     el.kfs = el.kfs.filter(x => x.offset !== offset)
     StorageM.setKfs(el.id, el.kfs)
 
-    await AnimM.refreshAnim(SvElM.svEl)
+    await AnimM.refreshAnim(SvElM.rootSvEl)
 }
 
 async function attrsToKfs(el: Element) {

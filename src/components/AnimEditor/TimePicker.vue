@@ -32,7 +32,7 @@ const selectTime = async (e: MouseEvent) => {
 
   if (pickedTime < 0) pickedTime = 0
   if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
-  await AnimM.selectTime(pickedTime, SvElM.svEl)
+  await AnimM.selectTime(pickedTime, SvElM.rootSvEl)
 
   window.addEventListener('mousemove', selectTime, { once: true })
 }

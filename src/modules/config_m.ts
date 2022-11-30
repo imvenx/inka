@@ -1,11 +1,7 @@
 import { computed, ref, watch } from "vue"
 import { StorageM } from "./storage_m"
 import { Vector2 } from "../models/Vector2"
-import { svgIO } from "./svgIO_m"
-import { eapi } from "./eapi_m"
 import { AnimM } from "./anim_m"
-import { useRouter } from "vue-router"
-import { createProjectParams } from "app/public/sharedModels"
 
 export const timePickerWidth = computed(() => AnimM.duration * ConfigM.numDecimals * ConfigM.zoomPx
     + (timeSideOffsetPx * 2))

@@ -18,9 +18,9 @@ export const svgIO = {
 
         svg.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
-        const _svEl = SvElM.getSvEls(svg)
+        const _svEl = await SvElM.getSvEls(svg)
         SvElM.svgString = svgData
-        SvElM.svEl = _svEl
+        SvElM.rootSvEl = _svEl
     },
     async output(): Promise<void> {
         clearTimeout(outputTimeout)
