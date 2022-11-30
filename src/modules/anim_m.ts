@@ -9,27 +9,33 @@ import { SvElM } from "./svel_m";
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
 
-const _currentTime = ref(0)
+const _currentTimeSeconds = ref(0)
 
-const _duration = ref(StorageM.getDuration())
-let _oldDuration = _duration.value
+const _durationSeconds = ref(StorageM.getDuration())
+let _oldDurationSeconds = _durationSeconds.value
 
 const _isPlayingAnim = ref(false)
 
 const _recalculateKfsOnChangeDuration = ref(true)
 
 export const AnimM = {
-    get currentTime() { return _currentTime.value },
-    set currentTime(v: number) { _currentTime.value = v },
+    get currentTimeSeconds() { return _currentTimeSeconds.value },
+    set currentTimeSeconds(v: number) { _currentTimeSeconds.value = v },
 
-    get duration() { return _duration.value },
-    set duration(v: number) {
+    get currentTimeMiliseconds() { return _currentTimeSeconds.value * 1000 },
+    set currentTimeMiliseconds(v: number) { _currentTimeSeconds.value = Math.round(v) / 1000 },
+
+    get durationSeconds() { return _durationSeconds.value },
+    set durationSeconds(v: number) {
         if (v <= 0) v = 0.1
-        _oldDuration = _duration.value
-        _duration.value = v;
+        _oldDurationSeconds = _durationSeconds.value
+        _durationSeconds.value = v;
         StorageM.setDuration(v);
         updateAnimDurationLoop(SvElM.rootSvEl)
     },
+
+    get durationMiliseconds() { return this.durationSeconds * 1000 },
+    set durationMiliseconds(v: number) { this.durationSeconds = v / 1000 },
 
     get isPlayingAnim() { return _isPlayingAnim.value },
     set isPlayingAnim(v: boolean) { _isPlayingAnim.value = v },
@@ -50,7 +56,7 @@ export const AnimM = {
         await pauseAnimLoop(svEl)
 
         const anim = svgEl()?.getAnimations()[0]
-        if (anim) this.currentTime = roundedCurrentTime(anim)
+        if (anim) this.currentTimeMiliseconds = animTime(anim)
 
         await svgIO.output()
     },
@@ -62,11 +68,12 @@ export const AnimM = {
     get recalculateKfsOnChangeDuration() { return _recalculateKfsOnChangeDuration.value },
     set recalculateKfsOnChangeDuration(v: boolean) { _recalculateKfsOnChangeDuration.value = v },
 
-    async selectTime(time: number, svEl: SvEl) {
+    async selectTime(miliseconds: number, svEl: SvEl) {
         stopRefreshCurrentTime()
         this.isPlayingAnim = false
-        this.currentTime = Math.round(time * 1000) / 1000
-        if (this.currentTime >= this.duration) this.currentTime -= 0.001
+        this.currentTimeMiliseconds = miliseconds
+        if (this.currentTimeMiliseconds >= this.durationMiliseconds)
+            this.currentTimeMiliseconds -= 1
         await updateAnimCurrentFrame(svEl)
         await svgIO.output()
     }
@@ -78,7 +85,7 @@ function startRefreshCurrentTime() {
     const x = el?.getAnimations()
     let a = {} as any
     if (x) a = x[x?.length - 1]
-    AnimM.currentTime = roundedCurrentTime(a)
+    AnimM.currentTimeMiliseconds = animTime(a)
     requestAnimationFrameId = requestAnimationFrame(startRefreshCurrentTime)
 }
 
@@ -97,11 +104,11 @@ async function playAnimLoop(svEl: SvEl) {
     if (eff && anim) {
         eff.setKeyframes(svEl.kfs);
         anim?.play()
-        eff.updateTiming({ duration: AnimM.duration * 1000 })
+        eff.updateTiming({ duration: AnimM.durationMiliseconds })
     }
     else {
         anim = domEl?.animate(svEl.kfs, {
-            duration: AnimM.duration * 1000,
+            duration: AnimM.durationMiliseconds,
             iterations: Infinity,
         })
     }
@@ -127,11 +134,11 @@ async function refreshAnimLoop(svEl: SvEl) {
     const eff = (anim?.effect as KeyframeEffect)
     if (eff && anim) {
         eff.setKeyframes(svEl.kfs);
-        eff.updateTiming({ duration: AnimM.duration * 1000 })
+        eff.updateTiming({ duration: AnimM.durationMiliseconds })
     }
     else {
         anim = domEl?.animate(svEl.kfs, {
-            duration: AnimM.duration * 1000,
+            duration: AnimM.durationMiliseconds,
             iterations: Infinity,
         })
         anim?.pause()
@@ -139,8 +146,8 @@ async function refreshAnimLoop(svEl: SvEl) {
 }
 
 // TODO: THIS SHOULD GO INSIDE THE SETTER OF CURRENT TIME TO PREVENT REPEAT CODE
-const roundedCurrentTime = (a: Animation) =>
-    Math.round((AnimM.currentTime + a.currentTime!) % (AnimM.duration * 1000)) / 1000
+const animTime = (a: Animation) =>
+    a.currentTime! % AnimM.durationMiliseconds
 
 async function updateAnimCurrentFrame(svEl: SvEl) {
     await updateAnimCurrentFrameLoop(svEl)
@@ -156,11 +163,11 @@ async function updateAnimCurrentFrameLoop(svEl: SvEl) {
 
     if (!anim) {
         anim = domEl.animate(svEl.kfs, {
-            duration: AnimM.duration * 1000,
+            duration: AnimM.durationMiliseconds,
             iterations: Infinity,
         })
     }
-    anim.currentTime = AnimM.currentTime * 1000
+    anim.currentTime = AnimM.currentTimeMiliseconds
     anim.pause()
     anim.commitStyles()
 
@@ -176,7 +183,7 @@ function updateAnimDurationLoop(svEl: SvEl) {
 
     if (AnimM.recalculateKfsOnChangeDuration) {
         svEl.kfs.forEach(kf => {
-            kf.offset! /= AnimM.duration / _oldDuration
+            kf.offset! /= AnimM.durationSeconds / _oldDurationSeconds
             if (kf.offset! > 1) kf.offset = 1
         })
         updateKfs(svEl.id, svEl.kfs)
@@ -185,14 +192,14 @@ function updateAnimDurationLoop(svEl: SvEl) {
 
     if (!anim) {
         anim = domEl?.animate(svEl.kfs, {
-            duration: AnimM.duration * 1000,
+            duration: AnimM.durationMiliseconds,
             iterations: Infinity,
         })
         anim?.pause()
     }
     else {
         const eff = (anim?.effect as KeyframeEffect)
-        eff.updateTiming({ duration: AnimM.duration * 1000 })
+        eff.updateTiming({ duration: AnimM.durationMiliseconds })
         eff.setKeyframes(svEl.kfs)
     }
 

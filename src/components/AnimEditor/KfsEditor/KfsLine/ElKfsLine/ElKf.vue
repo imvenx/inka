@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @mousedown="onMouseDown($event)">
+    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @mousedown="onMouseDown">
         <g transform="rotate(45)">
             <rect class="elKf" width="10" height="10" />
             <foreignObject width="10" height="10">
@@ -34,7 +34,7 @@ async function onMouseDown(e: MouseEvent) {
 async function updateKfTimeLoop(e: MouseEvent) {
     if (e.buttons !== 1) return
     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    await KfsM.updateKf(props.el, props.kf.offset!, getPickedTime(e) / AnimM.duration)
+    await KfsM.updateKf(props.el, props.kf.offset!, getPickedTime(e) / AnimM.durationSeconds)
 }
 
 const cont = document.getElementById('svgCont') as Element

@@ -8,7 +8,7 @@ import { mainWindow } from "../electron-main"
 const appPrefix = 'cssvg';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
 const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
-let skipRefresh = false // Prevents undesired refresh on output
+// let skipRefresh = false // Prevents undesired refresh on output
 
 try { watchTempSvg() } catch { }
 
@@ -86,7 +86,7 @@ export const projectH = {
     exec(getCommandLine() + tempFilePath(), (e) => e ? console.log(e) : '')
   },
   async updateTempSvg({ data }: updateTempSvgParams) {
-    skipRefresh = true
+    // skipRefresh = true
     try {
       await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
       refreshInkscapeUI()
@@ -130,7 +130,9 @@ async function writeTempSvg(data: string) {
 
 function watchTempSvg() {
   watchFile(tempFilePath(), { interval: 200 }, () => {
-    !skipRefresh ? mainWindow?.webContents.send('updatedSvg') : skipRefresh = false
+    // !skipRefresh ? 
+    mainWindow?.webContents.send('updatedSvg')
+    // : skipRefresh = false
   })
 }
 
