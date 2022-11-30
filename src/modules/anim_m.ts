@@ -2,10 +2,10 @@ import { allowedEls } from "src/modules/constants";
 import { SvEl } from "src/models/models";
 import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
-import { svEl } from "./svel_m";
 import { StorageM } from "./storage_m";
 import { updateKfs } from "./keyframe_m";
 import { ConfigM } from "./config_m";
+import { SvElM } from "./svel_m";
 
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
@@ -29,13 +29,13 @@ export const AnimM = {
         _oldDuration = _duration.value
         _duration.value = v;
         StorageM.setDuration(v);
-        updateAnimDurationLoop(svEl.value)
+        updateAnimDurationLoop(SvElM.svEl)
     },
 
     get isPlayingAnim() { return _isPlayingAnim.value },
     set isPlayingAnim(v: boolean) { _isPlayingAnim.value = v },
     async pauseOrPlayAnim() {
-        this.isPlayingAnim ? await this.pauseAnim(svEl.value) : await this.playAnim(svEl.value)
+        this.isPlayingAnim ? await this.pauseAnim(SvElM.svEl) : await this.playAnim(SvElM.svEl)
     },
 
     async playAnim(svEl: SvEl): Promise<void> {

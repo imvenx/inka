@@ -2,8 +2,7 @@ import { svgEl } from "./anim_m"
 import { allowedEls } from "./constants"
 import { eapi } from "./eapi_m"
 import { ProjectM } from "./project_m"
-import { StorageM } from "./storage_m"
-import { getSvEls, svEl, svgString } from "./svel_m"
+import { SvElM } from "./svel_m"
 
 let outputTimeout = {} as any
 
@@ -19,9 +18,9 @@ export const svgIO = {
 
         svg.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
-        const _svEl = getSvEls(svg)
-        svgString.value = svgData
-        svEl.value = _svEl
+        const _svEl = SvElM.getSvEls(svg)
+        SvElM.svgString = svgData
+        SvElM.svEl = _svEl
     },
     async output(): Promise<void> {
         clearTimeout(outputTimeout)

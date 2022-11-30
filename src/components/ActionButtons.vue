@@ -52,7 +52,7 @@
         </div>
         <div class="float-right">
           <q-btn v-bind="btnAttrs" icon="task_alt" title="apply duration change" v-if="isDurationModified"
-            @click="applyModifyDuration" />
+            @click="applyModifyDuration()" />
           <q-btn v-bind="btnAttrs" icon="cancel" title="cancel duration change" v-if="isDurationModified"
             @click="isDurationModified = false" />
           <input ref="durationInput" min="0.1" step="0.1" title="animation duration" type="number" class="timeInput"
@@ -82,7 +82,7 @@
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="createKeyFrame(svEl)" title="keyframe"><b>◆</b></q-btn>
+      <q-btn v-bind="btnAttrs" @click="createKeyFrame(SvElM.svEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
     <div style="position:absolute; display: flex; right:-.5em; ">
       <div id="windowButtons" v-bind="btnAttrs">
@@ -98,7 +98,6 @@
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
 import { AnimM } from 'src/modules/anim_m';
-import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
 import { useRouter } from 'vue-router';
@@ -106,6 +105,7 @@ import { ConfigM } from 'src/modules/config_m';
 import { ref } from 'vue';
 import { ProjectM } from 'src/modules/project_m';
 import { StorageM } from 'src/modules/storage_m';
+import { SvElM } from 'src/modules/svel_m';
 
 const router = useRouter()
 async function loadProject() {
@@ -116,7 +116,7 @@ async function loadProject() {
   }
 }
 
-function selectTime() { AnimM.selectTime(AnimM.currentTime, svEl.value) }
+function selectTime() { AnimM.selectTime(AnimM.currentTime, SvElM.svEl) }
 
 const refresh = () => location.reload()
 
@@ -125,7 +125,7 @@ function modifyDuration(e: any) {
   isDurationModified.value = e.target.value != AnimM.duration
 }
 const durationInput = ref<HTMLInputElement>()
-function applyModifyDuration(e: InputEvent) {
+function applyModifyDuration() {
   if (confirm('are you sure you want to change the duration? this could affect keyframes time')) {
     AnimM.duration = durationInput.value!.value as any ?? AnimM.duration
   }

@@ -1,12 +1,12 @@
 <template>
   <div ref="cont" id="els-list-cont">
-    <ListEl :el="svEl" />
+    <ListEl :el="SvElM.svEl" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
-import { svEl } from 'src/modules/svel_m';
+import { SvElM } from 'src/modules/svel_m';
 import { onMounted, ref, watch } from 'vue'
 import ListEl from './ListEl.vue';
 

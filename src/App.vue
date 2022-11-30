@@ -11,5 +11,8 @@ onMounted(async () => {
 </script>
 
 <style>
-
+/* * {
+  cursor: wait !important;
+  pointer-events: none;
+} */
 </style>

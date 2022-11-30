@@ -39,7 +39,7 @@
             </q-list>
           </q-menu> -->
           <div :style="`width:${timePickerWidth}px; padding-bottom: ${timeSideOffsetPx}px`">
-            <KfsLine :el="svEl" />
+            <KfsLine :el="SvElM.svEl" />
           </div>
           <div id="timeLine" :style="`left:${timePickerLinePos}px; top:${ConfigM.editorScroll.y}px`">
           </div>
@@ -60,10 +60,10 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import KfsLine from './KfsLine/ElKfsLine/ElKfsLine.vue';
-import { svEl } from 'src/modules/svel_m';
 import { ConfigM, timeSideOffsetPx, timePickerWidth } from 'src/modules/config_m';
 import { KfsM } from 'src/modules/keyframe_m';
 import { QMenu } from 'quasar';
+import { SvElM } from 'src/modules/svel_m';
 
 const foreignObjCont = ref<HTMLDivElement>()
 

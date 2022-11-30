@@ -1,21 +1,21 @@
 import { allowedAttrs, allowedEls } from "src/modules/constants"
 import { SvEl } from "src/models/models"
 import { AnimM, svgEl } from "./anim_m"
-import { svEl } from "./svel_m"
 import { eapi } from "./eapi_m"
+import { SvElM } from "./svel_m"
 
 export async function exportToSvg() {
     let _svgEl = svgEl()
     const lastTime = AnimM.currentTime
-    await AnimM.selectTime(0, svEl.value)
+    await AnimM.selectTime(0, SvElM.svEl)
     if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
-    let animStr = getExportAnimString(svEl.value)
+    let animStr = getExportAnimString(SvElM.svEl)
     let clone = _svgEl.cloneNode(true) as HTMLElement
     clone.innerHTML += `
 <style> ${animStr} </style>`
     await eapi.exportSvg(clone.outerHTML)
-    await AnimM.selectTime(lastTime, svEl.value)
+    await AnimM.selectTime(lastTime, SvElM.svEl)
 }
 
 function getExportAnimString(el: SvEl) {

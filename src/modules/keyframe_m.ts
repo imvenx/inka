@@ -2,8 +2,8 @@ import { allowedAttrs, allowedEls } from "src/modules/constants";
 import { SvEl } from "src/models/models";
 import { StorageM } from "./storage_m";
 import { AnimM } from "./anim_m";
-import { svEl } from "./svel_m";
 import { ref } from "vue";
+import { SvElM } from "./svel_m";
 
 const _showKfMenu = ref(false)
 const _selectedKfs = ref<Keyframe[]>()
@@ -48,6 +48,7 @@ export async function unselectAllKfs() {
 
 
 export async function createKeyFrame(el: SvEl): Promise<any> {
+
     // try {
     el.children?.forEach(async (child) => await createKeyFrame(child));
     if (!allowedEls.includes(el.tagName) || elHasNotAllowedAttrs(el)) return
@@ -65,7 +66,6 @@ export async function createKeyFrame(el: SvEl): Promise<any> {
     StorageM.setKfs(el.id, el.kfs)
 
     // } catch (e) { console.log('Error trying to create kf on el:', el, e) }
-
 }
 
 export async function updateKfs(elId: string, kf: Keyframe[]) {
@@ -75,6 +75,7 @@ export async function updateKfs(elId: string, kf: Keyframe[]) {
 
 
 export async function deleteKf(el: SvEl, offset: number | null | undefined) {
+
     if (offset === null || offset === undefined) {
         console.log('csSvg: error offset undefined'); return
     }
@@ -86,7 +87,7 @@ export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     el.kfs = el.kfs.filter(x => x.offset !== offset)
     StorageM.setKfs(el.id, el.kfs)
 
-    await AnimM.refreshAnim(svEl.value)
+    await AnimM.refreshAnim(SvElM.svEl)
 }
 
 async function attrsToKfs(el: Element) {

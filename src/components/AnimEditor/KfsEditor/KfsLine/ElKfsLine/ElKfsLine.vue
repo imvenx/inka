@@ -5,10 +5,10 @@
     </svg>
   </div>
   <template v-if="el.isUncollapsed">
-    <AttrsKfsLine :el="el" />
+    <AttrsKfsLine :kfs="el.kfs" />
 
     <template v-if="el.showAttrs">
-      <AttrKfsLine v-for="kf in el.attrs" :el="el" />
+      <AttrKfsLine v-for="attr in el.attrs" :kfs="el.kfs" />
     </template>
 
     <ElKfsLine v-for="child in el.children" :el="child" />
@@ -21,7 +21,6 @@ import ElKf from './ElKf.vue';
 import { rowHeight } from 'src/modules/config_m';
 import AttrsKfsLine from '../AttrsKfsLine/AttrsKfsLine.vue';
 import AttrKfsLine from '../AttrKfsLine/AttrKfsLine.vue';
-import { deleteKf, KfsM } from 'src/modules/keyframe_m';
 
 const props = defineProps<{ el: SvEl }>()
 </script>

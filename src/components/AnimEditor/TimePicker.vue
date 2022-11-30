@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';
 import { AnimM } from 'src/modules/anim_m'
-import { svEl } from 'src/modules/svel_m';
+import { SvElM } from 'src/modules/svel_m';
 import { ConfigM, timePickerWidth, timeSideOffsetPx } from 'src/modules/config_m';
 
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
@@ -32,7 +32,7 @@ const selectTime = async (e: MouseEvent) => {
 
   if (pickedTime < 0) pickedTime = 0
   if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
-  await AnimM.selectTime(pickedTime, svEl.value)
+  await AnimM.selectTime(pickedTime, SvElM.svEl)
 
   window.addEventListener('mousemove', selectTime, { once: true })
 }
