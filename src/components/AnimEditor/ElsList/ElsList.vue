@@ -17,7 +17,6 @@ onMounted(() => {
   cont.value?.addEventListener("scroll", (e: Event) => {
     ConfigM.editorScroll.y = cont.value?.scrollTop ?? 0
   })
-
 })
 
 watch(() => ConfigM.editorScroll.y, (val) => {

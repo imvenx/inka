@@ -3,13 +3,13 @@ import { StorageM } from "./storage_m"
 import { Vector2 } from "../models/Vector2"
 import { AnimM } from "./anim_m"
 
-export const timePickerWidth = computed(() => AnimM.duration * ConfigM.numDecimals * ConfigM.zoomPx
+export const timePickerWidth = computed(() => AnimM.durationSeconds * ConfigM.numDecimals * ConfigM.zoomPx
     + (timeSideOffsetPx * 2))
 
 export const timeSideOffsetPx = 10
 
 const _timePickerLinePos = computed<number>(() =>
-    (Math.round(AnimM.currentTime * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
+    (Math.round(AnimM.currentTimeSeconds * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
 
 const _numDecimals = 10
 const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)

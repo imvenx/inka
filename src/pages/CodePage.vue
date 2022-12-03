@@ -3,7 +3,7 @@
     <div id="page">
       <div contenteditable="true" spellcheck="false" style="overflow:scroll; height:90vh; border: 2px solid black;
       padding:.2em; background-color: rgb(20,20,20); color:burlywood;  ">
-        <pre style="margin:0; font-size: small; white-space: break-spaces;">{{ svgString }}</pre>
+        <pre style="margin:0; font-size: small; white-space: break-spaces;">{{ SvElM.svgString }}</pre>
       </div>
       <anim-viewer />
     </div>
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { svgString } from "src/modules/svel_m";
+import { SvElM } from "src/modules/svel_m";
 import AnimViewer from "../components/AnimViewer.vue";
 
 </script>

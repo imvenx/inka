@@ -6,7 +6,7 @@ import { SvElM } from "./svel_m"
 
 export async function exportToSvg() {
     let _svgEl = svgEl()
-    const lastTime = AnimM.currentTime
+    const lastTime = AnimM.currentTimeMiliseconds
     await AnimM.selectTime(0, SvElM.rootSvEl)
     if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
@@ -30,7 +30,7 @@ function getExportAnimString(el: SvEl) {
         res += ` 
     #${el.id} { 
         animation-name: myanim${el.id};
-        animation-duration: ${AnimM.duration}s; 
+        animation-duration: ${AnimM.durationSeconds}s; 
         animation-iteration-count: infinite;
         animation-timing-function: linear;
     }
