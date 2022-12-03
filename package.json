@@ -1,8 +1,8 @@
 {
-  "name": "cssvg",
-  "version": "1.0.0",
+  "name": "inka",
+  "version": "1.0.1",
   "description": "Animate SVG with CSS",
-  "productName": "cssvg",
+  "productName": "inka",
   "author": "oc",
   "private": true,
   "scripts": {

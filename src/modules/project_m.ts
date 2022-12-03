@@ -38,7 +38,7 @@ export const ProjectM = {
         StorageM.setCurrentFilePath(filePath)
     },
 
-    async getTempSvg() {
+    async getTempSvg(): Promise<string> {
         let tempSvg = await await eapi.getTempSvg()
         if (!tempSvg) {
             if (StorageM.getCurrentFilePath())

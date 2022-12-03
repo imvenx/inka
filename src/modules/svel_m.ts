@@ -18,6 +18,10 @@ export abstract class SvElM {
         svEl.children?.forEach(async (child) => await this.getSvElById(child, svEl.id))
     }
 
+    static async updateAttrs(svEl: SvEl, el: Element) {
+        svEl.attrs = SvElM.getAttrsArray(el)
+    }
+
     static async getSvEls(el: Element): Promise<SvEl> {
         let _svEl: SvEl
         const uncollapsed = StorageM.getUncollapsed()
@@ -34,6 +38,7 @@ export abstract class SvElM {
                 attrs: SvElM.getAttrsArray(el),
                 children: children,
                 id: el.id,
+                // isSelected: true,
                 isUncollapsed: uncollapsed[el.id],
                 showAttrs: showAttrs[el.id],
                 name: el.getAttribute('inkscape:label') ?? el.id,

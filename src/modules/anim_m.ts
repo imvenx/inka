@@ -57,7 +57,6 @@ export const AnimM = {
 
         const anim = svgEl()?.getAnimations()[0]
         if (anim) this.currentTimeMiliseconds = animTime(anim)
-
         await svgIO.output()
     },
 
@@ -82,10 +81,11 @@ export const AnimM = {
 let requestAnimationFrameId: number
 function startRefreshCurrentTime() {
     const el = svgEl()
-    const x = el?.getAnimations()
-    let a = {} as any
-    if (x) a = x[x?.length - 1]
-    AnimM.currentTimeMiliseconds = animTime(a)
+    const animations = el?.getAnimations()!
+    let anim = animations[animations?.length - 1]
+
+    // if (x) a = x[x?.length - 1]
+    AnimM.currentTimeMiliseconds = animTime(anim)
     requestAnimationFrameId = requestAnimationFrame(startRefreshCurrentTime)
 }
 
@@ -101,6 +101,7 @@ async function playAnimLoop(svEl: SvEl) {
     const domEl = document.getElementById(svEl.id)
     let anim = domEl?.getAnimations()[0]
     const eff = (anim?.effect as KeyframeEffect)
+
     if (eff && anim) {
         eff.setKeyframes(svEl.kfs);
         anim?.play()
@@ -145,9 +146,7 @@ async function refreshAnimLoop(svEl: SvEl) {
     }
 }
 
-// TODO: THIS SHOULD GO INSIDE THE SETTER OF CURRENT TIME TO PREVENT REPEAT CODE
-const animTime = (a: Animation) =>
-    a.currentTime! % AnimM.durationMiliseconds
+const animTime = (a: Animation) => (a.currentTime! % AnimM.durationMiliseconds)
 
 async function updateAnimCurrentFrame(svEl: SvEl) {
     await updateAnimCurrentFrameLoop(svEl)
@@ -202,6 +201,4 @@ function updateAnimDurationLoop(svEl: SvEl) {
         eff.updateTiming({ duration: AnimM.durationMiliseconds })
         eff.setKeyframes(svEl.kfs)
     }
-
-
 }

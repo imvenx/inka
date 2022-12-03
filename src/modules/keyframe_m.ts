@@ -48,24 +48,27 @@ export async function unselectAllKfs() {
 }
 
 
-export async function createKeyFrame(el: SvEl): Promise<any> {
+export async function createKeyFrame(svEl: SvEl): Promise<any> {
 
-    // try {
-    el.children?.forEach(async (child) => await createKeyFrame(child));
-    if (!allowedEls.includes(el.tagName) || elHasNotAllowedAttrs(el)) return
+    // console.log(
+    //     document.getElementById('rect556')?.attributes.x
+    // )
+    // return
+    svEl.children?.forEach(async (child) => await createKeyFrame(child));
+    if (!allowedEls.includes(svEl.tagName) || elHasNotAllowedAttrs(svEl)) return
 
-    let kf = el?.kfs?.find(x => x?.offset === AnimM.currentTimeSeconds / AnimM.durationSeconds)
-    if (kf) {
-        const kfs = await attrsToKfs(document.getElementById(el.id) ?? {} as any)
-        // if(Object.entries(kfs).length <= 0) return
-        el.kfs[el.kfs.indexOf(kf)] = kfs
-    }
-    else el?.kfs?.push(await attrsToKfs(document.getElementById(el.id) ?? {} as any))
+    const el = document.getElementById(svEl.id)
+    if (!el) return
 
-    el?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
-    StorageM.setKfs(el.id, el.kfs)
+    let kf = svEl?.kfs?.find(x => x?.offset === AnimM.currentTimeSeconds / AnimM.durationSeconds)
+    const kfs = await attrsToKfs(el)
+    if (!kfs) return
+    if (kf) svEl.kfs[svEl.kfs.indexOf(kf)] = kfs
+    else svEl?.kfs?.push(kfs)
 
-    // } catch (e) { console.log('Error trying to create kf on el:', el, e) }
+    svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
+    StorageM.setKfs(svEl.id, svEl.kfs)
+
 }
 
 export async function updateKfs(elId: string, kf: Keyframe[]) {
@@ -90,28 +93,33 @@ export async function deleteKf(el: SvEl, offset: number | null | undefined) {
     await AnimM.refreshAnim(SvElM.rootSvEl)
 }
 
+// TODO: check why this is being called twice, and fix it
 async function attrsToKfs(el: Element) {
     let r1: any = {}
 
-    // if (elHasNotAllowedAttrs(el)) return
-    // try {
     el?.getAttributeNames().forEach((attr: any) => {
         if (allowedAttrs.includes(attr)) {
+
             if (el.tagName === 'svg') { }
             else if (attr === 'x' || attr === 'y') {
-                const _attr = el?.getAttribute(attr)
-                if (!_attr?.includes('px')) r1[attr] = `${_attr}px`
-                else r1[attr] = _attr
+                const val = el?.getAttribute(attr)
+                if (val) {
+                    if (!val?.includes('px')) r1[attr] = `${val}px`
+                    else r1[attr] = val
+                }
             }
             else if (attr === 'width' || attr === 'height') {
-                r1[attr] = el?.getAttribute(attr) + 'px'
+                const val = el?.getAttribute(attr)
+                if (val) r1[attr] = val + 'px'
             }
             else if (attr === 'style') {
                 const styles = el.getAttribute(attr)?.split(';')
                 styles?.forEach(styleStr => {
-                    const style = styleStr.split(':')
-                    r1[style[0]] = style[1];
-                });
+                    if (styleStr) {
+                        const style = styleStr.replaceAll(' ', '').split(':')
+                        if (allowedAttrs.includes(style[0])) r1[style[0]] = style[1];
+                    }
+                })
             }
             else if (attr === 'transform') {
                 // console.log(el.getAttribute(attr))
@@ -126,7 +134,7 @@ async function attrsToKfs(el: Element) {
             ${m.c.toFixed(5)},
             ${m.d.toFixed(5)},
             ${m.e.toFixed(5)},
-            ${m.f.toFixed(5)})`;
+            ${m.f.toFixed(5)})`
             }
             else if (attr === 'd') {
                 r1[attr] = `path("${el?.getAttribute(attr)}")`
@@ -141,7 +149,6 @@ async function attrsToKfs(el: Element) {
         }
     })
     return r1
-    // } catch { console.log('Error on trying to get attr to kf on el:', el) }
 }
 
 function elHasNotAllowedAttrs(el: SvEl): boolean {
