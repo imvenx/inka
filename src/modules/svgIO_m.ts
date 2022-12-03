@@ -84,9 +84,7 @@ export async function cssStylesToSvgAttributes(_el: Element): Promise<Element> {
     if (d) {
         d = d.replace('path("', '').replace('")', '');
         el.setAttribute('d', d)
-
-        // el.style.d = ''
-
+        el.style.d = ''
     }
 
     return el
