@@ -13,7 +13,7 @@ import ListEl from './ListEl.vue';
 const cont = ref<HTMLDivElement>()
 
 onMounted(() => {
-  cont.value?.scrollTo({ top: ConfigM.editorScroll.y })
+  setTimeout(() => { cont.value?.scrollTo({ top: ConfigM.editorScroll.y }) }, 100);
   cont.value?.addEventListener("scroll", (e: Event) => {
     ConfigM.editorScroll.y = cont.value?.scrollTop ?? 0
   })

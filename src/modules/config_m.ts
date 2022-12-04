@@ -15,7 +15,7 @@ const _numDecimals = 10
 const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
 
 const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
-
+console.log(_editorScroll.value)
 const _inDebugMode = ref(true)
 
 // const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
@@ -30,7 +30,22 @@ export const ConfigM = {
 
     get editorScroll() { return _editorScroll.value },
     set editorScroll(v: Vector2) { _editorScroll.value = v },
-    initEditorScroll(cont: HTMLElement) { _initEditorScroll(cont) },
+    initEditorScroll(cont: HTMLElement) {
+        cont.scrollTo({ left: ConfigM.editorScroll.x })
+        setTimeout(() => {
+            cont.scrollTop = ConfigM.editorScroll.y
+                cont.addEventListener("scroll", () => {
+                    ConfigM.editorScroll.x = cont.scrollLeft ?? 0
+                    ConfigM.editorScroll.y = cont.scrollTop ?? 0
+                })
+            }, 100);
+                
+        watch(() => _editorScroll.value, (val) => {
+            cont?.scrollTo({ top: val.y })
+            cont?.scrollTo({ left: val.x })
+            StorageM.setEditorScroll(_editorScroll.value)
+        }, { deep: true })
+     },
 
 
 
@@ -68,17 +83,6 @@ export const ConfigM = {
 
 }
 
-function _initEditorScroll(cont: HTMLElement) {
-    cont.scrollTo({ top: ConfigM.editorScroll.y })
-    cont.scrollTo({ left: ConfigM.editorScroll.x })
-    cont.addEventListener("scroll", () => {
-        ConfigM.editorScroll.y = cont.scrollTop ?? 0
-        ConfigM.editorScroll.x = cont.scrollLeft ?? 0
-    })
-
-    watch(() => _editorScroll.value, (val) => {
-        cont?.scrollTo({ top: val.y })
-        cont?.scrollTo({ left: val.x })
-        StorageM.setEditorScroll(_editorScroll.value)
-    }, { deep: true })
-}
+// function _initEditorScroll(cont: HTMLElement) {
+  
+// }
