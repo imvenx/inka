@@ -1,23 +1,22 @@
 <template>
   <div ref="cont" id="els-list-cont">
-    <ListEl :el="svEl" />
+    <ListEl :el="SvElM.rootSvEl" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
-import { svEl } from 'src/modules/svel_m';
+import { SvElM } from 'src/modules/svel_m';
 import { onMounted, ref, watch } from 'vue'
 import ListEl from './ListEl.vue';
 
 const cont = ref<HTMLDivElement>()
 
 onMounted(() => {
-  cont.value?.scrollTo({ top: ConfigM.editorScroll.y })
+  setTimeout(() => { cont.value?.scrollTo({ top: ConfigM.editorScroll.y }) }, 100);
   cont.value?.addEventListener("scroll", (e: Event) => {
     ConfigM.editorScroll.y = cont.value?.scrollTop ?? 0
   })
-
 })
 
 watch(() => ConfigM.editorScroll.y, (val) => {

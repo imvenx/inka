@@ -1,6 +1,6 @@
 
-export const allowedEls = ['svg', 'rect', 'path', 'g', 'ellpise', 'circle', 'line', 'polygon',
+export const allowedEls = ['svg', 'rect', 'path', 'g', 'ellipse', 'circle', 'line', 'polygon',
     'text', 'tspan']
 export const allowedAttrs = ['fill', 'x', 'y', 'height', 'width', 'd', 'path', 'stroke',
-    'stroke-width', 'stroke-fill', 'transform', 'style']
+    'stroke-width', 'stroke-fill', 'style']
 

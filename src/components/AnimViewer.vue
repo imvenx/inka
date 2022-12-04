@@ -1,11 +1,11 @@
 <template>
-  <template v-if="svgString">
-    <div ref=cont id="cont" v-html="svgString">
+  <template v-if="SvElM.svgString">
+    <div ref=cont id="cont" v-html="SvElM.svgString">
     </div>
   </template>
 </template>
 <script lang="ts" setup>
-import { svgString } from 'src/modules/svel_m';
+import { SvElM } from 'src/modules/svel_m';
 import { onMounted, onUpdated, ref } from 'vue';
 
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
@@ -14,7 +14,7 @@ onUpdated(() => svgMaxSize())
 onMounted(() => svgMaxSize())
 
 function svgMaxSize() {
-  if (svgString?.value) {
+  if (SvElM.svgString) {
     let svgEl = cont?.value?.children[0] as HTMLElement
     if (!svgEl) return
     svgEl.style.width = '100%'

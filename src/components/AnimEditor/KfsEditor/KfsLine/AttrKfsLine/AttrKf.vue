@@ -3,7 +3,7 @@
         <g transform="rotate(45)">
             <rect class="attrKf" width="10" height="10" />
             <foreignObject width="10" height="10">
-                <div class="attrKfDiv" :title="kf.offset?.toString()"></div>
+                <div class="attrKfDiv" :title="JSON.stringify(title)"></div>
             </foreignObject>
         </g>
     </g>
@@ -12,6 +12,8 @@
 import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ kf: Keyframe }>()
+
+const title = Object.entries(props.kf)[1]
 
 // const kfPos = computed(() =>
 //     props.kf.offset! * ConfigM.zoomPx * ConfigM.numDecimals + timeSideOffsetPx)

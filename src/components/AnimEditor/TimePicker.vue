@@ -1,8 +1,11 @@
 <template>
-  <div ref="cont" id="timePickerCont" @wheel="onWheel" @mousemove="selectTime" @mousedown="selectTime">
+  <div ref="cont" id="timePickerCont" @mousedown="selectTime">
     <div id="offsetDiv"></div>&nbsp;
-    <div id="timePickerLine">&nbsp;</div>
-    <span v-for="deciSecond in Math.round(AnimM.duration * ConfigM.numDecimals)" class="timeStep"
+    <div id="timePickerLine" :style="`left: ${ConfigM.timePickerLinePos}px`">&nbsp;</div>
+    <span class="timeStep" :style="`left: ${timeSideOffsetPx}px`" style="z-index:999">
+      <div>0</div>
+    </span>
+    <span v-for="deciSecond in Math.round(AnimM.durationSeconds * ConfigM.numDecimals)" class="timeStep"
       :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
       <div>
         {{ deciSecond / ConfigM.numDecimals }}
@@ -15,31 +18,29 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';
 import { AnimM } from 'src/modules/anim_m'
-import { svEl } from 'src/modules/svel_m';
+import { SvElM } from 'src/modules/svel_m';
 import { ConfigM, timePickerWidth, timeSideOffsetPx } from 'src/modules/config_m';
 
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 
-const timePickerLinePos = ConfigM.timePickerLinePos
+// const timePickerLinePos = ConfigM.timePickerLinePos
 
-function onWheel(e: WheelEvent) { if (e.ctrlKey) { zoomTime(e); return } }
 
-const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDecimals
 
 const selectTime = async (e: MouseEvent) => {
   if (e.buttons !== 1) return
   let pickedTime = getPickedTime(e)
 
   if (pickedTime < 0) pickedTime = 0
-  if (pickedTime > AnimM.duration) pickedTime = AnimM.duration
-  await AnimM.selectTime(pickedTime, svEl.value)
+  if (pickedTime > AnimM.durationMiliseconds) pickedTime = AnimM.durationMiliseconds
+  await AnimM.selectTime(pickedTime, SvElM.rootSvEl)
 
   window.addEventListener('mousemove', selectTime, { once: true })
 }
 
-function getPickedTime(e: MouseEvent): number {
-  return (e.clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
-    - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
+function getPickedTime({ clientX }: MouseEvent): number {
+  return Math.round((clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
+    - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals * 1000)
 }
 
 onMounted(() => {
@@ -61,7 +62,7 @@ watch(() => ConfigM.editorScroll.x, (val) => {
   background-color: aquamarine;
   /* border: 1px solid lightblue; */
   width: .5rem;
-  left: v-bind(timePickerLinePos + 'px');
+  /* left: v-bind(timePickerLinePos + 'px'); */
   /* transform-origin: 0 0; */
   transform: translate(-50%);
 }

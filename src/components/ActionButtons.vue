@@ -48,15 +48,15 @@
           <!-- <input type="text" placeholder="projectName" value="ProjName" class="timeInput">
           <input type="text" placeholder="animName" value="AnimName" class="timeInput"> -->
           <input min="0.01" step="0.01" title="animation current time" type="number" class="timeInput"
-            @change="selectTime()" v-model="AnimM.currentTime">
+            @change="selectTime()" v-model="AnimM.currentTimeSeconds">
         </div>
         <div class="float-right">
-          <q-btn v-bind="btnAttrs" icon="task_alt" title="apply duration change" v-if="isDurationModified"
-            @click="applyModifyDuration" />
-          <q-btn v-bind="btnAttrs" icon="cancel" title="cancel duration change" v-if="isDurationModified"
-            @click="isDurationModified = false" />
+          <template v-if="isDurationModified">
+            <q-btn v-bind="btnAttrs" icon="task_alt" title="apply duration change" @click="applyModifyDuration()" />
+            <q-btn v-bind="btnAttrs" icon="cancel" title="cancel duration change" @click="isDurationModified = false" />
+          </template>
           <input ref="durationInput" min="0.1" step="0.1" title="animation duration" type="number" class="timeInput"
-            :value="AnimM.duration" @input="modifyDuration">
+            :value="AnimM.durationSeconds" @input="modifyDuration">
           <q-btn v-bind="btnAttrs" icon="settings" title="time settings">
             <q-menu dark>
               <q-list dense tag="label">
@@ -82,7 +82,7 @@
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="createKeyFrame(svEl)" title="keyframe"><b>◆</b></q-btn>
+      <q-btn v-bind="btnAttrs" @click="createKeyFrame(SvElM.rootSvEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
     <div style="position:absolute; display: flex; right:-.5em; ">
       <div id="windowButtons" v-bind="btnAttrs">
@@ -98,7 +98,6 @@
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
 import { AnimM } from 'src/modules/anim_m';
-import { svEl } from 'src/modules/svel_m';
 import { createKeyFrame } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
 import { useRouter } from 'vue-router';
@@ -106,6 +105,7 @@ import { ConfigM } from 'src/modules/config_m';
 import { ref } from 'vue';
 import { ProjectM } from 'src/modules/project_m';
 import { StorageM } from 'src/modules/storage_m';
+import { SvElM } from 'src/modules/svel_m';
 
 const router = useRouter()
 async function loadProject() {
@@ -116,18 +116,18 @@ async function loadProject() {
   }
 }
 
-function selectTime() { AnimM.selectTime(AnimM.currentTime, svEl.value) }
+function selectTime() { AnimM.selectTime(AnimM.currentTimeMiliseconds, SvElM.rootSvEl) }
 
 const refresh = () => location.reload()
 
 const isDurationModified = ref(false)
 function modifyDuration(e: any) {
-  isDurationModified.value = e.target.value != AnimM.duration
+  isDurationModified.value = e.target.value != AnimM.durationSeconds
 }
 const durationInput = ref<HTMLInputElement>()
-function applyModifyDuration(e: InputEvent) {
+function applyModifyDuration() {
   if (confirm('are you sure you want to change the duration? this could affect keyframes time')) {
-    AnimM.duration = durationInput.value!.value as any ?? AnimM.duration
+    AnimM.durationSeconds = durationInput.value!.value as any ?? AnimM.durationSeconds
   }
   isDurationModified.value = false
 }

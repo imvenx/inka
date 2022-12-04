@@ -3,6 +3,7 @@ export interface SvEl {
     children?: SvEl[]
     depth: number
     id: string
+    // isSelected: boolean
     isUncollapsed: boolean
     kfs: Keyframe[]
     // anims: Animation[]

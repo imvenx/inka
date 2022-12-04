@@ -39,10 +39,11 @@
             </q-list>
           </q-menu> -->
           <div :style="`width:${timePickerWidth}px; padding-bottom: ${timeSideOffsetPx}px`">
-            <KfsLine :el="svEl" />
+            <KfsLine :el="SvElM.rootSvEl" />
           </div>
-          <div id="timeLine" :style="`left:${timePickerLinePos}px; top:${ConfigM.editorScroll.y}px`">
-          </div>
+          <Timeline />
+          <!-- <div id="timeLine" :style="`left:${timePickerLinePos}px; top:${ConfigM.editorScroll.y}px`">
+          </div> -->
 
         </foreignObject>
         <!-- <g :transform="`translate(${timePickerLinePos})`"> -->
@@ -60,10 +61,11 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import KfsLine from './KfsLine/ElKfsLine/ElKfsLine.vue';
-import { svEl } from 'src/modules/svel_m';
 import { ConfigM, timeSideOffsetPx, timePickerWidth } from 'src/modules/config_m';
 import { KfsM } from 'src/modules/keyframe_m';
 import { QMenu } from 'quasar';
+import { SvElM } from 'src/modules/svel_m';
+import Timeline from './Timeline.vue';
 
 const foreignObjCont = ref<HTMLDivElement>()
 
@@ -93,7 +95,7 @@ onMounted(() => {
 //   // KfsM.showKfMenu = true
 // }
 
-const timePickerLinePos = ConfigM.timePickerLinePos
+// const timePickerLinePos = ConfigM.timePickerLinePos
 
 // function updateHeight() {
 //   const elsListCont = document.getElementById('els-list-cont')
@@ -157,13 +159,5 @@ const timePickerLinePos = ConfigM.timePickerLinePos
 
 #box_content {
   height: 100%;
-}
-
-#timeLine {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.37);
-  position: absolute;
-  height: 100%;
-  user-select: none;
-  pointer-events: none;
 }
 </style>

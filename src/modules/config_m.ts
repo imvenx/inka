@@ -1,25 +1,21 @@
 import { computed, ref, watch } from "vue"
 import { StorageM } from "./storage_m"
 import { Vector2 } from "../models/Vector2"
-import { svgIO } from "./svgIO_m"
-import { eapi } from "./eapi_m"
 import { AnimM } from "./anim_m"
-import { useRouter } from "vue-router"
-import { createProjectParams } from "app/public/sharedModels"
 
-export const timePickerWidth = computed(() => AnimM.duration * ConfigM.numDecimals * ConfigM.zoomPx
+export const timePickerWidth = computed(() => AnimM.durationSeconds * ConfigM.numDecimals * ConfigM.zoomPx
     + (timeSideOffsetPx * 2))
 
 export const timeSideOffsetPx = 10
 
 const _timePickerLinePos = computed<number>(() =>
-    (Math.round(AnimM.currentTime * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
+    (Math.round(AnimM.currentTimeSeconds * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
 
 const _numDecimals = 10
 const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
 
 const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
-
+console.log(_editorScroll.value)
 const _inDebugMode = ref(true)
 
 // const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
@@ -34,7 +30,22 @@ export const ConfigM = {
 
     get editorScroll() { return _editorScroll.value },
     set editorScroll(v: Vector2) { _editorScroll.value = v },
-    initEditorScroll(cont: HTMLElement) { _initEditorScroll(cont) },
+    initEditorScroll(cont: HTMLElement) {
+        cont.scrollTo({ left: ConfigM.editorScroll.x })
+        setTimeout(() => {
+            cont.scrollTop = ConfigM.editorScroll.y
+                cont.addEventListener("scroll", () => {
+                    ConfigM.editorScroll.x = cont.scrollLeft ?? 0
+                    ConfigM.editorScroll.y = cont.scrollTop ?? 0
+                })
+            }, 100);
+                
+        watch(() => _editorScroll.value, (val) => {
+            cont?.scrollTo({ top: val.y })
+            cont?.scrollTo({ left: val.x })
+            StorageM.setEditorScroll(_editorScroll.value)
+        }, { deep: true })
+     },
 
 
 
@@ -64,7 +75,7 @@ export const ConfigM = {
     get timePickerZoom() { return _timePickerZoom.value },
     set timePickerZoom(v: number) { _timePickerZoom.value = v },
 
-    get timePickerLinePos() { return _timePickerLinePos },
+    get timePickerLinePos() { return _timePickerLinePos.value },
     // set timePickerZoom(v: number) { _timePickerZoom.value = v },
 
     get zoomPx() { return _zoomPx.value },
@@ -72,17 +83,6 @@ export const ConfigM = {
 
 }
 
-function _initEditorScroll(cont: HTMLElement) {
-    cont.scrollTo({ top: ConfigM.editorScroll.y })
-    cont.scrollTo({ left: ConfigM.editorScroll.x })
-    cont.addEventListener("scroll", () => {
-        ConfigM.editorScroll.y = cont.scrollTop ?? 0
-        ConfigM.editorScroll.x = cont.scrollLeft ?? 0
-    })
-
-    watch(() => _editorScroll.value, (val) => {
-        cont?.scrollTo({ top: val.y })
-        cont?.scrollTo({ left: val.x })
-        StorageM.setEditorScroll(_editorScroll.value)
-    }, { deep: true })
-}
+// function _initEditorScroll(cont: HTMLElement) {
+  
+// }

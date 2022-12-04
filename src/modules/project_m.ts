@@ -2,7 +2,7 @@ import { createProjectParams, loadProjectParams, saveProjectParams } from "app/p
 import { AnimM, svgEl } from "./anim_m"
 import { eapi } from "./eapi_m"
 import { StorageM } from "./storage_m"
-import { svEl } from "./svel_m"
+import { SvElM } from "./svel_m"
 
 // let _hasUnsavedChanges = false
 
@@ -38,7 +38,7 @@ export const ProjectM = {
         StorageM.setCurrentFilePath(filePath)
     },
 
-    async getTempSvg() {
+    async getTempSvg(): Promise<string> {
         let tempSvg = await await eapi.getTempSvg()
         if (!tempSvg) {
             if (StorageM.getCurrentFilePath())
@@ -52,10 +52,10 @@ export const ProjectM = {
 
 async function getProjectToSave(): Promise<saveProjectParams> {
     const project = StorageM.getProject()
-    const lastTime = AnimM.currentTime
-    await AnimM.selectTime(0, svEl.value)
+    const lastTime = AnimM.currentTimeSeconds
+    await AnimM.selectTime(0, SvElM.rootSvEl)
     project.svgFile = svgEl()?.outerHTML
-    await AnimM.selectTime(lastTime, svEl.value)
+    await AnimM.selectTime(lastTime, SvElM.rootSvEl)
     return {
         data: project,
         filePath: StorageM.getCurrentFilePath(),

@@ -3,7 +3,7 @@
         <g transform="rotate(45)">
             <rect class="attrsKf" width="10" height="10" />
             <foreignObject width="10" height="10">
-                <div class="attrsKfDiv" :title="kf.offset?.toString()"></div>
+                <div class="attrsKfDiv" :title="JSON.stringify(kf)"></div>
             </foreignObject>
         </g>
     </g>
