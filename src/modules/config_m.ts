@@ -60,7 +60,7 @@ export const ConfigM = {
     get timePickerZoom() { return _timePickerZoom.value },
     set timePickerZoom(v: number) { _timePickerZoom.value = v },
 
-    get timePickerLinePos() { return _timePickerLinePos },
+    get timePickerLinePos() { return _timePickerLinePos.value },
     // set timePickerZoom(v: number) { _timePickerZoom.value = v },
 
     get zoomPx() { return _zoomPx.value },

@@ -11,7 +11,7 @@
 import { ConfigM } from 'src/modules/config_m';
 import { ref } from 'vue';
 import ElsList from './ElsList/ElsList.vue';
-import KfEditor from './KfsEditor/KfEditor.vue';
+import KfEditor from './KfsEditor/KfsEditor.vue';
 import TimePicker from './TimePicker.vue';
 
 const cont = ref<HTMLDivElement>()
