@@ -15,7 +15,7 @@ const _numDecimals = 10
 const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
 
 const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
-console.log(_editorScroll.value)
+
 const _inDebugMode = ref(true)
 
 // const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)

@@ -35,7 +35,6 @@ async function updateKfTimeLoop(e: MouseEvent) {
     if (e.buttons !== 1) return
     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
     await KfsM.updateKf(props.el, props.kf.offset!, getPickedTime(e) / AnimM.durationSeconds)
-    console.log(cont.scrollLeft)
 }
 
 const cont = document.getElementById('foreignObjCont') as Element
