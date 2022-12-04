@@ -2,6 +2,7 @@ import { allowedAttrs, allowedEls } from "src/modules/constants"
 import { SvEl, KeyVal } from "src/models/models"
 import { ref } from "vue"
 import { StorageM } from "./storage_m"
+import { watch } from "vue"
 
 export abstract class SvElM {
     private static _svgString = ref('')
@@ -18,32 +19,31 @@ export abstract class SvElM {
         svEl.children?.forEach(async (child) => await this.getSvElById(child, svEl.id))
     }
 
-    static async updateAttrs(svEl: SvEl, el: Element) {
-        svEl.attrs = SvElM.getAttrsArray(el)
-    }
+    // static async updateAttrs(svEl: SvEl, el: Element) {
+    //     svEl.attrs = SvElM.getAttrsArray(el)
+    // }
 
     static async getSvEls(el: Element): Promise<SvEl> {
         let _svEl: SvEl
         const uncollapsed = StorageM.getUncollapsed()
         const showAttrs = StorageM.getShowAttrs()
 
-        function getSvElsLoop(el: Element, i: number = 0): SvEl {
+        function getSvElsLoop(el: Element, depth: number = 0): SvEl {
 
             let children: SvEl[] = []
             Array.from(el.children)?.forEach(child =>
-                allowedEls.includes(child.tagName) ?
-                    children.push(getSvElsLoop(child, i + 1)) : '')
+                allowedEls.includes(child.tagName) ? children.push(getSvElsLoop(child, depth + 1)) : '')
 
             _svEl = {
                 attrs: SvElM.getAttrsArray(el),
                 children: children,
                 id: el.id,
-                // isSelected: true,
+                // isSelected: isSelected[el.id] ?? false,
                 isUncollapsed: uncollapsed[el.id],
                 showAttrs: showAttrs[el.id],
                 name: el.getAttribute('inkscape:label') ?? el.id,
                 tagName: el.tagName,
-                depth: i,
+                depth: depth,
                 kfs: StorageM.getKfs(el.id),
             }
             return _svEl
@@ -74,4 +74,4 @@ export abstract class SvElM {
         })
         return styles
     }
-} 
+}

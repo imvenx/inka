@@ -1,10 +1,7 @@
 <template>
   <div class="list-el" @click="toggleCollapse()" :title="outerHtml">
-    <!-- <input type="checkbox" v-model="el.isSelected" @click.stop style="vertical-align: middle; margin: 0 .3em;
-    opacity: .8;"> -->
     <span v-for="depth in el.depth">&nbsp;</span>
     <span>{{ el.isUncollapsed ? '▲' : '▼' }}</span>
-    <!-- {{props?.el.tagName}} -->
     <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
     {{ el.name }}
   </div>
