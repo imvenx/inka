@@ -82,7 +82,7 @@
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="createKeyFrame(SvElM.rootSvEl)" title="keyframe"><b>◆</b></q-btn>
+      <q-btn v-bind="btnAttrs" @click="KfsM.createKeyFrame(SvElM.rootSvEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
     <div style="position:absolute; display: flex; right:-.5em; ">
       <div id="windowButtons" v-bind="btnAttrs">
@@ -98,7 +98,7 @@
 <script lang="ts" setup>
 import { exportToSvg } from 'src/modules/export_m';
 import { AnimM } from 'src/modules/anim_m';
-import { createKeyFrame } from 'src/modules/keyframe_m';
+import { KfsM } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
 import { useRouter } from 'vue-router';
 import { ConfigM } from 'src/modules/config_m';

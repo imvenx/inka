@@ -12,7 +12,7 @@
 import { SvEl } from 'src/models/models';
 import { AnimM } from 'src/modules/anim_m';
 import { ConfigM } from 'src/modules/config_m';
-import { deleteKf, KfsM } from 'src/modules/keyframe_m';
+import { KfsM } from 'src/modules/keyframe_m';
 import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ el: SvEl, kf: Keyframe }>()
@@ -24,7 +24,7 @@ const props = defineProps<{ el: SvEl, kf: Keyframe }>()
 
 async function onMouseDown(e: MouseEvent) {
     if (e.buttons === 1) window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    if (e.buttons === 2) await deleteKf(props.el, props.kf.offset)
+    if (e.buttons === 2) await KfsM.deleteKf(props.el, props.kf.offset)
 }
 // async function updateKfTime(e: MouseEvent) {
 //     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })

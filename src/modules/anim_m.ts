@@ -3,8 +3,8 @@ import { SvEl } from "src/models/models";
 import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
 import { StorageM } from "./storage_m";
-import { updateKfs } from "./keyframe_m";
 import { SvElM } from "./svel_m";
+import { KfsM } from "./keyframe_m";
 
 export const svgEl = () => document.getElementById('svg5')
 export const svgElCont = svgEl()?.parentElement
@@ -185,7 +185,7 @@ function updateAnimDurationLoop(svEl: SvEl) {
             kf.offset! /= AnimM.durationSeconds / _oldDurationSeconds
             if (kf.offset! > 1) kf.offset = 1
         })
-        updateKfs(svEl.id, svEl.kfs)
+        KfsM.updateKfs(svEl.id, svEl.kfs)
     }
 
 
