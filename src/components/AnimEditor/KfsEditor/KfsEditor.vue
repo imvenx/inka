@@ -61,7 +61,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import KfsLine from './KfsLine/ElKfsLine/ElKfsLine.vue';
-import { ConfigM, timeSideOffsetPx, timePickerWidth } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 import { KfsM } from 'src/modules/keyframe_m';
 import { QMenu } from 'quasar';
 import { SvElM } from 'src/modules/svel_m';
@@ -71,6 +71,9 @@ const foreignObjCont = ref<HTMLDivElement>()
 
 // const showing = ref(false)
 // const kfsMenu = ref<QMenu>()
+
+const timeSideOffsetPx = ConfigM.timeSideOffsetPx
+const timePickerWidth = ConfigM.timePickerWidth
 
 onMounted(() => {
   if (foreignObjCont.value) ConfigM.initEditorScroll(foreignObjCont.value)

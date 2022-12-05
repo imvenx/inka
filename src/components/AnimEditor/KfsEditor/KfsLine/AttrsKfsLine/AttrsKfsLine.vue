@@ -7,11 +7,11 @@
 </template>
 
 <script lang="ts" setup>
-import { rowHeight } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 import AttrsKf from './AttrsKf.vue';
 
 const props = defineProps<{ kfs: Keyframe[] }>()
-
+const rowHeight = ConfigM.rowHeight
 </script>
 
 <style scoped>

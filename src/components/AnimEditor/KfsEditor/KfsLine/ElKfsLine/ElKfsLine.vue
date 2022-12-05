@@ -22,12 +22,13 @@
 <script lang="ts" setup>
 import { SvEl } from 'src/models/models';
 import ElKf from './ElKf.vue';
-import { rowHeight } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 import AttrsKfsLine from '../AttrsKfsLine/AttrsKfsLine.vue';
 import AttrKfsLine from '../AttrKfsLine/AttrKfsLine.vue';
 import { allowedAttrs } from 'src/modules/constants';
 
 defineProps<{ el: SvEl }>()
+const rowHeight = ConfigM.rowHeight
 
 function getAttrKfs(kfs: Keyframe[], attrName: string): Keyframe[] {
   return kfs.map(x => x = { offset: x.offset, [attrName]: x[attrName] })

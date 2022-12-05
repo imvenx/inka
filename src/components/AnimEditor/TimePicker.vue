@@ -19,12 +19,13 @@
 import { onMounted, ref, watch } from 'vue';
 import { AnimM } from 'src/modules/anim_m'
 import { SvElM } from 'src/modules/svel_m';
-import { ConfigM, timePickerWidth, timeSideOffsetPx } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 
 // const timePickerLinePos = ConfigM.timePickerLinePos
-
+const timeSideOffsetPx = ConfigM.timeSideOffsetPx
+const timePickerWidth = ConfigM.timePickerWidth
 
 
 const selectTime = async (e: MouseEvent) => {

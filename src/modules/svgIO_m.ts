@@ -65,7 +65,7 @@ export async function cssStylesToSvgAttributes(_el: Element): Promise<Element> {
     let width = el.style.width
     if (width) {
         if (el.tagName !== 'svg') el.setAttribute('width', width.replace('px', ''));
-        // el.style.width = ''
+        // el.style.-width = ''
     }
 
     let height = el.style.height

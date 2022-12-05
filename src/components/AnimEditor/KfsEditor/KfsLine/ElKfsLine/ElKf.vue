@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { SvEl } from 'src/models/models';
 import { AnimM } from 'src/modules/anim_m';
-import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 import { deleteKf, KfsM } from 'src/modules/keyframe_m';
 import { kfPos } from '../kf_shared';
 
@@ -40,7 +40,7 @@ async function updateKfTimeLoop(e: MouseEvent) {
 const cont = document.getElementById('foreignObjCont') as Element
 function getPickedTime(e: MouseEvent): number {
     return (e.clientX - cont.getBoundingClientRect().left + cont.scrollLeft
-        - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
+        - ConfigM.timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
 }
 
 </script>
