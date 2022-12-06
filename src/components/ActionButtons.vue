@@ -9,7 +9,7 @@
             <q-item clickable v-close-popup @click="loadProject()">Load</q-item>
             <q-item clickable v-close-popup @click="ProjectM.saveProject()">Save</q-item>
             <!-- <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item> -->
-            <q-item clickable v-close-popup @click="exportToSvg()">Export</q-item>
+            <q-item clickable v-close-popup @click="ExportM.exportToSvg()">Export</q-item>
             <q-item clickable v-close-popup @click="ProjectM.openProjectInInkscape()">Open in Inkscape</q-item>
             <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
             <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { exportToSvg } from 'src/modules/export_m';
+import { ExportM } from 'src/modules/export_m';
 import { AnimM } from 'src/modules/anim_m';
 import { KfsM } from 'src/modules/keyframe_m';
 import { eapi } from 'src/modules/eapi_m';
