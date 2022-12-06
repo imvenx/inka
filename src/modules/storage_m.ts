@@ -3,6 +3,11 @@ import { Vector2 } from "../models/Vector2";
 
 export abstract class StorageM {
 
+    static clearProject() {
+        LocalStorage.remove('p')
+        StorageM.setCurrentFilePath('')
+    }
+
     static getDuration = (): number => this.get('duration') ?? 1
     static setDuration = (v: number) => this.set('duration', v)
 
