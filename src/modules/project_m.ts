@@ -6,11 +6,11 @@ import { SvElM } from "./svel_m"
 
 // let _hasUnsavedChanges = false
 
-export const ProjectM = {
+export abstract class ProjectM {
     // get hasUnsavedChanges() { return _hasUnsavedChanges },
     // set hasUnsavedChanges(v: boolean) { _hasUnsavedChanges = v },
 
-    async createProject(params: createProjectParams): Promise<boolean> {
+    static async createProject(params: createProjectParams): Promise<boolean> {
         // if (!this.hasUnsavedChanges) {
         if (!confirm('There may be unsaved changes, do you still want to continue?'))
             return false
@@ -18,11 +18,11 @@ export const ProjectM = {
         const success = await eapi.createProject(params)
         if (success) StorageM.clearProject()
         return success
-    },
+    }
 
-    async openProjectInInkscape() { eapi.openProjectInInkscape() },
+    static async openProjectInInkscape() { eapi.openProjectInInkscape() }
 
-    async loadProject(p?: loadProjectParams): Promise<boolean> {
+    static async loadProject(p?: loadProjectParams): Promise<boolean> {
         if (!confirm('There may be unsaved changes, do you still want to continue?')) return false
 
         const { data, filePath } = await eapi.loadProject(p)
@@ -30,15 +30,15 @@ export const ProjectM = {
         StorageM.setProject(data)
         StorageM.setCurrentFilePath(filePath)
         return true
-    },
+    }
 
-    async saveProject() {
-        const filePath = await eapi.saveProject(await getProjectToSave())
+    static async saveProject() {
+        const filePath = await eapi.saveProject(await this.getProjectToSave())
         if (!filePath) return
         StorageM.setCurrentFilePath(filePath)
-    },
+    }
 
-    async getTempSvg(): Promise<string> {
+    static async getTempSvg(): Promise<string> {
         let tempSvg = await await eapi.getTempSvg()
         if (!tempSvg) {
             if (StorageM.getCurrentFilePath())
@@ -48,19 +48,21 @@ export const ProjectM = {
         tempSvg = await await eapi.getTempSvg()
         return tempSvg
     }
-}
 
-async function getProjectToSave(): Promise<saveProjectParams> {
-    const project = StorageM.getProject()
-    const lastTime = AnimM.currentTimeSeconds
-    await AnimM.selectTime(0, SvElM.rootSvEl)
-    project.svgFile = svgEl()?.outerHTML
-    await AnimM.selectTime(lastTime, SvElM.rootSvEl)
-    return {
-        data: project,
-        filePath: StorageM.getCurrentFilePath(),
+    private static async getProjectToSave(): Promise<saveProjectParams> {
+        const project = StorageM.getProject()
+        const lastTime = AnimM.currentTimeSeconds
+        await AnimM.selectTime(0, SvElM.rootSvEl)
+        project.svgFile = svgEl()?.outerHTML
+        await AnimM.selectTime(lastTime, SvElM.rootSvEl)
+        return {
+            data: project,
+            filePath: StorageM.getCurrentFilePath(),
+        }
     }
 }
+
+
 
 // async function isProjectUnsaved() {
 //     const a = await getProjectToSave()
