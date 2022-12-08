@@ -1,5 +1,5 @@
 <template>
-  <div class="list-el" @click="toggleCollapse()" :title="outerHtml">
+  <div class="list-el" @click="toggleCollapse()" ref="cont">
     <span v-for="depth in el.depth">&nbsp;</span>
     <span>{{ el.isUncollapsed ? '▲' : '▼' }}</span>
     <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
@@ -17,18 +17,17 @@
 
 <script lang="ts" setup>
 import { SvEl } from 'src/models/models';
-import { ConfigM } from 'src/modules/config_m';
 import { StorageM } from 'src/modules/storage_m';
 import { onMounted, ref } from 'vue';
 import ListAttr from './ListAttr.vue';
 
 const props = defineProps<{ el: SvEl }>()
 
-let outerHtml = ref<string>('')
-
+const cont = ref()
 onMounted(() => {
-  if (ConfigM.inDebugMode)
-    outerHtml.value = document.getElementById(props.el.id)?.outerHTML ?? ''
+  cont.value.addEventListener('mouseover', () => {
+    cont.value.title = document.getElementById(props.el.id)?.outerHTML
+  })
 })
 
 function getIcon(tagName: string) {
