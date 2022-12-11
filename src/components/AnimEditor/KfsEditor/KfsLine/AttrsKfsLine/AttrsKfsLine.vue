@@ -1,7 +1,7 @@
 <template>
   <div class="attrsKfsLineCont">
     <svg width="100%" :height="rowHeight">
-      <AttrsKf v-for="kf in kfs" :kf="kf" />
+      <AttrsKf v-for="kf in kfs" :kf="kf" :key="kf.offset!" />
     </svg>
   </div>
 </template>

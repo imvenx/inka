@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { kfPos } from '../kf_shared';
 
-const props = defineProps<{ kf: Keyframe }>()
+defineProps<{ kf: Keyframe }>()
 
 </script>
 

@@ -14,6 +14,9 @@
         <div class="list-el attr-child" :title='`[ ${attr.key} ] = [ ${attr.val} ]`'>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-for="d in el.depth">&nbsp;</span>
           <q-icon :name="getAttrIcon(attr.key)" />
+          <span v-if="attr.key === 'fill'" :style="`background: ${attr.val}`"
+            style="border:1px solid black; margin-left: 3px; font-size: .7em; vertical-align: middle;">
+            &nbsp;&nbsp;&nbsp;</span>
           {{ attr.val }}
         </div>
         <!-- </template> -->

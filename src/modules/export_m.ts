@@ -14,7 +14,9 @@ export abstract class ExportM {
         let animStr = this.getExportAnimString(SvElM.rootSvEl)
         let clone = _svgEl.cloneNode(true) as HTMLElement
         clone.innerHTML += `
-<style> ${animStr} </style>`
+<style> ${animStr}
+   
+</style>`
         await eapi.exportSvg(clone.outerHTML)
         await AnimM.selectTime(lastTime, SvElM.rootSvEl)
     }

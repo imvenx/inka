@@ -4,7 +4,7 @@
       <svg id="svgCont">
         <foreignObject ref="foreignObjCont" width="100%" height="100%" id="foreignObjCont">
           <div :style="`width:${timePickerWidth}px; padding-bottom: ${timeSideOffsetPx}px`">
-            <KfsLine :el="SvElM.rootSvEl" />
+            <KfsLine :el="SvElM.rootSvElRef.value" />
           </div>
           <Timeline />
         </foreignObject>
@@ -19,15 +19,10 @@
 import { onMounted, ref } from 'vue';
 import KfsLine from './KfsLine/ElKfsLine/ElKfsLine.vue';
 import { ConfigM } from 'src/modules/config_m';
-import { KfsM } from 'src/modules/keyframe_m';
-import { QMenu } from 'quasar';
 import { SvElM } from 'src/modules/svel_m';
 import Timeline from './Timeline.vue';
 
 const foreignObjCont = ref<HTMLDivElement>()
-
-// const showing = ref(false)
-// const kfsMenu = ref<QMenu>()
 
 const timeSideOffsetPx = ConfigM.timeSideOffsetPx
 const timePickerWidth = ConfigM.timePickerWidth

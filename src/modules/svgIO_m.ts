@@ -1,5 +1,4 @@
-import { AnimM, svgEl } from "./anim_m"
-import { allowedEls } from "./constants"
+import { svgEl } from "./anim_m"
 import { eapi } from "./eapi_m"
 import { ProjectM } from "./project_m"
 import { SvElM } from "./svel_m"
@@ -16,7 +15,7 @@ export abstract class svgIO {
         svgContainer.innerHTML = svgData
         let svg = svgContainer.children[0] as SVGElement
 
-        svg.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
+        // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
         const _svEl = await SvElM.getSvEls(svg)
         SvElM.svgString = svgData
@@ -28,12 +27,15 @@ export abstract class svgIO {
             const svg = svgEl()?.cloneNode(true) as Element
             if (!svg) return
 
-            let newFile = (await this.cssStylesToSvgAttributes(svg))?.outerHTML
-            await eapi.updateTempSvg({ data: newFile })
-            svg.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
+            // let newFile = (await cssvgParser.cssStylesToSvgAttributes(
+            //     svg.cloneNode(true) as Element))?.outerHTML
+
+            await eapi.updateTempSvg({ data: svg.outerHTML })
+            // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
             // console.log(svg.children[1].children[0].attributes.x)
             SvElM.rootSvEl = await SvElM.getSvEls(svg)
+            // cssvgParser.removeStyles(svg)
         }, 50)
 
     }
@@ -41,52 +43,5 @@ export abstract class svgIO {
     // TODO: use abortController on updateTempSvg on project handler instead of timeout on frontend
     static clearOutputTimeout() { clearTimeout(this.outputTimeout) }
 
-    private static async cssStylesToSvgAttributes(_el: Element): Promise<Element> {
-        // let el = _el as any
-        const el = document.getElementById(_el.id) as any
 
-        await Array.from(el.children)
-            .forEach(async (child) => await this.cssStylesToSvgAttributes(child as Element))
-
-        if (!allowedEls.includes(el.tagName)) return el
-
-        let x = el.style.x
-        if (x) {
-            el.setAttribute('x', x);
-            // el.style.x = ''
-        }
-
-        let y = el.style.y
-        if (y) {
-            el.setAttribute('y', y);
-            // el.style.y = ''
-        }
-
-        let width = el.style.width
-        if (width) {
-            if (el.tagName !== 'svg') el.setAttribute('width', width.replace('px', ''));
-            // el.style.-width = ''
-        }
-
-        let height = el.style.height
-        if (height) {
-            if (el.tagName !== 'svg') el.setAttribute('height', height.replace('px', ''));
-            // el.style.height = ''
-        }
-
-        let transform = el.style.transform
-        if (transform) {
-            el.setAttribute('transform', transform);
-            // el.style.transform = ''
-        }
-
-        let d = el.style.d
-        if (d) {
-            d = d.replace('path("', '').replace('")', '');
-            el.setAttribute('d', d)
-            el.style.d = ''
-        }
-
-        return el
-    }
 }

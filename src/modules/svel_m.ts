@@ -2,7 +2,7 @@ import { allowedAttrs, allowedEls } from "src/modules/constants"
 import { SvEl, KeyVal } from "src/models/models"
 import { ref } from "vue"
 import { StorageM } from "./storage_m"
-import { watch } from "vue"
+import { CsSvgParser } from "./csSvgParser"
 
 export abstract class SvElM {
     private static _svgString = ref('')
@@ -10,13 +10,32 @@ export abstract class SvElM {
     public static set svgString(value) { this._svgString.value = value }
 
     private static _rootSvEl = ref<SvEl>({} as SvEl)
+    // public static get rootSvElRef() { return this._rootSvEl }
+    public static get rootSvElRef() { return this._rootSvEl }
     public static get rootSvEl() { return this._rootSvEl.value }
     public static set rootSvEl(value) { this._rootSvEl.value = value }
 
     static async getSvElById(svEl: SvEl, id: string): Promise<SvEl | void> {
-        if (!allowedEls.includes(svEl.tagName)) return
-        if (svEl.id === id) return svEl
-        svEl.children?.forEach(async (child) => await this.getSvElById(child, svEl.id))
+        // if (!allowedEls.includes(svEl.tagName)) return
+        if (svEl.id == id) {
+            // console.log('asd')
+            return svEl
+        }
+        let result
+        for (let i = 0; result == null && i < svEl.children?.length!; i++)
+            // svEl.children?.forEach(
+            // async (child) => {
+            if (svEl.children && svEl.children.length > 0) {
+                const child = svEl.children[i]
+                if (child) result = await this.getSvElById(child, id)
+                if (result) return result
+            }
+
+        // if (res && res.id === id) {
+        //     console.log(svEl.id)
+        //     return res
+        // }
+        // })
     }
 
     // static async updateAttrs(svEl: SvEl, el: Element) {
@@ -35,7 +54,7 @@ export abstract class SvElM {
                 allowedEls.includes(child.tagName) ? children.push(getSvElsLoop(child, depth + 1)) : '')
 
             _svEl = {
-                attrs: SvElM.getAttrsArray(el),
+                attrs: CsSvgParser.getAttrs(el as SVGElement),
                 children: children,
                 id: el.id,
                 // isSelected: isSelected[el.id] ?? false,
@@ -49,29 +68,5 @@ export abstract class SvElM {
             return _svEl
         }
         return getSvElsLoop(el)
-    }
-
-    static getAttrsArray(el: Element): KeyVal[] {
-        const names = el.getAttributeNames()
-        let attrs: KeyVal[] = []
-        names.forEach(name => {
-            if (allowedAttrs.includes(name)) {
-                if (name === 'style') attrs = attrs.concat(this.separateStyleAttrs(el))
-                else attrs.push({ key: name, val: el.getAttribute(name) ?? '' })
-            }
-        })
-        return attrs
-    }
-    static separateStyleAttrs(el: Element): KeyVal[] {
-        const stylesStr = el.getAttribute('style')
-        const styles: KeyVal[] = []
-
-        let attrs = stylesStr?.split(';')
-        attrs?.pop()
-        attrs?.forEach(attr => {
-            const keyVal = attr.split(':')
-            styles.push({ key: keyVal[0], val: keyVal[1] })
-        })
-        return styles
     }
 }

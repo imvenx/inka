@@ -24,7 +24,7 @@ const props = defineProps<{ el: SvEl, kf: Keyframe }>()
 
 async function onMouseDown(e: MouseEvent) {
     if (e.buttons === 1) window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    if (e.buttons === 2) await KfsM.deleteKf(props.el, props.kf.offset)
+    if (e.buttons === 2) await KfsM.deleteKfs(props.el, props.kf.offset)
 }
 // async function updateKfTime(e: MouseEvent) {
 //     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })

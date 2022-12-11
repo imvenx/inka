@@ -5,6 +5,8 @@ import { svgIO } from "./svgIO_m";
 import { StorageM } from "./storage_m";
 import { SvElM } from "./svel_m";
 import { KfsM } from "./keyframe_m";
+import { CsSvgParser } from "./csSvgParser";
+import { roundToDecimals } from "./utils";
 
 export const svgEl = () => document.getElementById('svg5')
 // export const svgElCont = svgEl()?.parentElement
@@ -28,6 +30,10 @@ export abstract class AnimM {
     static get currentTimeMiliseconds() { return this._currentTimeSeconds.value * 1000 }
     static set currentTimeMiliseconds(v: number) {
         this._currentTimeSeconds.value = Math.round(v) / 1000
+    }
+
+    static get currentOffset(): number {
+        return roundToDecimals(3, this.currentTimeMiliseconds / this.durationMiliseconds)
     }
 
     static get durationSeconds() { return this._durationSeconds.value }
@@ -74,8 +80,12 @@ export abstract class AnimM {
         await this.refreshAnimLoop(svEl)
     }
 
-    static get recalculateKfsOnChangeDuration() { return this._recalculateKfsOnChangeDuration.value }
-    static set recalculateKfsOnChangeDuration(v: boolean) { this._recalculateKfsOnChangeDuration.value = v }
+    static get recalculateKfsOnChangeDuration() {
+        return this._recalculateKfsOnChangeDuration.value
+    }
+    static set recalculateKfsOnChangeDuration(v: boolean) {
+        this._recalculateKfsOnChangeDuration.value = v
+    }
 
     static async selectTime(miliseconds: number, svEl: SvEl) {
         this.stopRefreshCurrentTime()
@@ -132,10 +142,15 @@ export abstract class AnimM {
         if (!allowedEls.includes(svEl.tagName)) return
 
         const domEl = document.getElementById(svEl.id)
-        domEl?.getAnimations().forEach(anim => {
+        if (!domEl) return
+
+        domEl.getAnimations().forEach(anim => {
             anim.pause();
             anim.commitStyles();
-        })
+        });
+
+        CsSvgParser.updateAttrs(domEl)
+        // (domEl.style as any).x = ''
     }
 
     private static async refreshAnimLoop(svEl: SvEl) {
@@ -183,6 +198,7 @@ export abstract class AnimM {
         anim.pause()
         anim.commitStyles()
 
+        CsSvgParser.updateAttrs(domEl)
     }
 
     private static async updateAnimDurationLoop(svEl: SvEl) {
