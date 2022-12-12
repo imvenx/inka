@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { svgIO } from "./svgIO_m";
 import { StorageM } from "./storage_m";
 import { SvElM } from "./svel_m";
-import { KfsM } from "./keyframe_m";
+import { KfsM } from "./kfs_m";
 import { CsSvgParser } from "./csSvgParser";
 import { roundToDecimals } from "./utils";
 
@@ -78,6 +78,7 @@ export abstract class AnimM {
 
     static async refreshAnim(svEl: SvEl): Promise<void> {
         await this.refreshAnimLoop(svEl)
+        svgIO.output()
     }
 
     static get recalculateKfsOnChangeDuration() {
@@ -149,7 +150,7 @@ export abstract class AnimM {
             anim.commitStyles();
         });
 
-        CsSvgParser.updateAttrs(domEl)
+        await CsSvgParser.updateAttrs(domEl)
         // (domEl.style as any).x = ''
     }
 
@@ -158,19 +159,23 @@ export abstract class AnimM {
         if (!allowedEls.includes(svEl.tagName)) return
 
         const domEl = document.getElementById(svEl.id)
+        if (!domEl) return
+
         let anim = domEl?.getAnimations()[0]
-        const eff = (anim?.effect as KeyframeEffect)
-        if (eff && anim) {
-            eff.setKeyframes(svEl.kfs);
-            eff.updateTiming({ duration: this.durationMiliseconds })
-        }
-        else {
+        if (!anim) {
             anim = domEl?.animate(svEl.kfs, {
                 duration: this.durationMiliseconds,
                 iterations: Infinity,
             })
             anim?.pause()
+        } else {
+            const eff = (anim.effect as KeyframeEffect)
+            eff.setKeyframes(svEl.kfs);
+            eff.updateTiming({ duration: this.durationMiliseconds })
         }
+
+        anim.commitStyles()
+        await CsSvgParser.updateAttrs(domEl)
     }
 
     private static animTime = (a: Animation) => (a.currentTime! % this.durationMiliseconds)
@@ -198,7 +203,7 @@ export abstract class AnimM {
         anim.pause()
         anim.commitStyles()
 
-        CsSvgParser.updateAttrs(domEl)
+        await CsSvgParser.updateAttrs(domEl)
     }
 
     private static async updateAnimDurationLoop(svEl: SvEl) {

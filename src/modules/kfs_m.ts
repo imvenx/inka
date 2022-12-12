@@ -15,26 +15,29 @@ export abstract class KfsM {
     static get showKfMenu() { return this._showKfMenu.value }
     static set showKfMenu(v: boolean) { this._showKfMenu.value = v }
 
-    static async updateKf(el: SvEl, offset: number, newOffset: number) {
+    static async updateKf(svEl: SvEl, offset: number, newOffset: number) {
         if (offset === null || offset === undefined) {
             console.log('csSvg: error offset undefined')
             return
         }
 
-        el.children?.forEach(async (child) => await this.updateKf(child, offset, newOffset));
-        if (!allowedEls.includes(el.tagName)) return
+        svEl.children?.forEach(async (child) => await this.updateKf(child, offset, newOffset));
+        if (!allowedEls.includes(svEl.tagName)) return
 
-        const kfToEdit = el.kfs.find(x => x.offset === offset)
+        const kfToEdit = svEl.kfs.find(x => x.offset === offset)
         if (!kfToEdit) return
         if (newOffset < 0) newOffset = 0
         if (newOffset > 1) newOffset = 1
         kfToEdit.offset = roundToDecimals(3, newOffset)
+    }
 
-        window.addEventListener('mouseup', async () => {
-            el?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset);
-            StorageM.setKfs(el.id, el.kfs)
-            await AnimM.refreshAnim(el)
-        }, { once: true })
+    static async refreshAndSaveKfs(svEl: SvEl) {
+        svEl.children?.forEach(async (child) => await this.refreshAndSaveKfs(child));
+        if (!allowedEls.includes(svEl.tagName)) return
+
+        svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset);
+        StorageM.setKfs(svEl.id, svEl.kfs)
+        await AnimM.refreshAnim(svEl)
     }
 
     static async selectKf() {

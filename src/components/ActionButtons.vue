@@ -98,7 +98,7 @@
 <script lang="ts" setup>
 import { ExportM } from 'src/modules/export_m';
 import { AnimM } from 'src/modules/anim_m';
-import { KfsM } from 'src/modules/keyframe_m';
+import { KfsM } from 'src/modules/kfs_m';
 import { eapi } from 'src/modules/eapi_m';
 import { useRouter } from 'vue-router';
 import { ConfigM } from 'src/modules/config_m';

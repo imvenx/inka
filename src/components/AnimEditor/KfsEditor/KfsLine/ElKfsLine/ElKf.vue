@@ -12,10 +12,10 @@
 import { SvEl } from 'src/models/models';
 import { AnimM } from 'src/modules/anim_m';
 import { ConfigM } from 'src/modules/config_m';
-import { KfsM } from 'src/modules/keyframe_m';
+import { KfsM } from 'src/modules/kfs_m';
 import { kfPos } from '../kf_shared';
 
-const props = defineProps<{ el: SvEl, kf: Keyframe }>()
+const props = defineProps<{ svEl: SvEl, kf: Keyframe }>()
 
 // function selectKf() { }
 // async function showKfMenu() {
@@ -24,8 +24,14 @@ const props = defineProps<{ el: SvEl, kf: Keyframe }>()
 
 async function onMouseDown(e: MouseEvent) {
     if (e.buttons === 1) window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    if (e.buttons === 2) await KfsM.deleteKfs(props.el, props.kf.offset)
+    if (e.buttons === 2) await KfsM.deleteKfs(props.svEl, props.kf.offset)
+    refreshKfsOnMouseUp()
 }
+
+async function refreshKfsOnMouseUp() {
+    window.addEventListener('mouseup', async () => await KfsM.refreshAndSaveKfs(props.svEl))
+}
+
 // async function updateKfTime(e: MouseEvent) {
 //     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
 // }
@@ -34,7 +40,7 @@ async function onMouseDown(e: MouseEvent) {
 async function updateKfTimeLoop(e: MouseEvent) {
     if (e.buttons !== 1) return
     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    await KfsM.updateKf(props.el, props.kf.offset!, getPickedTime(e) / AnimM.durationSeconds)
+    await KfsM.updateKf(props.svEl, props.kf.offset!, getPickedTime(e) / AnimM.durationSeconds)
 }
 
 const cont = document.getElementById('foreignObjCont') as Element

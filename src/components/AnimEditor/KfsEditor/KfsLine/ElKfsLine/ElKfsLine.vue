@@ -1,7 +1,7 @@
 <template>
   <div class="elKfsLineCont">
     <svg width="100%" :height="rowHeight">
-      <ElKf v-for="kf in el.kfs" :el="el" :kf="kf" :key="kf.offset!" />
+      <ElKf v-for="kf in el.kfs" :sv-el="el" :kf="kf" :key="kf.offset!" />
     </svg>
   </div>
   <template v-if="el.isUncollapsed">

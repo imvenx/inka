@@ -18,7 +18,7 @@
     </g>
 </template>
 <script lang="ts" setup>
-import { KfsM } from 'src/modules/keyframe_m';
+import { KfsM } from 'src/modules/kfs_m';
 import { SvElM } from 'src/modules/svel_m';
 import { kfPos } from '../kf_shared';
 
