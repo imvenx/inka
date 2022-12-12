@@ -35,21 +35,9 @@ export abstract class KfsM {
         svEl.children?.forEach(async (child) => await this.refreshAndSaveKfs(child));
         if (!allowedEls.includes(svEl.tagName)) return
 
-        svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset);
+        svEl.kfs.sort((a: any, b: any) => a?.offset - b?.offset);
         StorageM.setKfs(svEl.id, svEl.kfs)
         await AnimM.refreshAnim(svEl)
-    }
-
-    static async selectKf() {
-
-    }
-
-    static async unselectKf() {
-
-    }
-
-    static async unselectAllKfs() {
-
     }
 
     static async createKeyFrame(svEl: SvEl): Promise<any> {
@@ -57,11 +45,11 @@ export abstract class KfsM {
         svEl.children?.forEach(async (child) => await this.createKeyFrame(child));
         if (!allowedEls.includes(svEl.tagName) || this.elHasNotAllowedAttrs(svEl)) return
 
-        let kf = svEl?.kfs?.find(x => x?.offset === AnimM.currentOffset)
+        let kf = svEl.kfs.find(x => x?.offset === AnimM.currentOffset)
         const kfs = await this.attrsToKfs(svEl)
         if (!kfs) return
         if (kf) svEl.kfs[svEl.kfs.indexOf(kf)] = kfs
-        else svEl?.kfs?.push(kfs)
+        else svEl.kfs.push(kfs)
 
         svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
         StorageM.setKfs(svEl.id, svEl.kfs)
