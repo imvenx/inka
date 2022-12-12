@@ -161,9 +161,9 @@ export abstract class AnimM {
         const domEl = document.getElementById(svEl.id)
         if (!domEl) return
 
-        let anim = domEl?.getAnimations()[0]
+        let anim = domEl.getAnimations()[0]
         if (!anim) {
-            anim = domEl?.animate(svEl.kfs, {
+            anim = domEl.animate(svEl.kfs, {
                 duration: this.durationMiliseconds,
                 iterations: Infinity,
             })

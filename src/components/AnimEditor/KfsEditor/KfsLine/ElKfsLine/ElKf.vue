@@ -24,13 +24,14 @@ async function onMouseDown(e: MouseEvent) {
 }
 
 async function refreshKfsOnMouseUp() {
-    window.addEventListener('mouseup', async () => await KfsM.refreshAndSaveKfs(props.svEl))
+    window.addEventListener('mouseup', async () => await KfsM.refreshAndSaveKfs(props.svEl),
+        { once: true })
 }
 
 async function updateKfTimeLoop(e: MouseEvent) {
     if (e.buttons !== 1) return
     window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    await KfsM.updateKf(props.svEl, props.kf.offset!, getPickedTime(e) / AnimM.durationSeconds)
+    await KfsM.updateKfOffset(props.svEl, props.kf.offset!, getPickedTime(e) / AnimM.durationSeconds)
 }
 
 const cont = document.getElementById('foreignObjCont') as Element

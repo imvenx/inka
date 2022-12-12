@@ -4,7 +4,7 @@ import { StorageM } from "./storage_m"
 import { AnimM } from "./anim_m"
 import { ref } from "vue"
 import { SvElM } from "./svel_m"
-import { roundToDecimals } from "./utils"
+import { performanceTest, roundToDecimals } from "./utils"
 
 
 export abstract class KfsM {
@@ -15,13 +15,13 @@ export abstract class KfsM {
     static get showKfMenu() { return this._showKfMenu.value }
     static set showKfMenu(v: boolean) { this._showKfMenu.value = v }
 
-    static async updateKf(svEl: SvEl, offset: number, newOffset: number) {
+    static async updateKfOffset(svEl: SvEl, offset: number, newOffset: number) {
         if (offset === null || offset === undefined) {
             console.log('csSvg: error offset undefined')
             return
         }
 
-        svEl.children?.forEach(async (child) => await this.updateKf(child, offset, newOffset));
+        svEl.children?.forEach(async (child) => await this.updateKfOffset(child, offset, newOffset));
         if (!allowedEls.includes(svEl.tagName)) return
 
         const kfToEdit = svEl.kfs.find(x => x.offset === offset)
@@ -31,13 +31,17 @@ export abstract class KfsM {
         kfToEdit.offset = roundToDecimals(3, newOffset)
     }
 
-    static async refreshAndSaveKfs(svEl: SvEl) {
-        svEl.children?.forEach(async (child) => await this.refreshAndSaveKfs(child));
-        if (!allowedEls.includes(svEl.tagName)) return
+    static async refreshAndSaveKfs(_svEl: SvEl) {
+        async function loop(svEl: SvEl) {
+            svEl.children?.forEach(async (child) => await loop(child));
+            if (!allowedEls.includes(svEl.tagName)) return
 
-        svEl.kfs.sort((a: any, b: any) => a?.offset - b?.offset);
-        StorageM.setKfs(svEl.id, svEl.kfs)
-        await AnimM.refreshAnim(svEl)
+            svEl.kfs.sort((a: any, b: any) => a?.offset - b?.offset);
+            StorageM.setKfs(svEl.id, svEl.kfs)
+        }
+
+        await loop(_svEl)
+        await AnimM.refreshAnim(_svEl)
     }
 
     static async createKeyFrame(svEl: SvEl): Promise<any> {
