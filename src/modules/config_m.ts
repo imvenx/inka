@@ -22,7 +22,7 @@ export abstract class ConfigM {
         this._rowHeight = value
     }
 
-    private static _timeSideOffsetPx = 10
+    private static _timeSideOffsetPx = 15
     public static get timeSideOffsetPx() {
         return ConfigM._timeSideOffsetPx
     }
