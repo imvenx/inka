@@ -1,6 +1,7 @@
-import { svgEl } from "./anim_m"
+import { AnimM, svgEl } from "./anim_m"
 import { eapi } from "./eapi_m"
 import { ProjectM } from "./project_m"
+import { StorageM } from "./storage_m"
 import { SvElM } from "./svel_m"
 
 
@@ -36,6 +37,7 @@ export abstract class svgIO {
             // console.log(svg.children[1].children[0].attributes.x)
             SvElM.rootSvEl = await SvElM.getSvEls(svg)
             // cssvgParser.removeStyles(svg)
+            StorageM.setCurrentTimeSeconds(AnimM.currentTimeSeconds)
         }, 50)
 
     }

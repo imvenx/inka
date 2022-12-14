@@ -13,7 +13,7 @@ export const svgEl = () => document.getElementById('svg5')
 
 export abstract class AnimM {
 
-    private static _currentTimeSeconds = ref(0)
+    private static _currentTimeSeconds = ref(StorageM.getCurrentTimeSeconds())
 
     private static _durationSeconds = ref(StorageM.getDuration())
     private static _oldDurationSeconds = this._durationSeconds.value
@@ -29,7 +29,7 @@ export abstract class AnimM {
 
     static get currentTimeMiliseconds() { return this._currentTimeSeconds.value * 1000 }
     static set currentTimeMiliseconds(v: number) {
-        this._currentTimeSeconds.value = Math.round(v) / 1000
+        this.currentTimeSeconds = Math.round(v) / 1000
     }
 
     static get currentOffset(): number {
@@ -142,7 +142,7 @@ export abstract class AnimM {
         svEl.children?.forEach(async (child: SvEl) => await this.pauseAnimLoop(child))
         if (!allowedEls.includes(svEl.tagName)) return
 
-        const domEl = document.getElementById(svEl.id)
+        const domEl = document.getElementById(svEl.id) as SVGAElement | null
         if (!domEl) return
 
         domEl.getAnimations().forEach(anim => {
@@ -158,7 +158,7 @@ export abstract class AnimM {
         svEl.children?.forEach(async (child) => await this.refreshAnimLoop(child))
         if (!allowedEls.includes(svEl.tagName)) return
 
-        const domEl = document.getElementById(svEl.id)
+        const domEl = document.getElementById(svEl.id) as SVGAElement | null
         if (!domEl) return
 
         let anim = domEl.getAnimations()[0]
@@ -189,7 +189,7 @@ export abstract class AnimM {
             await this.updateAnimCurrentFrameLoop(child))
         if (!allowedEls.includes(svEl.tagName)) return
 
-        const domEl = document.getElementById(svEl.id)
+        const domEl = document.getElementById(svEl.id) as SVGAElement | null
         if (!domEl) return
         let anim = domEl.getAnimations()[0]
 

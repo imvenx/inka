@@ -3,9 +3,28 @@ import { Vector2 } from "../models/Vector2";
 
 export abstract class StorageM {
 
+    private static get = (k: string): any => {
+        const r = LocalStorage.getItem<any>('p')
+        if (r) return r[k]; else return
+    }
+    private static set = (k: string, v: any) => {
+        const p: any = LocalStorage.getItem('p') ?? {}
+        p[k] = v
+        LocalStorage.set('p', p)
+    }
+
+    private static gGet = LocalStorage.getItem
+    private static gSet = LocalStorage.set
+
     static clearProject() {
         LocalStorage.remove('p')
         StorageM.setCurrentFilePath('')
+    }
+
+    static getCurrentTimeSeconds = (): number => this.get('currentTimeSeconds') ?? 0
+    static setCurrentTimeSeconds = (v: number) => {
+        this.set('currentTimeSeconds', v)
+        console.log('asd')
     }
 
     static getDuration = (): number => this.get('duration') ?? 1
@@ -45,18 +64,4 @@ export abstract class StorageM {
 
     static getZoomPxTimePicker = (): any => this.get('zoomPxTimePicker')
     static setZoomPxTimePicker = (v: any) => this.set('zoomPxTimePicker', v)
-
-
-    private static get = (k: string): any => {
-        const r = LocalStorage.getItem<any>('p')
-        if (r) return r[k]; else return
-    }
-    private static set = (k: string, v: any) => {
-        const p: any = LocalStorage.getItem('p') ?? {}
-        p[k] = v
-        LocalStorage.set('p', p)
-    }
-    private static gGet = LocalStorage.getItem
-    private static gSet = LocalStorage.set
-
 }
