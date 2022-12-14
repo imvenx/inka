@@ -18,9 +18,14 @@ export abstract class svgIO {
 
         // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
-        const _svEl = await SvElM.getSvEls(svg)
         SvElM.svgString = svgData
-        SvElM.rootSvEl = _svEl
+        // console.log(svgEl().getBBox())
+        // console.log(svg.getBBox())
+        // setTimeout(() => {
+
+        // }, 500);
+        // const _svEl = await SvElM.getSvEls(svg)
+        // SvElM.rootSvEl = _svEl
     }
     static async output(): Promise<void> {
         clearTimeout(this.outputTimeout)
@@ -31,11 +36,12 @@ export abstract class svgIO {
             // let newFile = (await cssvgParser.cssStylesToSvgAttributes(
             //     svg.cloneNode(true) as Element))?.outerHTML
 
-            await eapi.updateTempSvg({ data: svg.outerHTML })
+            ProjectM.updateTempSvg(svg.outerHTML)
+            // await eapi.updateTempSvg({ data: svg.outerHTML })
             // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
             // console.log(svg.children[1].children[0].attributes.x)
-            SvElM.rootSvEl = await SvElM.getSvEls(svg)
+            SvElM.rootSvEl = await SvElM.getSvEls(svgEl()!)
             // cssvgParser.removeStyles(svg)
             StorageM.setCurrentTimeSeconds(AnimM.currentTimeSeconds)
         }, 50)

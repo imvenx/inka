@@ -41,12 +41,16 @@ export abstract class ProjectM {
     static async getTempSvg(): Promise<string> {
         let tempSvg = await await eapi.getTempSvg()
         if (!tempSvg) {
-            if (StorageM.getCurrentFilePath())
-                await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
+            if (StorageM.getCurrentFilePath()) await this.updateTempSvg()
+            // await eapi.loadProject({ filePath: StorageM.getCurrentFilePath() })
             else await eapi.createProject({ doImportSvg: false })
         }
         tempSvg = await await eapi.getTempSvg()
         return tempSvg
+    }
+
+    static async updateTempSvg(svg: string | undefined = undefined) {
+        await eapi.updateTempSvg({ data: svg ?? svgEl()!.outerHTML })
     }
 
     private static async getProjectToSave(): Promise<saveProjectParams> {
