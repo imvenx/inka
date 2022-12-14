@@ -22,10 +22,7 @@ export abstract class StorageM {
     }
 
     static getCurrentTimeSeconds = (): number => this.get('currentTimeSeconds') ?? 0
-    static setCurrentTimeSeconds = (v: number) => {
-        this.set('currentTimeSeconds', v)
-        console.log('asd')
-    }
+    static setCurrentTimeSeconds = (v: number) => this.set('currentTimeSeconds', v)
 
     static getDuration = (): number => this.get('duration') ?? 1
     static setDuration = (v: number) => this.set('duration', v)
