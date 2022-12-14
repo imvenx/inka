@@ -122,19 +122,22 @@ export abstract class AnimM {
 
         // TODO: instead of access document.getById should be svgContainer.getById or smt else
         const domEl = document.getElementById(svEl.id)
-        let anim = domEl?.getAnimations()[0]
-        const eff = (anim?.effect as KeyframeEffect)
+        if (!domEl) return
 
-        if (eff && anim) {
+        let anim = domEl.getAnimations()[0]
+
+        if (anim) {
+            const eff = (anim.effect as KeyframeEffect)
             eff.setKeyframes(svEl.kfs);
             anim?.play()
             eff.updateTiming({ duration: this.durationMiliseconds })
         }
         else {
-            anim = domEl?.animate(svEl.kfs, {
+            anim = domEl.animate(svEl.kfs, {
                 duration: this.durationMiliseconds,
                 iterations: Infinity,
             })
+            anim.currentTime = this.currentTimeMiliseconds
         }
     }
 
