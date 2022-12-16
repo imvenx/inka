@@ -9,11 +9,16 @@ export abstract class SvElM {
     public static get svgString() { return this._svgString.value }
     public static set svgString(value) { this._svgString.value = value }
 
+    // public static lastSvEl = ref<SvEl>({} as SvEl)
+
     private static _rootSvEl = ref<SvEl>({} as SvEl)
     // public static get rootSvElRef() { return this._rootSvEl }
     public static get rootSvElRef() { return this._rootSvEl }
     public static get rootSvEl() { return this._rootSvEl.value }
-    public static set rootSvEl(value) { this._rootSvEl.value = value }
+    public static set rootSvEl(value) {
+        // this.lastSvEl.value = this.rootSvEl
+        this._rootSvEl.value = value
+    }
 
     static async getSvElById(svEl: SvEl, id: string): Promise<SvEl | void> {
         // if (!allowedEls.includes(svEl.tagName)) return
@@ -54,7 +59,7 @@ export abstract class SvElM {
                 allowedEls.includes(child.tagName) ? children.push(getSvElsLoop(child, depth + 1)) : '')
 
             _svEl = {
-                attrs: CsSvgParser.getAttrs(el as SVGElement),
+                attrs: CsSvgParser.getAttrsFromInkscapeToInka(el as SVGElement),
                 children: children,
                 id: el.id,
                 // isSelected: isSelected[el.id] ?? false,

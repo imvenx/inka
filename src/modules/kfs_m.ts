@@ -50,7 +50,11 @@ export abstract class KfsM {
         if (!allowedEls.includes(svEl.tagName) || this.elHasNotAllowedAttrs(svEl)) return
 
         let kf = svEl.kfs.find(x => x?.offset === AnimM.currentOffset)
-        const kfs = await this.attrsToKfs(svEl)
+        // const kfs = await this.attrsToKfs(svEl)
+        let kfs: any = {}
+        kfs.offset = AnimM.currentOffset
+        svEl.attrs.forEach(attr => kfs[attr.key] = attr.val)
+
         if (!kfs) return
         if (kf) svEl.kfs[svEl.kfs.indexOf(kf)] = kfs
         else svEl.kfs.push(kfs)
@@ -85,85 +89,72 @@ export abstract class KfsM {
             console.log('csSvg: error offset undefined'); return
         }
 
-        console.log(el, offset, kfToDeleteName)
         let index = el.kfs.indexOf(el.kfs.find(x => x.offset == offset)!)
         delete el.kfs[index][kfToDeleteName]
-        console.log(index)
-        //  kf[kfToDeleteName]
 
         StorageM.setKfs(el.id, el.kfs)
 
         await AnimM.refreshAnim(SvElM.rootSvEl)
     }
 
-    private static async attrsToKfs(svEl: SvEl) {
-        let kfs: any = {}
-        kfs.offset = AnimM.currentOffset
-        svEl.attrs.forEach(attr => kfs[attr.key] = attr.val)
-        return kfs
+    // private static async attrsToKfs(svEl: SvEl) {
+    //     let kfs: any = {}
+    //     kfs.offset = AnimM.currentOffset
+    //     svEl.attrs.forEach(attr => kfs[attr.key] = attr.val)
+    //     return kfs
 
-        // el?.getAttributeNames().forEach((attr: any) => {
-        //     if (allowedAttrs.includes(attr)) {
+    //     // el?.getAttributeNames().forEach((attr: any) => {
+    //     //     if (allowedAttrs.includes(attr)) {
 
-        // if (el.tagName === 'svg') { }
-        // else if (attr === 'x' || attr === 'y') {
-        //     const val = el?.getAttribute(attr)
-        //     if (val) {
-        //         if (!val?.includes('px')) r1[attr] = `${val}px`
-        //         else r1[attr] = val
-        //     }
-        // }
-        // else if (attr === 'width' || attr === 'height') {
-        //     const val = el?.getAttribute(attr)
-        //     if (val) r1[attr] = val + 'px'
-        // }
-        // else if (attr === 'style') {
-        //     const styles = el.getAttribute(attr)?.split(';')
-        //     styles?.forEach(styleStr => {
-        //         if (styleStr) {
-        //             const style = styleStr.replaceAll(' ', '').split(':')
-        //             if (allowedAttrs.includes(style[0])) r1[style[0]] = style[1];
-        //         }
-        //     })
-        // }
-        // else if (attr === 'transform') {
-        //     // console.log(el.getAttribute(attr))
-        //     // r1['transform-origin'] = 'center'
-        //     // transform-box: fill-box;
-        //     // transform-origin: center;
-        //     // r1[attr] = el.getAttribute(attr)?.replace(')', 'deg)')
+    //     // if (el.tagName === 'svg') { }
+    //     // else if (attr === 'x' || attr === 'y') {
+    //     //     const val = el?.getAttribute(attr)
+    //     //     if (val) {
+    //     //         if (!val?.includes('px')) r1[attr] = `${val}px`
+    //     //         else r1[attr] = val
+    //     //     }
+    //     // }
+    //     // else if (attr === 'width' || attr === 'height') {
+    //     //     const val = el?.getAttribute(attr)
+    //     //     if (val) r1[attr] = val + 'px'
+    //     // }
+    //     // else if (attr === 'style') {
+    //     //     const styles = el.getAttribute(attr)?.split(';')
+    //     //     styles?.forEach(styleStr => {
+    //     //         if (styleStr) {
+    //     //             const style = styleStr.replaceAll(' ', '').split(':')
+    //     //             if (allowedAttrs.includes(style[0])) r1[style[0]] = style[1];
+    //     //         }
+    //     //     })
+    //     // }
+    //     // else if (attr === 'transform') {
+    //     //     // console.log(el.getAttribute(attr))
+    //     //     // r1['transform-origin'] = 'center'
+    //     //     // transform-box: fill-box;
+    //     //     // transform-origin: center;
+    //     //     // r1[attr] = el.getAttribute(attr)?.replace(')', 'deg)')
 
-        //     // const m = (el as any).transform.baseVal.consolidate().matrix
-        //     // r1[attr] = `matrix(${m.a.toFixed(5)}, ${m.b.toFixed(5)}, ${m.c.toFixed(5)}, ${m.d.toFixed(5)}, ${m.e.toFixed(5)}, ${m.f.toFixed(5)})`
-        // }
-        //         else if (attr === 'd') {
-        //             r1[attr] = `path("${el?.getAttribute(attr)}")`
-        //         }
-        //         else if (attr.includes('sodipodi:')) { }
+    //     //     // const m = (el as any).transform.baseVal.consolidate().matrix
+    //     //     // r1[attr] = `matrix(${m.a.toFixed(5)}, ${m.b.toFixed(5)}, ${m.c.toFixed(5)}, ${m.d.toFixed(5)}, ${m.e.toFixed(5)}, ${m.f.toFixed(5)})`
+    //     // }
+    //     //         else if (attr === 'd') {
+    //     //             r1[attr] = `path("${el?.getAttribute(attr)}")`
+    //     //         }
+    //     //         else if (attr.includes('sodipodi:')) { }
 
-        //         // else if (attr === 'stdDeviation') console.log(attr)
-        //         else r1[attr] = el?.getAttribute(attr)
+    //     //         // else if (attr === 'stdDeviation') console.log(attr)
+    //     //         else r1[attr] = el?.getAttribute(attr)
 
-        //         // r1['offset'] = offset.value;
-        //         r1['offset'] = AnimM.currentTimeSeconds / AnimM.durationSeconds;
-        //     }
-        // })
-        // console.log('asd')
-        // return r1
-    }
+    //     //         // r1['offset'] = offset.value;
+    //     //         r1['offset'] = AnimM.currentTimeSeconds / AnimM.durationSeconds;
+    //     //     }
+    //     // })
+    //     // console.log('asd')
+    //     // return r1
+    // }
 
     private static elHasNotAllowedAttrs(el: SvEl): boolean {
         return el?.attrs.filter(v => allowedAttrs.includes(v.key)).length <= 0
     }
 
 }
-
-
-
-
-
-
-
-
-
-

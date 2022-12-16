@@ -20,4 +20,5 @@ export const allowedAttrs = [
     'width',
     'height',
     'transform',
+    'd'
 ]

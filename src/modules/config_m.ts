@@ -4,6 +4,7 @@ import { Vector2 } from "../models/Vector2"
 import { AnimM } from "./anim_m"
 
 export abstract class ConfigM {
+
     private static _timePickerLinePos = computed<number>(() =>
         (Math.round(AnimM.currentTimeSeconds * ConfigM.numDecimals * ConfigM.zoomPx + this.timeSideOffsetPx)))
 

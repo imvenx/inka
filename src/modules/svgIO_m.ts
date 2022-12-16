@@ -4,12 +4,10 @@ import { ProjectM } from "./project_m"
 import { StorageM } from "./storage_m"
 import { SvElM } from "./svel_m"
 
-
 export abstract class svgIO {
     private static outputTimeout = {} as any
 
     static async input(): Promise<void> {
-
         let svgData = await ProjectM.getTempSvg()
 
         const svgContainer = document.createElement('div')
@@ -17,7 +15,6 @@ export abstract class svgIO {
         let svg = svgContainer.children[0] as SVGElement
 
         // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
-
         SvElM.svgString = svgData
         // console.log(svgEl().getBBox())
         // console.log(svg.getBBox())

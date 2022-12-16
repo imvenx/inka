@@ -1,7 +1,9 @@
 import { L } from "app/dist/electron/UnPackaged/assets/index.8edcfc3a"
 import { KeyVal } from "src/models/models"
 import { svgEl } from "./anim_m"
-import { performanceTest } from "./utils"
+import { SvElM } from "./svel_m"
+import { svgIO } from "./svgIO_m"
+import { performanceTest, roundToDecimals } from "./utils"
 
 export abstract class CsSvgParser {
     // static async cssStylesToSvgAttributes(_el: Element): Promise<Element> {
@@ -92,103 +94,101 @@ export abstract class CsSvgParser {
      * so inkscape can render them properly, since inkscape only uses styles for some attributes
      * like fill, stroke etc, but not for x, y, width, etc
      */
-    static async updateAttrs(el: HTMLElement) {
+    static async updateAttrsFromInkaToInkscape(el: SVGElement): Promise<void> {
         let x = (el.style as any).x?.replace('px', '')
-        if (x) {
-            el.setAttribute('x', x)
-            // el.style.x = ''
-        }
+        if (x) el.setAttribute('x', x)
 
         let y = (el.style as any).y?.replace('px', '')
-        if (y) {
-            el.setAttribute('y', y)
-        }
-        // el.style.y = ''
+        if (y) el.setAttribute('y', y)
 
         let width = el.style.width?.replace('px', '')
-        let height = el.style.width?.replace('px', '')
-
+        let height = el.style.height?.replace('px', '')
 
         let transform = el.style.transform
-        if (transform) {
-            // el.setAttribute('transform', transform.replaceAll('px', '')
-            //     .replaceAll('deg', ''))
 
-            if (transform.includes('rotate')) {
-                // const baseVal: SVGTransform = (el as any).transform.baseVal[0]
-                // const m = baseVal.matrix
+        if (transform.includes('translate')) {
+            el.setAttribute('transform', transform.replaceAll('px', ''))
+        }
 
-                // const svgCR = svgEl()!.getBoundingClientRect()
-                // const cR = el.getBoundingClientRect()
-                // const bbox = (el as any).getBBox()
-                // const x = Math.round((bbox.width / 2))
-                // const y = Math.round((bbox.height / 2))
+        if (transform.includes('rotate')) {
+            const bbox = (el as SVGGraphicsElement).getBBox()
 
-                // if (m) {
-                // el.setAttribute('transform'
-                //     , `(${m.a.toFixed(5),
-                //     m.b.toFixed(5),
-                //     m.c.toFixed(5),
-                //     m.d.toFixed(5),
-                //     m.e.toFixed(5),
-                //     m.f.toFixed(5)})`
-                // )
-                // el.setAttribute('x', '100')
-                // el.setAttribute('y', '50')
-                const cRect = el.getBoundingClientRect()
-                const a = (cRect.width + cRect.left) / 2
-                const b = (cRect.height + cRect.top) / 2
+            const oX = bbox.x + bbox.width / 2
+            const oY = bbox.y + bbox.height / 2
 
-                const f = (parseInt(x) + a).toFixed(3)
-                const g = (parseInt(y) + b).toFixed(3)
-                console.log(x, y, a, b, f, g)
+            el.setAttribute('transform',
+                `rotate(${el.style.transform
+                    .replace('rotate(', '')
+                    .replace('deg)', '')
+                },${oX.toFixed(3)}, ${oY.toFixed(3)})`
+            )
 
-                el.setAttribute('transform',
-                    `rotate(${el.style.transform
-                        .replace('rotate(', '')
-                        .replace('deg)', '')
-                    })`
-                )
-                // }
-            }
-            // el.style.transformOrigin = 'unset'
-            // el.style.transformBox = 'fill-box'
+            // if (transform.includes('matrix')) {
+            //     const baseVal: SVGTransform = (el as any).transform.baseVal[0]
+            //     const m = baseVal.matrix
+
+            //     if (m) {
+            //         el.setAttribute('transform'
+            //             , `(${m.a.toFixed(5),
+            //             m.b.toFixed(5),
+            //             m.c.toFixed(5),
+            //             m.d.toFixed(5),
+            //             m.e.toFixed(5),
+            //             m.f.toFixed(5)})`
+            //         )
+            //     }
+            // }
         }
     }
 
     /**
      * Get attributes from inkscape svg format to a css friendly format
      */
-    static getAttrs(el: SVGElement): KeyVal[] {
-        // const names = el.getAttributeNames()
-        let attrs: KeyVal[] = []
+    static getAttrsFromInkscapeToInka(el: SVGElement): KeyVal[] {
 
         if (el.tagName === 'svg') return []
+
+        let attrs: KeyVal[] = []
+
+        // TODO: compare with last state, return if not modified, focus on hierarcy if modified
+        // const lastEl = await SvElM.getSvElById(SvElM.lastSvEl.value, el.id)
+        // console.log(lastEl);
+
+
         // if (el.tagName === 'g') return []
 
-        // if( el instanceof SVGGeometryElement){        }
-
         const x = (el.style as any).x || el.getAttribute('x')
+        const y = (el.style as any).y || el.getAttribute('y')
+        let width = el.style.width || el.getAttribute('width')
+        let height = el.style.height || el.getAttribute('height')
+
+        if (x && y && width && height) {
+            // const bbox = (el as SVGGraphicsElement).getBBox()
+
+            // const oX = parseInt(x) + parseInt(width) / 2
+            // const oY = parseInt(y) + parseInt(height) / 2
+
+            // const oX = bbox.x + bbox.width / 2
+            // const oY = bbox.y + bbox.height / 2
+            // console.log(oX, oY, bbox)
+        }
+
         if (x) {
             el.setAttribute('x', x)
             attrs.push({ key: 'x', val: x })
         }
 
-
-        const y = (el.style as any).y || el.getAttribute('y')
         if (y) {
             el.setAttribute('y', y)
             attrs.push({ key: 'y', val: y })
         }
 
-        let width = el.style.width || el.getAttribute('width')
         if (width) {
             width.includes('px') ? '' : width += 'px'
             el.setAttribute('width', width)
             attrs.push({ key: 'width', val: width })
         }
 
-        let height = el.style.height || el.getAttribute('height')
         if (height) {
             height.includes('px') ? '' : height += 'px'
             el.setAttribute('height', height)
@@ -203,29 +203,42 @@ export abstract class CsSvgParser {
 
         // const transform = el.transform.baseVal[0]
         const transform = el.getAttribute('transform')
-        if (transform) {
+        if (!transform) {
+            if (el.tagName === 'g') {
+                attrs.push({ key: 'transform', val: 'rotate(0)' })
+            }
+        }
+        else {
             const baseVal: SVGTransform = (el as any).transform.baseVal[0]
-            // console.log(baseVal)
-            // const m = baseVal.matrix
-            // console.log(baseVal)
-            // if (m) {
-            // if (transform.includes('translate')) {
-            //     attrs.push({
-            //         key: 'transform',
-            //         val: `translate(${m.e}px, ${m.f}px)`
-            //     })
-            // }
+            const m = baseVal.matrix
 
-            if (baseVal && transform.includes('rotate')) {
-                // console.log((transform));
-
+            if (transform.includes('translate')) {
                 attrs.push({
                     key: 'transform',
-                    val: `rotate(${Math.round(baseVal.angle)}deg)`
+                    val: `translate(${m.e.toFixed(0) ?? 0}px, ${m.f.toFixed(0) ?? 0}px)`
                 })
             }
+
+            else if (transform.includes('rotate')) {
+                attrs.push({
+                    key: 'transform',
+                    val: `rotate(${roundToDecimals(1, baseVal.angle)}deg)`
+                })
+            }
+
+            // else if (baseVal && transform.includes('matrix')) {
+            //     const matrix =
+            //         `matrix(${m.a.toFixed(5)},
+            //         ${m.b.toFixed(5)},
+            //         ${m.c.toFixed(5)},
+            //         ${m.d.toFixed(5)},
+            //         ${m.e.toFixed(5)},
+            //         ${m.f.toFixed(5)})`
+            //     attrs.push({
+            //         key: 'transform',
+            //         val: matrix
+            //     })
             // }
-            // attrs.push({ key: 'transform', val: transform })
         }
 
         // names.forEach(name => {
