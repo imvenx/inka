@@ -13,6 +13,18 @@ export const svgEl = () => document.getElementById('svg5')
 
 export abstract class AnimM {
 
+    public static transformOrigin = ref('center')
+    public static transformBox = ref('fill-box')
+
+    public static transformOriginCenterAnimViewer() {
+        this.transformOrigin.value = 'center'
+        this.transformBox.value = 'fill-box'
+    }
+    public static transformOriginRevertAnimViewer() {
+        this.transformOrigin.value = '0 0'
+        this.transformBox.value = 'content-box'
+    }
+
     private static _currentTimeSeconds = ref(StorageM.getCurrentTimeSeconds())
 
     private static _durationSeconds = ref(StorageM.getDuration())
@@ -60,6 +72,8 @@ export abstract class AnimM {
     }
 
     static async playAnim(svEl: SvEl): Promise<void> {
+        this.transformOriginCenterAnimViewer()
+
         svgIO.clearOutputTimeout()
         this.isPlayingAnim = true
         await this.playAnimLoop(svEl)
@@ -89,6 +103,8 @@ export abstract class AnimM {
     }
 
     static async selectTime(miliseconds: number, svEl: SvEl) {
+        this.transformOriginCenterAnimViewer()
+
         this.stopRefreshCurrentTime()
         this.isPlayingAnim = false
         this.currentTimeMiliseconds = miliseconds
@@ -120,8 +136,10 @@ export abstract class AnimM {
         svEl.children?.forEach(async (child) => await this.playAnimLoop(child))
         if (!allowedEls.includes(svEl.tagName)) return
 
+
         // TODO: instead of access document.getById should be svgContainer.getById or smt else
-        const domEl = document.getElementById(svEl.id)
+        const domEl = document.getElementById(svEl.id) as HTMLElement
+
         if (!domEl) return
 
         let anim = domEl.getAnimations()[0]
@@ -153,7 +171,7 @@ export abstract class AnimM {
             anim.commitStyles();
         });
 
-        await CsSvgParser.updateAttrs(domEl)
+        await CsSvgParser.updateAttrsFromInkaToInkscape(domEl)
         // (domEl.style as any).x = ''
     }
 
@@ -178,7 +196,7 @@ export abstract class AnimM {
         }
 
         anim.commitStyles()
-        await CsSvgParser.updateAttrs(domEl)
+        await CsSvgParser.updateAttrsFromInkaToInkscape(domEl)
     }
 
     private static animTime = (a: Animation) => (a.currentTime! % this.durationMiliseconds)
@@ -206,7 +224,7 @@ export abstract class AnimM {
         anim.pause()
         anim.commitStyles()
 
-        await CsSvgParser.updateAttrs(domEl)
+        await CsSvgParser.updateAttrsFromInkaToInkscape(domEl)
     }
 
     private static async updateAnimDurationLoop(svEl: SvEl) {
