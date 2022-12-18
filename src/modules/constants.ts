@@ -13,12 +13,23 @@ export const allowedEls = [
 ]
 
 export const allowedAttrs = [
-    'style',
-    'fill',
     'x',
     'y',
     'width',
     'height',
+
+    'rx',
+    'ry',
+
     'transform',
-    'd'
+
+    'd',
+    'path',
+
+    'style',
+    'fill',
+    'stroke',
+    'strokeWidth',
+    'strokeDasharray',
+    'strokeLinecap',
 ]

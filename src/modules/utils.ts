@@ -13,3 +13,9 @@ export const performanceTest = {
     }
 
 }
+
+/**
+ convert string to kebab-case
+ */
+// @ts-ignore
+export const kebabize = (str) => str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, ($, ofs) => (ofs ? "-" : "") + $.toLowerCase())

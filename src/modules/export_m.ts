@@ -3,6 +3,7 @@ import { SvEl } from "src/models/models"
 import { AnimM, svgEl } from "./anim_m"
 import { eapi } from "./eapi_m"
 import { SvElM } from "./svel_m"
+import { kebabize } from "./utils"
 
 export abstract class ExportM {
     static async exportToSvg(): Promise<void> {
@@ -16,6 +17,10 @@ export abstract class ExportM {
         clone.innerHTML += `
 <style> ${animStr}
    
+#svg5 *{
+    transform-box: fill-box;
+    transform-origin: center;
+}
 </style>`
         await eapi.exportSvg(clone.outerHTML)
         await AnimM.selectTime(lastTime, SvElM.rootSvEl)
@@ -43,7 +48,7 @@ export abstract class ExportM {
                 el.attrs?.forEach(attr => {
                     if (allowedAttrs.includes(attr.key) && kf[attr.key]) {
                         kfsStr += `
-            ${attr.key}: ${kf[attr.key]};`
+            ${kebabize(attr.key)}: ${kf[attr.key]};`
                     }
                 })
                 kfsStr += `
