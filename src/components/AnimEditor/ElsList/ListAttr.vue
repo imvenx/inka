@@ -48,7 +48,7 @@ function getAttrIcon(attrName: string) {
     case 'x': return 'east'
     case 'y': return 'south'
     case 'stroke': return 'border_color'
-    case 'stroke-width': return 'highlight_alt'
+    case 'strokeWidth': return 'highlight_alt'
     case 'd': return 'gesture'
     default: return 'help'
   }
