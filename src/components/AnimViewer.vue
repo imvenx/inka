@@ -7,27 +7,26 @@
 <script lang="ts" setup>
 import { AnimM, svgEl } from 'src/modules/anim_m';
 import { SvElM } from 'src/modules/svel_m';
-import { onMounted, onUpdated, ref, watch } from 'vue';
+import { onMounted, onUpdated, ref } from 'vue';
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 
-const transformBox = AnimM.transformBox
-const transformOrigin = AnimM.transformOrigin
+// const transformBox = AnimM.transformBox
+// const transformOrigin = AnimM.transformOrigin
 
 onMounted(async () => {
   await svgMaxSize()
-  setTimeout(() => AnimM.transformOriginCenterAnimViewer(), 100);
+  // setTimeout(() => AnimM.transformOriginCenterAnimViewer(), 100);
 })
 
 onUpdated(async () => {
   await svgMaxSize()
-  AnimM.transformOriginRevertAnimViewer()
+  // AnimM.transformOriginRevertAnimViewer()
 })
 
 window.addEventListener('resize', async () => await svgMaxSize())
 
-const width = ref('auto')
-const height = ref('100%')
-
+// const width = ref('auto')
+// const height = ref('100%')
 
 async function svgMaxSize() {
   if (SvElM.svgString) {
@@ -73,9 +72,9 @@ async function svgMaxSize() {
 
 <style>
 #animViewerCont * {
-  transform-box: v-bind(transformBox);
-  transform-origin: v-bind(transformOrigin);
-  /* transform-box: content-box;
-  transform-origin: 0 0; */
+  /* transform-box: v-bind(transformBox);
+  transform-origin: v-bind(transformOrigin); */
+  transform-box: fill-box;
+  transform-origin: center;
 }
 </style>
