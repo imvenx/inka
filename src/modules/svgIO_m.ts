@@ -1,5 +1,4 @@
 import { AnimM, svgEl } from "./anim_m"
-import { eapi } from "./eapi_m"
 import { ProjectM } from "./project_m"
 import { StorageM } from "./storage_m"
 import { SvElM } from "./svel_m"
@@ -12,17 +11,12 @@ export abstract class svgIO {
 
         const svgContainer = document.createElement('div')
         svgContainer.innerHTML = svgData
-        let svg = svgContainer.children[0] as SVGElement
 
-        // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
         SvElM.svgString = svgData
-        // console.log(svgEl().getBBox())
-        // console.log(svg.getBBox())
         // setTimeout(() => {
-
-        // }, 500);
-        // const _svEl = await SvElM.getSvEls(svg)
-        // SvElM.rootSvEl = _svEl
+        // TODO: Check if this solved the bug that would reset project
+        // document.getElementsByTagName('sodipodi:namedview')?.[0]?.remove()
+        // }, 100);
     }
     static async output(): Promise<void> {
         clearTimeout(this.outputTimeout)
@@ -30,16 +24,9 @@ export abstract class svgIO {
             const svg = svgEl()?.cloneNode(true) as Element
             if (!svg) return
 
-            // let newFile = (await cssvgParser.cssStylesToSvgAttributes(
-            //     svg.cloneNode(true) as Element))?.outerHTML
-
             ProjectM.updateTempSvg(svg.outerHTML)
-            // await eapi.updateTempSvg({ data: svg.outerHTML })
-            // svg?.removeChild(svg.getElementsByTagName('sodipodi:namedview')[0])
 
-            // console.log(svg.children[1].children[0].attributes.x)
             SvElM.rootSvEl = await SvElM.getSvEls(svgEl()!)
-            // cssvgParser.removeStyles(svg)
             StorageM.setCurrentTimeSeconds(AnimM.currentTimeSeconds)
         }, 50)
 
@@ -47,6 +34,5 @@ export abstract class svgIO {
 
     // TODO: use abortController on updateTempSvg on project handler instead of timeout on frontend
     static clearOutputTimeout() { clearTimeout(this.outputTimeout) }
-
 
 }

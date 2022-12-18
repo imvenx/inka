@@ -13,17 +13,17 @@ export const svgEl = () => document.getElementById('svg5')
 
 export abstract class AnimM {
 
-    public static transformOrigin = ref('center')
-    public static transformBox = ref('fill-box')
+    // public static transformOrigin = ref('center')
+    // public static transformBox = ref('fill-box')
 
-    public static transformOriginCenterAnimViewer() {
-        this.transformOrigin.value = 'center'
-        this.transformBox.value = 'fill-box'
-    }
-    public static transformOriginRevertAnimViewer() {
-        this.transformOrigin.value = '0 0'
-        this.transformBox.value = 'content-box'
-    }
+    // public static transformOriginCenterAnimViewer() {
+    //     this.transformOrigin.value = 'center'
+    //     this.transformBox.value = 'fill-box'
+    // }
+    // public static transformOriginRevertAnimViewer() {
+    //     this.transformOrigin.value = '0 0'
+    //     this.transformBox.value = 'content-box'
+    // }
 
     private static _currentTimeSeconds = ref(StorageM.getCurrentTimeSeconds())
 
@@ -72,7 +72,7 @@ export abstract class AnimM {
     }
 
     static async playAnim(svEl: SvEl): Promise<void> {
-        this.transformOriginCenterAnimViewer()
+        // this.transformOriginCenterAnimViewer()
 
         svgIO.clearOutputTimeout()
         this.isPlayingAnim = true
@@ -103,7 +103,7 @@ export abstract class AnimM {
     }
 
     static async selectTime(miliseconds: number, svEl: SvEl) {
-        this.transformOriginCenterAnimViewer()
+        // this.transformOriginCenterAnimViewer()
 
         this.stopRefreshCurrentTime()
         this.isPlayingAnim = false
