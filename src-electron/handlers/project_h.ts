@@ -5,7 +5,7 @@ import { promises as p, unwatchFile, watchFile } from "fs"
 import { tmpdir } from "os"
 import { mainWindow } from "../electron-main"
 
-const appPrefix = 'cssvg';
+const appPrefix = 'inka';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
 const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
 
@@ -70,7 +70,7 @@ export const projectH = {
     if (!data.svgFile) return ''
 
     filePath = filePath.replace('.json', '')
-    await p.writeFile(`${filePath}.json`, JSON.stringify(data), { encoding: 'utf-8' })
+    await p.writeFile(`${filePath}_inka.json`, JSON.stringify(data), { encoding: 'utf-8' })
     return filePath
   },
   async getTempSvg(): Promise<string> {
