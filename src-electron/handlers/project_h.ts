@@ -104,7 +104,7 @@ export const projectH = {
         properties: ['showOverwriteConfirmation'],
         title: 'Export path',
         filters: [
-          { name: 'json', extensions: ['json'] },
+          { name: 'svg', extensions: ['svg'] },
         ]
       })
       if (!exportPath) return
