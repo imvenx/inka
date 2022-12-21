@@ -66,18 +66,10 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('getTempSvg', ({ }) => projectH.getTempSvg())
   ipcMain.handle('updateTempSvg', ({ }, p) => projectH.updateTempSvg(p))
-  // ipcMain.handle('getSvg', ({ }, fp) => getSvg(fp))
-  // ipcMain.handle('updateFile', ({ }, newFile: string) => updateFile(newFile))
-  // ipcMain.handle('updateFilePath', ({ }, path: string) => updateFilePath(path))
   ipcMain.handle('exportSvg', ({ }, fileStr: string) => projectH.exportSvg(fileStr))
   ipcMain.handle('openProjectInInkscape', () => projectH.openProjectInInkscape())
   ipcMain.handle('closeApp', () => closeApp())
-  // ipcMain.handle('writeProject', ({ }, folder: string, fileName: string, data: string) => writeProject(folder, fileName, data))
-
-  // filePath = (await dialog.showOpenDialog({ properties: ['openFile'] })).filePaths[0]
   mainWindow?.webContents.send('updatedSvg')
-
-  // createDirectoryIfDontExist(projectsFolderPath)
 });
 
 

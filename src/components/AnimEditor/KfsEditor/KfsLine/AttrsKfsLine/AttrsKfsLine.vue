@@ -1,17 +1,17 @@
 <template>
   <div class="attrsKfsLineCont">
     <svg width="100%" :height="rowHeight">
-      <AttrsKf v-for="kf in kfs" :kf="kf" />
+      <AttrsKf v-for="kf in kfs" :kf="kf" :key="kf.offset!" />
     </svg>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { rowHeight } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 import AttrsKf from './AttrsKf.vue';
 
 const props = defineProps<{ kfs: Keyframe[] }>()
-
+const rowHeight = ConfigM.rowHeight
 </script>
 
 <style scoped>

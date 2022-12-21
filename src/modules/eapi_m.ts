@@ -13,7 +13,9 @@ export const eapi = {
     loadProject: async (p?: loadProjectParams): Promise<loadProjectResult> => _eapi.loadProject(p),
     saveProject: async (p: saveProjectParams) => _eapi.saveProject(p),
     exportSvg: async (svgStr: string) => _eapi.exportSvg(svgStr),
+
     updatedSvg: async (cb: any) => _eapi.updatedSvg(cb),
+
     updateTempSvg: async (p: updateTempSvgParams) => _eapi.updateTempSvg(p),
     closeApp: async () => _eapi.closeApp(),
     // writeProject: async (folder: string, fileName: string, data: string) => await _eapi.writeProject(folder, fileName, data),

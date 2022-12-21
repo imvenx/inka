@@ -1,10 +1,26 @@
 <template>
-    <div id="timeLine" :style="`left:${ConfigM.timePickerLinePos}px; top:${ConfigM.editorScroll.y}px`">
+    <div id="timeLine" :style="`left:${ConfigM.timePickerLinePos}px; top:${top}px`">
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ConfigM } from 'src/modules/config_m';
+import { onMounted, ref } from 'vue';
+
+const top = ref(0)
+
+onMounted(() => {
+    const cont = document.getElementById('foreignObjCont')
+    if (!cont) {
+        alert('no cont!')
+        return
+    }
+    top.value = cont.scrollTop ?? 0
+    cont.addEventListener('scroll', () => {
+        top.value = cont.scrollTop
+    })
+})
+
 </script>
 
 <style scoped>

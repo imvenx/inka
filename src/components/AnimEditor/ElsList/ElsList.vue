@@ -5,12 +5,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ConfigM, timeSideOffsetPx } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m'
 import { SvElM } from 'src/modules/svel_m';
 import { onMounted, ref, watch } from 'vue'
-import ListEl from './ListEl.vue';
+import ListEl from './ListEl.vue'
 
 const cont = ref<HTMLDivElement>()
+const timeSideOffsetPx = ConfigM.timeSideOffsetPx
 
 onMounted(() => {
   setTimeout(() => { cont.value?.scrollTo({ top: ConfigM.editorScroll.y }) }, 100);

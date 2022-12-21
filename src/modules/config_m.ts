@@ -3,49 +3,63 @@ import { StorageM } from "./storage_m"
 import { Vector2 } from "../models/Vector2"
 import { AnimM } from "./anim_m"
 
-export const timePickerWidth = computed(() => AnimM.durationSeconds * ConfigM.numDecimals * ConfigM.zoomPx
-    + (timeSideOffsetPx * 2))
+export abstract class ConfigM {
 
-export const timeSideOffsetPx = 10
+    private static _timePickerLinePos = computed<number>(() =>
+        (Math.round(AnimM.currentTimeSeconds * ConfigM.numDecimals * ConfigM.zoomPx + this.timeSideOffsetPx)))
 
-const _timePickerLinePos = computed<number>(() =>
-    (Math.round(AnimM.currentTimeSeconds * ConfigM.numDecimals * ConfigM.zoomPx + timeSideOffsetPx)))
+    private static _numDecimals = 10
+    private static _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
 
-const _numDecimals = 10
-const _zoomPx = ref(StorageM.getZoomPxTimePicker() ?? 80)
+    private static _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
+    static get editorScroll() { return this._editorScroll.value }
+    static set editorScroll(v: Vector2) { this._editorScroll.value = v }
 
-const _editorScroll = ref<Vector2>(StorageM.getEditorScroll())
-console.log(_editorScroll.value)
-const _inDebugMode = ref(true)
+    private static _rowHeight = 19.19
+    static get rowHeight() {
+        return this._rowHeight
+    }
+    static set rowHeight(value) {
+        this._rowHeight = value
+    }
 
-// const _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
-const _projectName = ref(StorageM.getProjectName() ?? `new_project`)
+    private static _timeSideOffsetPx = 15
+    public static get timeSideOffsetPx() {
+        return ConfigM._timeSideOffsetPx
+    }
+    public static set timeSideOffsetPx(value) {
+        ConfigM._timeSideOffsetPx = value
+    }
 
-const _timePickerZoom = ref(1)
+    static timePickerWidth = computed(() => AnimM.durationSeconds * ConfigM.numDecimals * ConfigM.zoomPx
+        + (this.timeSideOffsetPx * 2))
 
-export const rowHeight = 19.19
 
-export const ConfigM = {
-    init: () => { if (ConfigM.inDebugMode) console.log('init config module') },
+    private static _inDebugMode = ref(true)
 
-    get editorScroll() { return _editorScroll.value },
-    set editorScroll(v: Vector2) { _editorScroll.value = v },
-    initEditorScroll(cont: HTMLElement) {
+    // private static _projectId = ref(StorageM.getCurrentProjectId() ?? `id_${Date.now()}`)
+    private static _projectName = ref(StorageM.getProjectName() ?? `new_project`)
+
+    private static _timePickerZoom = ref(1)
+
+
+
+    static initEditorScroll(cont: HTMLElement) {
         cont.scrollTo({ left: ConfigM.editorScroll.x })
         setTimeout(() => {
             cont.scrollTop = ConfigM.editorScroll.y
-                cont.addEventListener("scroll", () => {
-                    ConfigM.editorScroll.x = cont.scrollLeft ?? 0
-                    ConfigM.editorScroll.y = cont.scrollTop ?? 0
-                })
-            }, 100);
-                
-        watch(() => _editorScroll.value, (val) => {
+            cont.addEventListener("scroll", () => {
+                ConfigM.editorScroll.x = cont.scrollLeft ?? 0
+                ConfigM.editorScroll.y = cont.scrollTop ?? 0
+            })
+        }, 100);
+
+        watch(() => this._editorScroll.value, (val) => {
             cont?.scrollTo({ top: val.y })
             cont?.scrollTo({ left: val.x })
-            StorageM.setEditorScroll(_editorScroll.value)
+            StorageM.setEditorScroll(this._editorScroll.value)
         }, { deep: true })
-     },
+    }
 
 
 
@@ -55,34 +69,30 @@ export const ConfigM = {
     //     await svgIO.input()
     // },
 
-    get inDebugMode() { return _inDebugMode.value },
-    set inDebugMode(v: boolean) { _inDebugMode.value = v },
+    static get inDebugMode() { return this._inDebugMode.value }
+    static set inDebugMode(v: boolean) { this._inDebugMode.value = v }
 
-    get numDecimals() { return _numDecimals },
+    static get numDecimals() { return this._numDecimals }
 
     // get projectId() { return _projectId.value },
     // set projectId(v: string) {
     //     _projectId.value = v
     //     StorageM.setCurrentProjectId(this.projectId)
     // },
-    get projectName() { return _projectName.value },
-    set projectName(v: string) {
-        _projectName.value = v
+    static get projectName() { return this._projectName.value }
+    static set projectName(v: string) {
+        this._projectName.value = v
         StorageM.setProjectName(this.projectName)
-    },
+    }
     // newProjectId(): void { this.projectId = `id_${Date.now()}` },
 
-    get timePickerZoom() { return _timePickerZoom.value },
-    set timePickerZoom(v: number) { _timePickerZoom.value = v },
+    static get timePickerZoom() { return this._timePickerZoom.value }
+    static set timePickerZoom(v: number) { this._timePickerZoom.value = v }
 
-    get timePickerLinePos() { return _timePickerLinePos.value },
-    // set timePickerZoom(v: number) { _timePickerZoom.value = v },
+    static get timePickerLinePos() { return this._timePickerLinePos.value }
+    // set timePickerZoom(v: number) { this._timePickerZoom.value = v },
 
-    get zoomPx() { return _zoomPx.value },
-    set zoomPx(v: number) { _zoomPx.value = v; StorageM.setZoomPxTimePicker(v) },
+    static get zoomPx() { return this._zoomPx.value }
+    static set zoomPx(v: number) { this._zoomPx.value = v; StorageM.setZoomPxTimePicker(v) }
 
 }
-
-// function _initEditorScroll(cont: HTMLElement) {
-  
-// }

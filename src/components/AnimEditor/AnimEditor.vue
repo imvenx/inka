@@ -1,9 +1,9 @@
 <template>
   <div id="animatorCont" ref="cont">
     <div class="corner"></div>
-    <TimePicker @wheel="onWheel" />
+    <TimePicker @wheel.passive="onWheel" />
     <ElsList />
-    <KfEditor @wheel="onWheel" />
+    <KfEditor @wheel.passive="onWheel" />
   </div>
 </template>
 

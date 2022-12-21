@@ -1,7 +1,7 @@
 <template>
   <div class="elKfsLineCont">
     <svg width="100%" :height="rowHeight">
-      <ElKf v-for="kf in el.kfs" :el="el" :kf="kf" />
+      <ElKf v-for="kf in el.kfs" :sv-el="el" :kf="kf" :key="kf.offset!" />
     </svg>
   </div>
   <template v-if="el.isUncollapsed">
@@ -10,7 +10,7 @@
     <template v-if="el.showAttrs">
       <template v-for="attr in el.attrs">
         <template v-if="allowedAttrs.includes(attr.key)">
-          <AttrKfsLine :kfs="getAttrKfs(el.kfs, attr.key)" />
+          <AttrKfsLine :kfs="getAttrKfs(el.kfs, attr.key)" :elId="el.id" />
         </template>
       </template>
     </template>
@@ -22,14 +22,16 @@
 <script lang="ts" setup>
 import { SvEl } from 'src/models/models';
 import ElKf from './ElKf.vue';
-import { rowHeight } from 'src/modules/config_m';
+import { ConfigM } from 'src/modules/config_m';
 import AttrsKfsLine from '../AttrsKfsLine/AttrsKfsLine.vue';
 import AttrKfsLine from '../AttrKfsLine/AttrKfsLine.vue';
 import { allowedAttrs } from 'src/modules/constants';
 
 defineProps<{ el: SvEl }>()
+const rowHeight = ConfigM.rowHeight
 
 function getAttrKfs(kfs: Keyframe[], attrName: string): Keyframe[] {
+  kfs = kfs.filter(x => x[attrName] != undefined)
   return kfs.map(x => x = { offset: x.offset, [attrName]: x[attrName] })
 }
 </script>

@@ -138,9 +138,9 @@ function watchTempSvg() {
 }
 
 const svgTemplate =
-  `<svg width="1000mm" height="1000mm" viewBox="0 0 999.99995 999.99995" version="1.1" id="svg5" inkscape:version="1.1 (c4e8f9e, 2021-05-24)" sodipodi:docname="template.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  `<svg width="1000mm" height="1000mm" viewBox="0 0 100 100" version="1.1" id="svg5" inkscape:version="1.1 (c4e8f9e, 2021-05-24)" sodipodi:docname="template.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview id="namedview7" pagecolor="#c8c8c8" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0" inkscape:pagecheckerboard="0" inkscape:document-units="mm" showgrid="true" inkscape:zoom="0.08" inkscape:cx="912.5" inkscape:cy="1031.25" inkscape:window-width="1331" inkscape:window-height="743" inkscape:window-x="35" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="layer1" units="mm" width="1000mm">
-    <inkscape:grid type="xygrid" id="grid378" units="mm" spacingx="9.9999999" spacingy="9.9999999" />
+    <inkscape:grid type="xygrid" id="grid378" units="mm" spacingx="10" spacingy="10" />
   </sodipodi:namedview>
   <defs id="defs2" />
   <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" />

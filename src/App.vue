@@ -3,11 +3,9 @@
 </template>
 
 <script lang="ts" setup>import { onMounted } from 'vue';
-import { initApp } from './modules/init_m';
+import { initInkaApp } from './modules/init_m';
 
-onMounted(async () => {
-  await initApp()
-})
+onMounted(async () => await initInkaApp())
 </script>
 
 <style>
