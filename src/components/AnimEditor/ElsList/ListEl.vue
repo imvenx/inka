@@ -55,7 +55,7 @@ function toggleCollapse() {
   /* border-bottom: 1px solid black; */
   user-select: none;
   /* background-color: rgb(137, 192, 54); */
-  background-color: rgb(137, 192, 54);
+  background-color: var(--listElBgColor);
   /* height: v-bind(rowHeight + 'px'); */
 }
 

@@ -54,7 +54,7 @@ function getPickedTime(e: MouseEvent): number {
 }
 
 .elKf {
-    stroke: black;
+    stroke: var(--kfStrokeColor);
 }
 
 .elKf:hover {

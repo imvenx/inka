@@ -90,7 +90,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   position: relative;
-  background-color: rgb(81, 160, 81);
+  background-color: var(--bgColor1);
 }
 
 #foreignObjCont {

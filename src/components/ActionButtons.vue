@@ -165,7 +165,7 @@ const btnAttrs = {
   'no-caps': ''
 }
 
-window.addEventListener('keydown', (e) => { if (e.key === 'F1') AnimM.pauseOrPlayAnim() })
+window.addEventListener('keydown', (e) => { e.preventDefault(); if (e.key === 'F1') AnimM.pauseOrPlayAnim() })
 
 const closeApp = async () => await eapi.closeApp()
 

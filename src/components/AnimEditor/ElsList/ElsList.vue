@@ -35,7 +35,7 @@ watch(() => ConfigM.editorScroll.y, (val) => {
   overflow-y: auto;
   text-overflow: ellipsis;
   font-size: .8rem;
-  background-color: rgb(81, 160, 81);
+  background-color: var(--bgColor1);
   padding-bottom: v-bind(timeSideOffsetPx + 'px');
 }
 

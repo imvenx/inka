@@ -5,7 +5,7 @@
   </template>
 </template>
 <script lang="ts" setup>
-import { AnimM, svgEl } from 'src/modules/anim_m';
+import { svgEl } from 'src/modules/anim_m';
 import { SvElM } from 'src/modules/svel_m';
 import { onMounted, onUpdated, ref } from 'vue';
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
@@ -34,13 +34,16 @@ async function svgMaxSize() {
     let svgEl = cont?.value?.children[0] as HTMLElement
     if (!svgEl) return
 
-    const contR = cont.value.getBoundingClientRect()
-    const svgR = svgEl.getBoundingClientRect()
+    svgEl.style.width = 'auto'
+    svgEl.style.height = 'auto'
 
-    const contP = contR.width / contR.height
-    const svgP = svgR.width / svgR.height
+    const contRect = cont.value.getBoundingClientRect()
+    const svgRect = svgEl.getBoundingClientRect()
 
-    if (contP < svgP) {
+    const contRatio = contRect.width / contRect.height
+    const svgRatio = svgRect.width / svgRect.height
+
+    if (contRatio < svgRatio) {
       svgEl.style.width = '100%'
       svgEl.style.height = 'auto'
     }
@@ -49,11 +52,11 @@ async function svgMaxSize() {
       svgEl.style.height = '100%'
     }
   }
+
   const svg = svgEl()
   if (!svg) return
   const _svEl = await SvElM.getSvEls(svg)
   SvElM.rootSvEl = _svEl
-
 }
 
 </script>
@@ -67,6 +70,7 @@ async function svgMaxSize() {
 
 #animViewerCont :nth-child(1) {
   border: 1px solid black;
+  background-color: grey;
 }
 </style>
 

@@ -8,9 +8,9 @@ import { initInkaApp } from './modules/init_m';
 onMounted(async () => await initInkaApp())
 </script>
 
-<style>
-/* * {
+<!-- <style scoped>
+* {
   cursor: wait !important;
   pointer-events: none;
-} */
-</style>
+}
+</style> -->

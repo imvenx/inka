@@ -43,7 +43,7 @@ const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDeci
 
 .corner {
   z-index: 100;
-  background-color: rgb(103, 161, 103);
+  background-color: var(--bgColor1);
   /* border: 1px solid rgb(158, 158, 158); */
 }
 </style>
