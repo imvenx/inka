@@ -49,8 +49,9 @@ export abstract class ProjectM {
         return tempSvg
     }
 
-    static async updateTempSvg(svg: string | undefined = undefined) {
-        await eapi.updateTempSvg({ data: svg ?? svgEl()!.outerHTML })
+    static async updateTempSvg(_svg: string | undefined = undefined) {
+        const svg = _svg ?? StorageM.getProject().svgFile
+        await eapi.updateTempSvg({ data: svg })
     }
 
     private static async getProjectToSave(): Promise<saveProjectParams> {
