@@ -167,7 +167,6 @@ const btnAttrs = {
 
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'F1') return
-  e.preventDefault();
   AnimM.pauseOrPlayAnim()
 })
 
