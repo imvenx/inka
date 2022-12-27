@@ -1,5 +1,5 @@
 <template>
-  <div ref="cont" id="els-list-cont">
+  <div ref="cont" id="elsListCont">
     <ListEl :el="SvElM.rootSvEl" />
   </div>
 </template>
@@ -24,15 +24,18 @@ watch(() => ConfigM.editorScroll.y, (val) => {
   cont.value?.scrollTo({ top: val })
 })
 
+
+
 </script>
 
 <style scoped>
-#els-list-cont {
+#elsListCont {
   /* border-right: 1px solid black; */
   white-space: nowrap;
   /* overflow: hidden; */
   overflow-x: hidden;
   overflow-y: auto;
+  /* height: 80%; */
   text-overflow: ellipsis;
   font-size: .8rem;
   background-color: var(--bgColor1);

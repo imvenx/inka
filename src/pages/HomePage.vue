@@ -1,34 +1,25 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <div id="page">
-      <div style="overflow:scroll; height:88vh; ">
-        <q-list style="display:grid; grid-template-columns: 50% 50%; ">
-          <!-- <q-item>
-          <q-btn>New Project</q-btn>
-        </q-item> -->
-
-
-          <div style="display:flex">
-            <q-btn class="home-item" icon="add" @click="createProject()">New</q-btn>
-            <q-btn class="home-item" icon="download" @click="createProject(true)">New from SVG</q-btn>
-            <q-input disable style="padding: 0 1em .5em 1em" dark dense class="home-item" color="teal"
-              v-model="searchStr">
-              <template v-slot:prepend>
-                <q-icon color="teal" name="search" />
-              </template>
-            </q-input>
+  <q-page class="q-pa-xs" style="height: 100%;">
+    <div style="overflow:auto; height:100%">
+      <q-list id="qList">
+        <div style="display:flex">
+          <q-btn class="homeItem" icon="add" @click="createProject()">New</q-btn>
+          <q-btn class="homeItem" icon="download" @click="createProject(true)">New from SVG</q-btn>
+          <q-input disable style="padding: 0 1em .5em 1em" dark dense class="homeItem" v-model="searchStr">
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+          <div style="margin-left: auto; margin-top: auto; font-size: 1.5rem;">
+            Open recent:
           </div>
-          <q-item class="home-item" v-for=" filePath in recentFilePaths" clickable @click="loadProject(filePath)">
-            {{ filePath }}
-            <!-- <b>{{ proj[1].projectName ?? 'no_name' }}</b> &nbsp;&nbsp;➡
-            {{ proj[1].filePath }} -->
-          </q-item>
-          <!-- <q-item class="home-item" v-for=" proj in projs" clickable @click="loadProject(proj[0], proj[1].filePath)">
-            <b>{{ proj[1].projectName ?? 'no_name' }}</b> &nbsp;&nbsp;➡
-            {{ proj[1].filePath }}
-          </q-item> -->
-        </q-list>
-      </div>
+        </div>
+        <div></div>
+
+        <q-item dense class="homeItem" v-for=" filePath in recentFilePaths" clickable @click="loadProject(filePath)">
+          {{ filePath }}
+        </q-item>
+      </q-list>
     </div>
   </q-page>
 </template>
@@ -57,15 +48,15 @@ const loadProject = async (path: string) => {
 </script>
 
 <style scoped>
-#page {
-  width: 100%;
-}
-
-.home-item {
-  color: darkcyan;
-  background-color: black;
+.homeItem {
+  background-color: rgb(19, 19, 19);
   margin: 2px;
   box-shadow: 0 0 5px black;
-  border: 1px solid darkcyan;
+  border: 1px solid grey;
+}
+
+#qList {
+  display: grid;
+  grid-template-columns: 50% 50%;
 }
 </style>

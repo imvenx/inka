@@ -70,7 +70,6 @@ watch(() => ConfigM.editorScroll.x, (val) => {
 }
 
 #timePickerCont {
-  color: white;
   position: relative;
   display: inline-flex;
   background-color: var(--bgColor1);

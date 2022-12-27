@@ -1,6 +1,5 @@
 /* app global css */
 
-
 :root {
   /* --listElBgColor:  rgb(137, 192, 54);
   --listAttrBgColor: rgb(150, 150, 50);
@@ -17,15 +16,16 @@
   --kfStrokeColor: var(--fontColor1);
 }
 
-main {
-  border: 1px solid var(--bgColor2) !important;
-  box-sizing: border-box;
-}
-
 body {
   background-color: var(--bgColor2);
-  overflow: hidden;
   color: var(--fontColor1);
+}
+
+main {
+  /* box-shadow: inset 0 0 0 1px orange;
+  z-index: 9999;
+  border: 1px solid var(--fontColor1); */
+  padding: 2px;
 }
 
 .stepStyle {

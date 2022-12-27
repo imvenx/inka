@@ -75,7 +75,7 @@
         </div>
       </div>
     </div>
-    <div style="text-align:center;">
+    <div style="text-align:center;" id="videoPlayerButtons">
       <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="play [F1]" v-if="!AnimM.isPlayingAnim">
         ▶
@@ -162,7 +162,7 @@ function goToMenu() { router.push('/home') }
 const btnAttrs = {
   size: "12px",
   padding: "0 sm",
-  'no-caps': ''
+  'no-caps': '',
 }
 
 window.addEventListener('keydown', (e) => {
@@ -198,7 +198,7 @@ const closeApp = async () => await eapi.closeApp()
 .timeInput {
   width: 4rem;
   height: 1.2rem;
-  background-color: black;
-  color: white;
+  background-color: var(--bgColor1);
+  color: var(--fontColor1);
 }
 </style>

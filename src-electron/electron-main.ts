@@ -1,6 +1,6 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, } from 'electron';
 import path from 'path';
-import os, { tmpdir } from 'os';
+import os from 'os';
 import { screen } from 'electron';
 
 // needed in case process is undefined under Linux

@@ -1,6 +1,6 @@
 <template>
   <div id="wrapper">
-    <div id="box_content">
+    <div id="boxContent">
       <svg id="svgCont">
         <foreignObject ref="foreignObjCont" width="100%" height="100%" id="foreignObjCont">
           <div :style="`width:${timePickerWidth}px; padding-bottom: ${timeSideOffsetPx}px`">
@@ -89,6 +89,7 @@ onMounted(() => {
 #svgCont {
   width: 100%;
   height: 100%;
+  overflow: hidden;
   position: relative;
   background-color: var(--bgColor1);
 }
@@ -98,8 +99,10 @@ onMounted(() => {
 }
 
 #wrapper {
+  /* height: -webkit-fill-available; */
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */
+  overflow: hidden;
 }
 
 #mask {
@@ -112,7 +115,7 @@ onMounted(() => {
   box-shadow: 0 0 10px #000000 inset;
 }
 
-#box_content {
+#boxContent {
   height: 100%;
 }
 </style>
