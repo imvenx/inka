@@ -26,7 +26,6 @@ async function onMouseDown(e: MouseEvent) {
 }
 
 async function refreshKfsOnMouseUp() {
-    console.log('wwerwer')
     window.addEventListener('mouseup', async () => await KfsM.refreshAndSaveKfs(props.svEl),
         { once: true })
 }
