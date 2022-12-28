@@ -20,7 +20,9 @@ export abstract class ProjectM {
         return success
     }
 
-    static async openProjectInInkscape() { eapi.openProjectInInkscape() }
+
+    static async openSvgWithInkscape() { eapi.openSvgWithInkscape() }
+    static async openSvgWithDefaultProgram() { eapi.openSvgWithDefaultProgram() }
 
     static async loadProject(p?: loadProjectParams): Promise<boolean> {
         if (!confirm('There may be unsaved changes, do you still want to continue?')) return false

@@ -1,13 +1,16 @@
 import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams, updateTempSvgParams } from "app/public/sharedModels"
 import { exec } from "child_process"
-import { dialog } from "electron"
+import electron, { dialog } from "electron"
 import { promises as p, unwatchFile, watchFile } from "fs"
 import { tmpdir } from "os"
+import path from "path"
 import { mainWindow } from "../electron-main"
 
 const appPrefix = 'inka';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
 const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
+
+const configRootPath = path.join(electron.app.getPath('userData'), 'inkaConfig.json');
 
 /* Prevents refresh when SvgIO_Module calls update file,
  since we only want to refresh when inkscape save updates file */
@@ -77,7 +80,44 @@ export const projectH = {
     try { return await p.readFile(tempFilePath(), { encoding: 'utf-8' }) }
     catch { return '' }
   },
-  async openProjectInInkscape() {
+
+  async openSvgWithInkscape() {
+    const inkscapePath = await this.getInkscapePath()
+    if (!inkscapePath) return
+
+    exec(`"${inkscapePath}" ${tempFilePath()}`, async (e) => {
+      if (e) {
+        const newInkscapePath = await this.askInkscapePath()
+        if (newInkscapePath) exec(`"${newInkscapePath}" ${tempFilePath()}`)
+      }
+    })
+  },
+  async getInkscapePath() {
+    let inkscapePath = ''
+    try { inkscapePath = JSON.parse(await (p.readFile(configRootPath, 'utf-8') as any)).inkscapePath }
+    catch { inkscapePath = await this.askInkscapePath() }
+    return inkscapePath
+  },
+  async askInkscapePath() {
+    await dialog.showMessageBox(mainWindow!, { message: 'Please select inkscape executable file', })
+    const inkscapePath = (await dialog.showOpenDialog(mainWindow!,
+      {
+        properties: ['openFile'],
+        title: 'Select inkscape path',
+      })).filePaths[0]
+    if (inkscapePath) this.setInkscapePath(inkscapePath)
+    return inkscapePath
+  },
+  async setInkscapePath(path: string) {
+    let _config
+    try { _config = JSON.parse(await p.readFile(configRootPath, 'utf-8') as any) }
+    catch { _config = {} as any }
+    const config = _config
+    config.inkscapePath = path
+    await p.writeFile(configRootPath, JSON.stringify(config), { encoding: 'utf-8' })
+  },
+
+  async openSvgWithDefaultProgram() {
     function getCommandLine() {
       switch (process.platform) {
         case 'darwin': return 'open ';

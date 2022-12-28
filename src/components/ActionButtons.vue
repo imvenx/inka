@@ -10,7 +10,10 @@
             <q-item clickable v-close-popup @click="ProjectM.saveProject()">Save</q-item>
             <!-- <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item> -->
             <q-item clickable v-close-popup @click="ExportM.exportToSvg()">Export</q-item>
-            <q-item clickable v-close-popup @click="ProjectM.openProjectInInkscape()">Open in Inkscape</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.openSvgWithInkscape()">Open SVG with
+              Inkscape</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.openSvgWithDefaultProgram()">Open SVG with default
+              program</q-item>
             <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
             <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
           </q-list>

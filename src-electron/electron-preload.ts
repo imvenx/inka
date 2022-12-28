@@ -19,7 +19,8 @@ contextBridge.exposeInMainWorld('eapi', {
   getTempSvg: () => ipcRenderer.invoke('getTempSvg'),
   updateTempSvg: (p: updateTempSvgParams) => ipcRenderer.invoke('updateTempSvg', p),
   exportSvg: (fileStr: string) => ipcRenderer.invoke('exportSvg', fileStr),
-  openProjectInInkscape: () => ipcRenderer.invoke('openProjectInInkscape'),
+  openSvgWithDefaultProgram: () => ipcRenderer.invoke('openSvgWithDefaultProgram'),
+  openSvgWithInkscape: () => ipcRenderer.invoke('openSvgWithInkscape'),
   closeApp: () => ipcRenderer.invoke('closeApp'),
   updatedSvg: (callback: any) => ipcRenderer.on('updatedSvg', callback),
 })
