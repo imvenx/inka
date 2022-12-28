@@ -5,6 +5,7 @@ import { AnimM } from "./anim_m"
 import { ref } from "vue"
 import { SvElM } from "./svel_m"
 import { performanceTest, roundToDecimals } from "./utils"
+import { svgIO } from "./svgIO_m"
 
 
 export abstract class KfsM {
@@ -42,6 +43,7 @@ export abstract class KfsM {
 
         await loop(_svEl)
         await AnimM.refreshAnim(_svEl)
+        svgIO.output()
     }
 
     static async createKeyFrame(svEl: SvEl): Promise<any> {

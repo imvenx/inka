@@ -18,12 +18,15 @@ import { kfPos } from '../kf_shared';
 const props = defineProps<{ svEl: SvEl, kf: Keyframe }>()
 
 async function onMouseDown(e: MouseEvent) {
-    if (e.buttons === 1) window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
-    if (e.buttons === 2) await KfsM.deleteKfs(props.svEl, props.kf.offset)
-    refreshKfsOnMouseUp()
+    if (e.buttons === 1) {
+        window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
+        refreshKfsOnMouseUp()
+    }
+    else if (e.buttons === 2) await KfsM.deleteKfs(props.svEl, props.kf.offset)
 }
 
 async function refreshKfsOnMouseUp() {
+    console.log('wwerwer')
     window.addEventListener('mouseup', async () => await KfsM.refreshAndSaveKfs(props.svEl),
         { once: true })
 }

@@ -28,6 +28,7 @@ export abstract class svgIO {
 
             SvElM.rootSvEl = await SvElM.getSvEls(svgEl()!)
             StorageM.setCurrentTimeSeconds(AnimM.currentTimeSeconds)
+            console.log('asasd')
         }, 50)
 
     }

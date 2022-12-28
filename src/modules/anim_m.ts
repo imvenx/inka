@@ -92,7 +92,7 @@ export abstract class AnimM {
 
     static async refreshAnim(svEl: SvEl): Promise<void> {
         await this.refreshAnimLoop(svEl)
-        svgIO.output()
+        // svgIO.output()
     }
 
     static get recalculateKfsOnChangeDuration() {
