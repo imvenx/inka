@@ -1,6 +1,6 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, } from 'electron';
 import path from 'path';
-import os, { tmpdir } from 'os';
+import os from 'os';
 import { screen } from 'electron';
 
 // needed in case process is undefined under Linux
@@ -67,7 +67,9 @@ app.whenReady().then(async () => {
   ipcMain.handle('getTempSvg', ({ }) => projectH.getTempSvg())
   ipcMain.handle('updateTempSvg', ({ }, p) => projectH.updateTempSvg(p))
   ipcMain.handle('exportSvg', ({ }, fileStr: string) => projectH.exportSvg(fileStr))
-  ipcMain.handle('openProjectInInkscape', () => projectH.openProjectInInkscape())
+
+  ipcMain.handle('openSvgWithInkscape', () => projectH.openSvgWithInkscape())
+  ipcMain.handle('openSvgWithDefaultProgram', () => projectH.openSvgWithDefaultProgram())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
 });

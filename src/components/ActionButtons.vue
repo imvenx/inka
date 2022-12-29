@@ -10,7 +10,10 @@
             <q-item clickable v-close-popup @click="ProjectM.saveProject()">Save</q-item>
             <!-- <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item> -->
             <q-item clickable v-close-popup @click="ExportM.exportToSvg()">Export</q-item>
-            <q-item clickable v-close-popup @click="ProjectM.openProjectInInkscape()">Open in Inkscape</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.openSvgWithInkscape()">Open SVG with
+              Inkscape</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.openSvgWithDefaultProgram()">Open SVG with default
+              program</q-item>
             <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
             <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
           </q-list>
@@ -75,7 +78,7 @@
         </div>
       </div>
     </div>
-    <div style="text-align:center;">
+    <div style="text-align:center;" id="videoPlayerButtons">
       <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="play [F1]" v-if="!AnimM.isPlayingAnim">
         ▶
@@ -162,10 +165,13 @@ function goToMenu() { router.push('/home') }
 const btnAttrs = {
   size: "12px",
   padding: "0 sm",
-  'no-caps': ''
+  'no-caps': '',
 }
 
-window.addEventListener('keydown', (e) => { if (e.key === 'F1') AnimM.pauseOrPlayAnim() })
+window.addEventListener('keydown', (e) => {
+  if (e.key !== 'F1') return
+  AnimM.pauseOrPlayAnim()
+})
 
 const closeApp = async () => await eapi.closeApp()
 
@@ -195,7 +201,7 @@ const closeApp = async () => await eapi.closeApp()
 .timeInput {
   width: 4rem;
   height: 1.2rem;
-  background-color: black;
-  color: white;
+  background-color: var(--bgColor1);
+  color: var(--fontColor1);
 }
 </style>

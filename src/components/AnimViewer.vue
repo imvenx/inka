@@ -1,20 +1,31 @@
 <template>
   <template v-if="SvElM.svgString">
-    <div ref=cont id="animViewerCont" v-html="SvElM.svgString">
+    <div ref="cont" id="animViewerCont" v-html="SvElM.svgString">
     </div>
+
+    <!-- <Teleport to="#animViewerCont">
+    </Teleport> -->
+
+    <Teleport to="#videoPlayerButtons">
+      <input type="color" style="height:1rem; width:1rem; border:none; padding: 0;" v-model="animViewerBgColor">
+    </Teleport>
   </template>
 </template>
 <script lang="ts" setup>
-import { AnimM, svgEl } from 'src/modules/anim_m';
+import { svgEl } from 'src/modules/anim_m';
 import { SvElM } from 'src/modules/svel_m';
 import { onMounted, onUpdated, ref } from 'vue';
+
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
+const animViewerBgColor = ref('#8c8c8c')
+// const parentHeight = ref('200px')
 
 // const transformBox = AnimM.transformBox
 // const transformOrigin = AnimM.transformOrigin
 
 onMounted(async () => {
   await svgMaxSize()
+
   // setTimeout(() => AnimM.transformOriginCenterAnimViewer(), 100);
 })
 
@@ -23,24 +34,50 @@ onUpdated(async () => {
   // AnimM.transformOriginRevertAnimViewer()
 })
 
-window.addEventListener('resize', async () => await svgMaxSize())
+window.addEventListener('resize', () => setTimeout(async () => await svgMaxSize(), 100))
 
 // const width = ref('auto')
 // const height = ref('100%')
 
 async function svgMaxSize() {
+
+
+
   if (SvElM.svgString) {
+
+
+    // const cont1 = document.createElement('div')
+    // cont1.innerHTML = SvElM.svgString
+    // const svgEl = cont1.children[0] as HTMLElement
+    // svgEl.style.width = ''
+    // svgEl.style.height = ''
+    // svgEl.removeAttribute('width')
+    // svgEl.removeAttribute('height')
+    // console.log(svgEl)
+
+    // cont.value.innerHTML = svgEl.outerHTML
 
     let svgEl = cont?.value?.children[0] as HTMLElement
     if (!svgEl) return
 
-    const contR = cont.value.getBoundingClientRect()
-    const svgR = svgEl.getBoundingClientRect()
+    // svgEl.setAttribute('width', '')
+    // svgEl.setAttribute('height', '')
+    // svgEl.style.width = ''
+    // svgEl.style.height = ''
 
-    const contP = contR.width / contR.height
-    const svgP = svgR.width / svgR.height
+    // cont.value.style.height = cont.value.parentElement?.getBoundingClientRect().height + 'px'
+    // console.log(cont.value.style.height)
 
-    if (contP < svgP) {
+    svgEl.style.width = 'auto'
+    svgEl.style.height = 'auto'
+
+    const contRect = cont.value.getBoundingClientRect()
+    const svgRect = svgEl.getBoundingClientRect()
+
+    const contRatio = contRect.width / contRect.height
+    const svgRatio = svgRect.width / svgRect.height
+
+    if (contRatio < svgRatio) {
       svgEl.style.width = '100%'
       svgEl.style.height = 'auto'
     }
@@ -49,6 +86,7 @@ async function svgMaxSize() {
       svgEl.style.height = '100%'
     }
   }
+
   const svg = svgEl()
   if (!svg) return
   const _svEl = await SvElM.getSvEls(svg)
@@ -60,12 +98,14 @@ async function svgMaxSize() {
 <style scoped>
 #animViewerCont {
   overflow: hidden;
-  height: 88vh;
   text-align: center;
-  padding-top: 1px;
+  /* width: fit-content;
+  height: auto; */
+  /* padding-top: 1px; */
 }
 
 #animViewerCont :nth-child(1) {
+  background-color: v-bind(animViewerBgColor);
   border: 1px solid black;
 }
 </style>

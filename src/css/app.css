@@ -1,47 +1,66 @@
 /* app global css */
+
+:root {
+  /* --listElBgColor:  rgb(137, 192, 54);
+  --listAttrBgColor: rgb(150, 150, 50);
+  --listAttrsBgColor:  rgb(180, 180, 130); */
+
+  --fontColor1: rgb(167, 167, 167);
+  --bgColor1: black;
+  --bgColor2: rgb(70, 70, 70);
+
+  --listElBgColor: rgb(14, 14, 14);
+  --listAttrsBgColor: rgb(34, 34, 34);
+  --listAttrBgColor: rgb(49, 49, 49);
+
+  --kfStrokeColor: var(--fontColor1);
+}
+
 body {
-    background-color: grey;
-    overflow: hidden;
-  }
-  
-  /* a {
-    color: purple;
-    font-weight: 1000;
-  } */
-  
-  .stepStyle {
-    cursor: pointer;
-    font-size: .8rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    width: 3em;
-    display: block;
-    min-width: 3em;
-    margin: 0 .2em;
-  }
-  
-  ::-webkit-scrollbar {
-    width: .5rem;
-    height: .5rem;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #ffffff00;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: rgb(0, 0, 0);
-    border-radius: 4px;
-    /* box-shadow: 0 0 5px black; IT WAS GLITCHING :( */
-    border: 1px solid teal;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(236, 26, 26);
-  }
-  
-  ::-webkit-scrollbar-corner {
-    background: transparent;
-  }
+  background-color: var(--bgColor2);
+  color: var(--fontColor1);
+}
+
+main {
+  /* box-shadow: inset 0 0 0 1px orange;
+  z-index: 9999;
+  border: 1px solid var(--fontColor1); */
+  padding: 3px 4px;
+}
+
+.stepStyle {
+  cursor: pointer;
+  font-size: .8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  width: 3em;
+  display: block;
+  min-width: 3em;
+  margin: 0 .2em;
+}
+
+::-webkit-scrollbar {
+  width: .5rem;
+  height: .5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff00;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 0, 0);
+  border-radius: 4px;
+  /* box-shadow: 0 0 5px black; IT WAS GLITCHING :( */
+  border: 1px solid grey;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

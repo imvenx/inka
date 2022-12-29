@@ -51,7 +51,7 @@ async function deleteKf() {
 }
 
 .attrKf {
-    stroke: black;
+    stroke: var(--kfStrokeColor);
     fill: transparent;
 }
 

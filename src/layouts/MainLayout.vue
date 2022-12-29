@@ -1,23 +1,11 @@
 <template>
-  <q-layout view="hHh Lpr lFf">
-    <q-header elevated style="height: 1.4rem; background-color: black; ">
-      <div>
-        &nbsp;
+  <q-layout view="hHh Lpr lFf" style="outline:none">
+    <q-header elevated id="qHeader">
+      <div> &nbsp;
         <ActionButtons />
       </div>
     </q-header>
-
-    <!-- <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header>
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer> -->
-
-    <q-page-container>
+    <q-page-container id="qPageContainer">
       <router-view />
     </q-page-container>
   </q-layout>
@@ -26,3 +14,17 @@
 <script setup lang="ts">
 import ActionButtons from 'src/components/ActionButtons.vue';
 </script>
+
+<style scoped>
+#qHeader {
+  height: 1.4rem;
+  background-color: black;
+}
+
+#qPageContainer {
+  /* margin-top: .2rem; */
+  /* height: calc(100vh - 1.8rem); */
+  /* box-shadow: inset 0 0 0px 1px yellow; */
+  height: 100vh;
+}
+</style>

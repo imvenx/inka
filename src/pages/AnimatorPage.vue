@@ -1,5 +1,5 @@
 <template>
-  <q-page v-if="mount" class="row items-center justify-evenly">
+  <q-page style="height: 100%;" v-if="mount">
     <div id="page">
       <anim-editor />
       <anim-viewer />
@@ -27,7 +27,8 @@ onBeforeMount(() => {
 #page {
   display: grid;
   grid-template-columns: 70% auto;
-  width: 99%;
   gap: 1%;
+  /* overflow: visible; */
+  height: inherit;
 }
 </style>

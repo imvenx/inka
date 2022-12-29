@@ -60,9 +60,10 @@ watch(() => ConfigM.editorScroll.x, (val) => {
 <style scoped>
 #timePickerLine {
   position: absolute;
-  background-color: aquamarine;
+  background-color: rgba(255, 230, 0, 0.397);
+  z-index: 10;
   /* border: 1px solid lightblue; */
-  width: .5rem;
+  width: 1rem;
   /* left: v-bind(timePickerLinePos + 'px'); */
   /* transform-origin: 0 0; */
   transform: translate(-50%);
@@ -71,7 +72,7 @@ watch(() => ConfigM.editorScroll.x, (val) => {
 #timePickerCont {
   position: relative;
   display: inline-flex;
-  background-color: rgb(81, 160, 81);
+  background-color: var(--bgColor1);
   overflow-x: auto;
   overflow-y: hidden;
   font-weight: 1000;
@@ -107,7 +108,6 @@ watch(() => ConfigM.editorScroll.x, (val) => {
 }
 
 #offsetDiv {
-  background-color: rgb(0, 80, 80);
   width: v-bind(timeSideOffsetPx + 'px');
   z-index: 10;
   user-select: none;

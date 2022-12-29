@@ -25,7 +25,7 @@ onMounted(() => {
 
 <style scoped>
 #timeLine {
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.37);
+    box-shadow: 0 0 0 1px rgba(255, 230, 0, 0.295);
     position: absolute;
     height: 100%;
     user-select: none;

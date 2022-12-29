@@ -17,10 +17,10 @@ export abstract class ExportM {
         clone.innerHTML += `
 <style> ${animStr}
    
-#svg5 *{
-    transform-box: fill-box;
-    transform-origin: center;
-}
+    #svg5 *{
+        transform-box: fill-box;
+        transform-origin: center;
+    }
 </style>`
         await eapi.exportSvg(clone.outerHTML)
         await AnimM.selectTime(lastTime, SvElM.rootSvEl)

@@ -15,7 +15,7 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-for="d in el.depth">&nbsp;</span>
           <q-icon :name="getAttrIcon(attr.key)" />
           <span v-if="attr.key === 'fill'" :style="`background: ${attr.val}`"
-            style="border:1px solid black; margin-left: 3px; font-size: .7em; vertical-align: middle;">
+            style="border:1px solid grey; margin-left: 3px; font-size: .7em; vertical-align: middle;">
             &nbsp;&nbsp;&nbsp;</span>
           {{ attr.val }}
         </div>
@@ -61,11 +61,11 @@ function getAttrIcon(attrName: string) {
 }
 
 .attr-cont {
-  background-color: rgb(150, 150, 50);
+  background-color: var(--listAttrsBgColor);
 }
 
 .attr-child {
-  background-color: rgb(180, 180, 130);
+  background-color: var(--listAttrBgColor);
 
 }
 

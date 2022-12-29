@@ -39,7 +39,6 @@ function getAttrKfs(kfs: Keyframe[], attrName: string): Keyframe[] {
 <style scoped>
 .elKfsLineCont {
   height: v-bind(rowHeight + 'px');
-  background-color: rgb(137, 192, 54);
-
+  background-color: var(--listElBgColor);
 }
 </style>

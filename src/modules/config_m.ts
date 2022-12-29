@@ -42,8 +42,6 @@ export abstract class ConfigM {
 
     private static _timePickerZoom = ref(1)
 
-
-
     static initEditorScroll(cont: HTMLElement) {
         cont.scrollTo({ left: ConfigM.editorScroll.x })
         setTimeout(() => {
@@ -60,8 +58,6 @@ export abstract class ConfigM {
             StorageM.setEditorScroll(this._editorScroll.value)
         }, { deep: true })
     }
-
-
 
     // async loadProject(id: string, filePath: string) {
     //     this.projectId = id

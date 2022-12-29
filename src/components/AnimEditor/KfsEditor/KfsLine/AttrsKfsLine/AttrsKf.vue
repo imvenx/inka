@@ -28,7 +28,8 @@ defineProps<{ kf: Keyframe }>()
 }
 
 .attrsKf {
-    stroke: black;
+    stroke: var(--kfStrokeColor);
+    /* stroke: black; */
 }
 
 .attrsKf:hover {

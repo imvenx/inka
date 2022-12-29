@@ -17,6 +17,6 @@ const rowHeight = ConfigM.rowHeight
 <style scoped>
 .attrsKfsLineCont {
   height: v-bind(rowHeight + 'px');
-  background-color: rgb(150, 150, 50);
+  background-color: var(--listAttrsBgColor);
 }
 </style>
