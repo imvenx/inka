@@ -12,7 +12,7 @@
   </template>
 </template>
 <script lang="ts" setup>
-import { svgEl } from 'src/modules/anim_m';
+import { AnimM, svgEl } from 'src/modules/anim_m';
 import { SvElM } from 'src/modules/svel_m';
 import { onMounted, onUpdated, ref } from 'vue';
 
@@ -25,24 +25,21 @@ const animViewerBgColor = ref('#8c8c8c')
 
 onMounted(async () => {
   await svgMaxSize()
-
   // setTimeout(() => AnimM.transformOriginCenterAnimViewer(), 100);
 })
 
 onUpdated(async () => {
-  await svgMaxSize()
+  await svgMaxSize(true)
+
   // AnimM.transformOriginRevertAnimViewer()
 })
 
-window.addEventListener('resize', () => setTimeout(async () => await svgMaxSize(), 100))
+window.addEventListener('resize', () => setTimeout(async () => await svgMaxSize(true), 100))
 
 // const width = ref('auto')
 // const height = ref('100%')
 
-async function svgMaxSize() {
-
-
-
+async function svgMaxSize(isMounted: boolean = false) {
   if (SvElM.svgString) {
 
 
@@ -89,7 +86,7 @@ async function svgMaxSize() {
 
   const svg = svgEl()
   if (!svg) return
-  const _svEl = await SvElM.getSvEls(svg)
+  const _svEl = await SvElM.getSvEls(svg, isMounted && AnimM.isRecording)
   SvElM.rootSvEl = _svEl
 
 }
@@ -107,6 +104,8 @@ async function svgMaxSize() {
 #animViewerCont :nth-child(1) {
   background-color: v-bind(animViewerBgColor);
   border: 1px solid black;
+  /* box-shadow: 0 0 5px black; */
+
 }
 </style>
 

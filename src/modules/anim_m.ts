@@ -44,6 +44,10 @@ export abstract class AnimM {
         this.currentTimeSeconds = Math.round(v) / 1000
     }
 
+    private static _isRecording = ref(false);
+    static get isRecording() { return this._isRecording.value }
+    static set isRecording(v: boolean) { this._isRecording.value = v }
+
     static get currentOffset(): number {
         return roundToDecimals(3, this.currentTimeMiliseconds / this.durationMiliseconds)
     }

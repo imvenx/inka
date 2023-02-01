@@ -4,6 +4,7 @@ import { StorageM } from "./storage_m"
 import { SvElM } from "./svel_m"
 
 export abstract class svgIO {
+
     private static outputTimeout = {} as any
 
     static async input(): Promise<void> {
@@ -13,11 +14,8 @@ export abstract class svgIO {
         svgContainer.innerHTML = svgData
 
         SvElM.svgString = svgData
-        // setTimeout(() => {
-        // TODO: Check if this solved the bug that would reset project
-        // document.getElementsByTagName('sodipodi:namedview')?.[0]?.remove()
-        // }, 100);
     }
+
     static async output(): Promise<void> {
         clearTimeout(this.outputTimeout)
         this.outputTimeout = setTimeout(async () => {

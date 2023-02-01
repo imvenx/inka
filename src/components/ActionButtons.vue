@@ -21,7 +21,7 @@
       </q-btn>
       <q-btn v-bind="btnAttrs" icon="slideshow" title="animator" @click="goToAnimEditor()"></q-btn>
       <q-btn v-bind="btnAttrs" icon="code" title="code" @click="goToCode()"></q-btn>
-      <q-btn v-bind="btnAttrs" icon="bug_report" title="debug" disabled></q-btn>
+      <!-- <q-btn v-bind="btnAttrs" icon="bug_report" title="debug" disabled></q-btn> -->
       <q-btn v-bind="btnAttrs" icon="refresh" title="refresh [ctrl] + [shift] + [R]" @click="refresh()"></q-btn>
       <q-btn v-bind="btnAttrs" icon="article" title="project">
         <q-menu dark>
@@ -79,13 +79,14 @@
       </div>
     </div>
     <div style="text-align:center;" id="videoPlayerButtons">
-      <q-btn v-bind="btnAttrs" title="record" disabled>⬤</q-btn>
+      <q-btn v-bind="btnAttrs" title="record" @click="AnimM.isRecording = !AnimM.isRecording"
+        :style="`color:${AnimM.isRecording ? 'red' : ''}`">⬤</q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="play [F1]" v-if="!AnimM.isPlayingAnim">
         ▶
       </q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="pause [F1]" v-else style="color:red; ">| |
       </q-btn>
-      <q-btn v-bind="btnAttrs" @click="KfsM.createKeyFrame(SvElM.rootSvEl)" title="keyframe"><b>◆</b></q-btn>
+      <q-btn v-bind="btnAttrs" @click="KfsM.createKeyFrames(SvElM.rootSvEl)" title="keyframe"><b>◆</b></q-btn>
     </div>
     <div style="position:absolute; display: flex; right:-.5em; ">
       <div id="windowButtons" v-bind="btnAttrs">
