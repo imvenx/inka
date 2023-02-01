@@ -73,7 +73,7 @@ export const projectH = {
     if (!data.svgFile) return ''
 
     filePath = filePath.replace('.json', '')
-    await p.writeFile(`${filePath}_inka.json`, JSON.stringify(data), { encoding: 'utf-8' })
+    await p.writeFile(`${filePath}.json`, JSON.stringify(data), { encoding: 'utf-8' })
     return filePath
   },
   async getTempSvg(): Promise<string> {
@@ -157,7 +157,17 @@ export const projectH = {
 }
 
 async function refreshInkscapeUI() {
-  await exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
+  await exec(`${await projectH.getInkscapePath()} -q --actions="file-rebase"`, (e, stdout, stderr) => {
+    if (e) console.log('error: ', e)
+    // if (stdout) console.log('stdout: ', stdout)
+    if (stderr) console.log('stderr: ', stderr)
+  })
+  // await exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`,
+  //   (e, stdout, stderr) => {
+  //     if (e) console.log('error: ', e)
+  //     // if (stdout) console.log('stdout: ', stdout)
+  //     if (stderr) console.log('stderr: ', stderr)
+  //   })
 }
 
 async function writeTempSvg(data: string) {
