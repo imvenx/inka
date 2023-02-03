@@ -11,9 +11,12 @@ export abstract class CsSvgParser {
     /**
   * Get attributes from inkscape svg format to a css friendly format
   */
-    static async getAttrsFromInkscapeToInka(el: SVGElement, compareAndRecord: boolean): Promise<KeyVal[]> {
+    static async getAttrsFromInkscapeToInka(el: SVGElement): Promise<KeyVal[]> {
 
-        if (el.tagName === 'svg') return []
+        if (
+            el.tagName === 'svg'
+            || el.id === 'layer1'
+        ) return []
 
         let attrs: KeyVal[] = []
 
@@ -81,7 +84,7 @@ export abstract class CsSvgParser {
             if (strokeLinecap) { attrs.push({ key: 'strokeLinecap', val: strokeLinecap }) }
         }
 
-        // if (compareAndRecord) {
+        // if (AnimM.isRecording) {
         //     await this.ifValueChangedRecord(el.id, [
         //         { key: 'x', val: x },
         //         { key: 'y', val: y },
@@ -172,7 +175,7 @@ export abstract class CsSvgParser {
             prop.val != this.lastValue?.[elId]?.[prop.key] ? changedProps[prop.key] = prop.val : '')
         console.log(changedProps)
         if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(elId, changedProps)
-        AnimM.selectTime(AnimM.currentTimeMiliseconds += 50, SvElM.rootSvEl)
+        // AnimM.selectTime(AnimM.currentTimeMiliseconds += 50, SvElM.rootSvEl)
     }
 
     /*********
