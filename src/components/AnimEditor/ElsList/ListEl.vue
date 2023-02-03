@@ -1,13 +1,14 @@
 <template>
   <div class="list-el" @click="toggleCollapse()" ref="cont">
     <span v-for="depth in el.depth">&nbsp;</span>
-    <span>{{ el.isUncollapsed ? '▲' : '▼' }}</span>
+    <span v-if="el?.attrs?.length > 0 || el?.children?.length">{{ el.isUncollapsed ? '▲' : '▼' }}</span>
+    <span v-else>&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
     {{ el.name }}
   </div>
 
   <template v-if="el.isUncollapsed">
-    <ListAttr :el="el" />
+    <ListAttr v-if="el.attrs.length > 0" :el="el" />
 
     <template v-for="child in el.children">
       <ListEl :el="child" />
