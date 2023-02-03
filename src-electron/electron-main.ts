@@ -64,12 +64,12 @@ app.whenReady().then(async () => {
   ipcMain.handle('loadProject', ({ }, p) => projectH.loadProject(p))
   ipcMain.handle('saveProject', ({ }, p) => projectH.saveProject(p))
 
-  ipcMain.handle('getTempSvg', ({ }) => projectH.getTempSvg())
-  ipcMain.handle('updateTempSvg', ({ }, p) => projectH.updateTempSvg(p))
-  ipcMain.handle('exportSvg', ({ }, fileStr: string) => projectH.exportSvg(fileStr))
+  ipcMain.handle('getTempSvg', ({ }) => svgH.getTempSvg())
+  ipcMain.handle('updateTempSvg', ({ }, p) => svgH.updateTempSvg(p))
+  ipcMain.handle('exportSvg', ({ }, fileStr: string) => svgH.exportSvg(fileStr))
 
-  ipcMain.handle('openSvgWithInkscape', () => projectH.openSvgWithInkscape())
-  ipcMain.handle('openSvgWithDefaultProgram', () => projectH.openSvgWithDefaultProgram())
+  ipcMain.handle('openSvgWithInkscape', () => svgH.openSvgWithInkscape())
+  ipcMain.handle('openSvgWithDefaultProgram', () => svgH.openSvgWithDefaultProgram())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
 });
@@ -91,6 +91,7 @@ import { readFileSync, unwatchFile, watchFile, writeFile, mkdir, readFile, write
 import { exec } from 'child_process';
 import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams } from 'app/public/sharedModels';
 import { projectH } from './handlers/project_h';
+import { svgH } from './handlers/svgH';
 
 
 
