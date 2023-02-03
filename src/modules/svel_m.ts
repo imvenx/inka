@@ -32,22 +32,22 @@ export abstract class SvElM {
     //     svEl.attrs = SvElM.getAttrsArray(el)
     // }
 
-    static async getSvEls(el: Element, compareAndRecord: boolean = false): Promise<SvEl> {
+    static async getSvEls(el: Element): Promise<SvEl> {
         let _svEl: SvEl = {} as SvEl
         const uncollapsed = StorageM.getUncollapsed()
         const showAttrs = StorageM.getShowAttrs()
 
-        return await this.getSvElsLoop(el, 0, _svEl, uncollapsed, showAttrs, compareAndRecord)
+        return await this.getSvElsLoop(el, 0, _svEl, uncollapsed, showAttrs)
     }
 
-    static async getSvElsLoop(el: Element, depth: number = 0, _svEl: SvEl, uncollapsed: any, showAttrs: any, compareAndRecord: boolean): Promise<SvEl> {
+    static async getSvElsLoop(el: Element, depth: number = 0, _svEl: SvEl, uncollapsed: any, showAttrs: any): Promise<SvEl> {
 
         let children: SvEl[] = []
         Array.from(el.children)?.forEach(async (child) =>
-            allowedEls.includes(child.tagName) ? children.push(await this.getSvElsLoop(child, depth + 1, _svEl, uncollapsed, showAttrs, compareAndRecord)) : '')
+            allowedEls.includes(child.tagName) ? children.push(await this.getSvElsLoop(child, depth + 1, _svEl, uncollapsed, showAttrs)) : '')
 
         _svEl = {
-            attrs: await CsSvgParser.getAttrsFromInkscapeToInka(el as SVGElement, compareAndRecord),
+            attrs: await CsSvgParser.getAttrsFromInkscapeToInka(el as SVGElement),
             children: children,
             id: el.id,
             // isSelected: isSelected[el.id] ?? false,
