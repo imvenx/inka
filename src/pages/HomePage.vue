@@ -5,7 +5,7 @@
         <div style="display:flex">
           <q-btn class="homeItem" icon="add" @click="createProject()">New</q-btn>
           <q-btn class="homeItem" icon="download" @click="createProject(true)">New from SVG</q-btn>
-          <q-input disable style="padding: 0 1em .5em 1em" dark dense class="homeItem" v-model="searchStr">
+          <q-input v-model="filterString" style="padding: 0 1em .5em 1em" dark dense class="homeItem">
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
@@ -16,8 +16,11 @@
         </div>
         <div></div>
 
-        <q-item dense class="homeItem" v-for=" filePath in recentFilePaths" clickable @click="loadProject(filePath)">
+        <q-item dense class="homeItem" v-for=" filePath in recentFilePaths.filter(x => x.includes(filterString))"
+          clickable @click="loadProject(filePath)">
           {{ filePath }}
+          <q-btn @click.stop="deleteRecentFilePathFromList(filePath)" icon="delete" style="margin-left:auto;"
+            color="red" dense flat />
         </q-item>
       </q-list>
     </div>
@@ -27,24 +30,39 @@
 <script setup lang="ts">
 import { ProjectM } from 'src/modules/project_m';
 import { StorageM } from 'src/modules/storage_m';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
 // const projs = StorageM.getAllProjects()
-const recentFilePaths = StorageM.getRecentFilePaths()
+const recentFilePaths = ref(StorageM.getRecentFilePaths())
+
+const filterString = ref('')
 
 async function createProject(doImportSvg = false) {
   const success = await ProjectM.createProject({ doImportSvg: doImportSvg })
   if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 
-const searchStr = ref('')
-
 const loadProject = async (path: string) => {
-  const success = await ProjectM.loadProject({ filePath: path })
-  if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
+  try {
+    const success = await ProjectM.loadProject({ filePath: path })
+    if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
+  }
+  catch (e) {
+    console.log(e)
+    if (("" + e).includes('no such file or directory')) {
+      recentFilePaths.value.splice(recentFilePaths.value.indexOf(path))
+      StorageM.updateRecentFilePaths(recentFilePaths.value)
+    }
+  }
 }
+
+function deleteRecentFilePathFromList(path: string) {
+  recentFilePaths.value.splice(recentFilePaths.value.indexOf(path))
+  StorageM.updateRecentFilePaths(recentFilePaths.value)
+}
+
 </script>
 
 <style scoped>
