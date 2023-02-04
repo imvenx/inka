@@ -20,6 +20,7 @@
           {{ filePath }}
         </q-item>
       </q-list>
+      <q-btn class="homeItem" icon="download" @click="askInkscapePath()">Change inkscape path</q-btn>
     </div>
   </q-page>
 </template>
@@ -39,6 +40,10 @@ async function createProject(doImportSvg = false) {
   if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 
+async function askInkscapePath() {
+  const newInkscapePath = await ProjectM.askInkscapePath()
+  if (newInkscapePath) exec(`"${newInkscapePath}" ${tempFilePath()}`)
+}
 const searchStr = ref('')
 
 const loadProject = async (path: string) => {

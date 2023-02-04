@@ -21,6 +21,5 @@ import AnimViewer from "../components/AnimViewer.vue";
   display: grid;
   grid-template-columns: 70% auto;
   width: 99%;
-  gap: 1%;
 }
 </style>

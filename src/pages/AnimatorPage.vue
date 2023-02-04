@@ -27,7 +27,6 @@ onBeforeMount(() => {
 #page {
   display: grid;
   grid-template-columns: 70% auto;
-  gap: 1%;
   /* overflow: visible; */
   height: inherit;
 }

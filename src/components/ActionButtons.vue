@@ -10,8 +10,9 @@
             <q-item clickable v-close-popup @click="ProjectM.saveProject()">Save</q-item>
             <!-- <q-item clickable v-close-popup @click="importFile()">Import SVG</q-item> -->
             <q-item clickable v-close-popup @click="ExportM.exportToSvg()">Export</q-item>
-            <q-item clickable v-close-popup @click="ProjectM.openSvgWithInkscape()">Open SVG with
-              Inkscape</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.askInkscapePath()">Select inkscape application</q-item>
+            <q-item clickable v-close-popup @click="ProjectM.openSvgWithDefaultProgram()">Open SVG with default
+              program</q-item>
             <q-item clickable v-close-popup @click="ProjectM.openSvgWithDefaultProgram()">Open SVG with default
               program</q-item>
             <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
@@ -89,11 +90,70 @@
     </div>
     <div style="position:absolute; display: flex; right:-.5em; ">
       <div id="windowButtons" v-bind="btnAttrs">
-        <div icon="resize" style="margin-right:-5px" id="dragWindow" title="keyframe">
-          <q-btn v-bind="btnAttrs">⚓</q-btn>
+        <div class="btnAttrs" icon="resize" id="dragWindow" title="keyframe">
+          <q-btn v-bind="btnAttrs">
+          <svg width="100%" height="auto" viewBox="0 0 100 100" version="1.1" id="svg5" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+            <defs
+              id="defs143">
+              <marker
+                style="overflow:visible"
+                id="marker1148"
+                refX="0"
+                refY="0"
+                orient="auto-start-reverse"
+                inkscape:stockid="Arrow1"
+                markerWidth="4.0606604"
+                markerHeight="6.7071066"
+                viewBox="0 0 4.0606602 6.7071068"
+                inkscape:isstock="true"
+                inkscape:collect="always"
+                preserveAspectRatio="xMidYMid">
+                <path
+                  style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+                  d="M 3,-3 0,0 3,3"
+                  id="path1146"
+                  transform="rotate(180,0.125,0)"
+                  sodipodi:nodetypes="ccc" />
+              </marker>
+              <marker
+                style="overflow:visible"
+                id="Arrow1"
+                refX="0"
+                refY="0"
+                orient="auto-start-reverse"
+                inkscape:stockid="Arrow1"
+                markerWidth="4.0606604"
+                markerHeight="6.7071066"
+                viewBox="0 0 4.0606602 6.7071068"
+                inkscape:isstock="true"
+                inkscape:collect="always"
+                preserveAspectRatio="xMidYMid">
+                <path
+                  style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+                  d="M 3,-3 0,0 3,3"
+                  id="path5057"
+                  transform="rotate(180,0.125,0)"
+                  sodipodi:nodetypes="ccc" />
+              </marker>
+            </defs>
+            <path
+              style="marker-start:url(#Arrow1);marker-end:url(#marker1148)"
+              d="M 13.549034,51.004801 H 85.994552"
+              id="path357" />
+            <path
+              style="marker-start:url(#Arrow1);marker-end:url(#marker1148)"
+              d="M 49.771793,14.782043 V 87.22756"
+              id="path373" />
+          </svg>
+          </q-btn>
         </div>
       </div>
-      <q-btn style="color:red" v-bind="btnAttrs" title="close" @click="closeApp()">✖</q-btn>
+      <q-btn class="close btnAttrs" v-bind="btnAttrs" title="close" @click="closeApp()">
+        <svg width="100%" height="auto" viewBox="0 0 100 100" version="1.1" id="svg5" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+          <path d="M 24.386641,24.386641 75.613359,75.613359" id="path357" />
+          <path d="M 75.613358,24.386641 24.386642,75.613359" id="path373" />
+        </svg>
+      </q-btn>
     </div>
   </div>
 </template>
@@ -182,7 +242,6 @@ const closeApp = async () => await eapi.closeApp()
   display: grid;
   grid-template-columns: 70% auto;
   width: 99%;
-  gap: 1%;
   position: absolute;
   top: 0;
 }
@@ -191,6 +250,11 @@ const closeApp = async () => await eapi.closeApp()
   -webkit-user-select: none;
   user-select: none;
   -webkit-app-region: drag;
+}
+.btnAttrs * {
+  height: 18px !important;
+  stroke: var(--lightWhite);
+  stroke-width: 5px;
 }
 
 /* #windowButtons {
@@ -203,5 +267,11 @@ const closeApp = async () => await eapi.closeApp()
   height: 1.2rem;
   background-color: var(--bgColor1);
   color: var(--fontColor1);
+  border-style:solid;
+  border-width:1px;
+  margin-left:-1px;
+  border-color:var(--bgColor2);
+  margin:2px -1px 2px 0;
+  font-size:0.8rem;
 }
 </style>

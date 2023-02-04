@@ -77,6 +77,8 @@ watch(() => ConfigM.editorScroll.x, (val) => {
   overflow-y: hidden;
   font-weight: 1000;
   font-size: .55rem;
+  padding:5px;
+  vertical-align:middle;
   user-select: none;
   /* margin-left: .5em; */
   /* border-left: .5em solid black; */
