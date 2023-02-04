@@ -16,11 +16,14 @@
         </div>
         <div></div>
 
-        <q-item dense class="homeItem" v-for=" filePath in recentFilePaths.filter(x => x.includes(filterString))"
-          clickable @click="loadProject(filePath)">
+        <q-item dense class="homeItem"
+          v-for=" filePath in recentFilePaths.filter(x => x.toLowerCase().includes(filterString.toLowerCase()))">
           {{ filePath }}
-          <q-btn @click.stop="deleteRecentFilePathFromList(filePath)" icon="delete" style="margin-left:auto;"
-            color="red" dense flat />
+          <div style="margin-left:auto; display:flex; gap:1em">
+            <q-btn @click="loadProject(filePath)" color="primary" dense no-caps flat icon="file_open" title="open" />
+            <q-btn @click="deleteRecentFilePathFromList(filePath)" color="red" dense no-caps flat icon="playlist_remove"
+              title="remove from list" />
+          </div>
         </q-item>
       </q-list>
     </div>
