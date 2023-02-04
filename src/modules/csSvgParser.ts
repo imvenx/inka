@@ -6,178 +6,7 @@ import { roundToDecimals } from "./utils"
 
 export abstract class CsSvgParser {
 
-    private static lastValue: any = {}
-
-    /**
-  * Get attributes from inkscape svg format to a css friendly format
-  */
-    static async getAttrsFromInkscapeToInka(el: SVGElement): Promise<KeyVal[]> {
-
-        if (
-            el.tagName === 'svg'
-            ||
-            el.id === 'layer1'
-        ) return []
-
-        let attrs: KeyVal[] = []
-
-        // TODO: compare with last state, return if not modified, focus on hierarcy if modified
-        // const lastEl = await SvElM.getSvElById(SvElM.lastSvEl.value, el.id)
-
-        const x = (el.style as any).x || el.getAttribute('x')
-        const y = (el.style as any).y || el.getAttribute('y')
-
-        this.lastValue[el.id] = { x: x }
-
-        if (x) {
-            el.setAttribute('x', x)
-            attrs.push({ key: 'x', val: x })
-        }
-
-        if (y) {
-            el.setAttribute('y', y)
-            attrs.push({ key: 'y', val: y })
-        }
-
-        if (el.tagName === 'rect' || el.tagName === 'ellipse') {
-
-            const rx = (el.style as any).rx || el.getAttribute('rx')
-            if (rx) {
-                el.setAttribute('rx', rx)
-                attrs.push({ key: 'rx', val: rx })
-            }
-            const ry = (el.style as any).ry || el.getAttribute('ry')
-            if (ry) {
-                el.setAttribute('ry', ry)
-                attrs.push({ key: 'ry', val: ry })
-            }
-        }
-
-        let width = el.style.width || el.getAttribute('width')
-        if (width) {
-            width.includes('px') ? '' : width += 'px'
-            el.setAttribute('width', width)
-            attrs.push({ key: 'width', val: width })
-        }
-
-        let height = el.style.height || el.getAttribute('height')
-        if (height) {
-            height.includes('px') ? '' : height += 'px'
-            el.setAttribute('height', height)
-            attrs.push({ key: 'height', val: height })
-        }
-
-        const style = el.style
-        if (style) {
-            const fill = style.fill
-            if (fill) { attrs.push({ key: 'fill', val: fill }) }
-
-            const stroke = style.stroke
-            if (stroke) { attrs.push({ key: 'stroke', val: stroke }) }
-
-            const strokeWidth = style.strokeWidth
-            if (strokeWidth) { attrs.push({ key: 'strokeWidth', val: strokeWidth }) }
-
-            const strokeDasharray = style.strokeDasharray
-            if (strokeDasharray) { attrs.push({ key: 'strokeDasharray', val: strokeDasharray }) }
-
-            const strokeLinecap = style.strokeLinecap
-            if (strokeLinecap) { attrs.push({ key: 'strokeLinecap', val: strokeLinecap }) }
-        }
-
-        // if (AnimM.isRecording) {
-        //     await this.ifValueChangedRecord(el.id, [
-        //         { key: 'x', val: x },
-        //         { key: 'y', val: y },
-        //         // { key: 'width', val: width },
-        //         // { key: 'height', val: height },
-        //         // { key: 'fill', val: fill },
-        //     ])
-        //     // this.ifValueChangedRecord(el.id, 'y', y)
-        //     // const currentEl = await SvElM.getSvElById({} as SvEl, el.id) as SvEl
-        // }
-
-        const transform = el.getAttribute('transform')
-        if (!transform) {
-            if (el.tagName === 'g') {
-                attrs.push({ key: 'transform', val: 'none' })
-            }
-        }
-        else {
-            const baseVal: SVGTransform = (el as any).transform.baseVal[0]
-            const m = baseVal.matrix
-
-            if (transform.includes('translate')) {
-                const v = `translate(${m.e.toFixed(3) ?? 0}px, ${m.f.toFixed(3) ?? 0}px)`
-                attrs.push({
-                    key: 'transform',
-                    val: v
-                })
-                el.style.transform = v
-            }
-
-            else if (transform.includes('rotate')) {
-                const v = `rotate(${roundToDecimals(1, baseVal.angle)}deg)`
-                attrs.push({
-                    key: 'transform',
-                    val: v
-                })
-                el.style.transform = v
-            }
-
-            // else if (baseVal && transform.includes('matrix')) {
-            //     const matrix =
-            //         `matrix(${m.a.toFixed(5)},
-            //         ${m.b.toFixed(5)},
-            //         ${m.c.toFixed(5)},
-            //         ${m.d.toFixed(5)},
-            //         ${m.e.toFixed(5)},
-            //         ${m.f.toFixed(5)})`
-            //     attrs.push({
-            //         key: 'transform',
-            //         val: matrix
-            //     })
-            // }
-
-        }
-
-        if (el.tagName === 'path') {
-            const d = `path('${el.getAttribute('d')}')`
-            attrs.push({ key: 'd', val: d })
-        }
-
-        // names.forEach(name => {
-        //     if (allowedAttrs.includes(name)) {
-        //         // if (name === 'style') attrs = attrs.concat(this.separateStyleAttrs(el))
-        //         // else 
-        //         attrs.push({ key: name, val: el.getAttribute(name) ?? '' })
-        //     }
-        // })
-
-        return attrs
-    }
-
-    static separateStyleAttrs(el: Element): KeyVal[] {
-        const stylesStr = el.getAttribute('style')
-        const styles: KeyVal[] = []
-
-        let attrs = stylesStr?.split(';')
-        attrs?.pop()
-        attrs?.forEach(attr => {
-            const keyVal = attr.split(':')
-            styles.push({ key: keyVal[0], val: keyVal[1] })
-        })
-        return styles
-    }
-
-    static async ifValueChangedRecord(elId: string, props: KeyVal[]) {
-        let changedProps: any = {}
-        props.forEach(prop =>
-            prop.val != this.lastValue?.[elId]?.[prop.key] ? changedProps[prop.key] = prop.val : '')
-        console.log(changedProps)
-        if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(elId, changedProps)
-        // AnimM.selectTime(AnimM.currentTimeMiliseconds += 50, SvElM.rootSvEl)
-    }
+    // private static lastValue: any = {}
 
     /*********
     * We update attributes because when we animate and then apply styles to get a new
@@ -195,18 +24,18 @@ export abstract class CsSvgParser {
         let y = (el.style as any).y?.replace('px', '')
         if (y) el.setAttribute('y', y)
 
+        let width = el.style.width?.replace('px', '')
+        if (width) el.setAttribute('width', width)
+
+        let height = el.style.height?.replace('px', '')
+        if (height) el.setAttribute('height', height)
+
         if (el.tagName === 'rect' || el.tagName === 'ellipse') {
             let rx = (el.style as any).rx
             if (rx) el.setAttribute('rx', rx)
             let ry = (el.style as any).ry
             if (ry) el.setAttribute('ry', ry)
         }
-
-        let width = el.style.width?.replace('px', '')
-        if (width) el.setAttribute('width', width)
-
-        let height = el.style.height?.replace('px', '')
-        if (height) el.setAttribute('height', height)
 
         let d = (el.style as any).d
         if (d) {
@@ -251,4 +80,175 @@ export abstract class CsSvgParser {
             // }
         }
     }
+
+    /**
+    * Get attributes from inkscape svg format to a css-friendly-animable format
+    */
+    static async getAttrsFromInkscapeToInka(el: SVGElement): Promise<KeyVal[]> {
+
+        if (
+            el.tagName === 'svg'
+            ||
+            el.id === 'layer1'
+        ) return []
+
+        let attrs: KeyVal[] = []
+
+        // TODO: compare with last state, return if not modified, focus on hierarcy if modified
+        // const lastEl = await SvElM.getSvElById(SvElM.lastSvEl.value, el.id)
+
+        const x = (el.style as any).x || el.getAttribute('x')
+        const y = (el.style as any).y || el.getAttribute('y')
+        let width = el.style.width || el.getAttribute('width')
+        let height = el.style.height || el.getAttribute('height')
+        const style = el.style
+        const transform = el.getAttribute('transform')
+
+        // this.lastValue[el.id] = { x: x }
+
+        // if (AnimM.isRecording) {
+        //     await this.ifValueChangedRecord(el.id, [
+        //         { key: 'x', val: x },
+        //         { key: 'y', val: y },
+        //         // { key: 'width', val: width },
+        //         // { key: 'height', val: height },
+        //         // { key: 'fill', val: fill },
+        //     ])
+        //     // this.ifValueChangedRecord(el.id, 'y', y)
+        //     // const currentEl = await SvElM.getSvElById({} as SvEl, el.id) as SvEl
+        // }
+
+        if (x) {
+            el.setAttribute('x', x)
+            attrs.push({ key: 'x', val: x })
+        }
+
+        if (y) {
+            el.setAttribute('y', y)
+            attrs.push({ key: 'y', val: y })
+        }
+
+        if (width) {
+            width.includes('px') ? '' : width += 'px'
+            el.setAttribute('width', width)
+            attrs.push({ key: 'width', val: width })
+        }
+
+        if (height) {
+            height.includes('px') ? '' : height += 'px'
+            el.setAttribute('height', height)
+            attrs.push({ key: 'height', val: height })
+        }
+
+        if (style) {
+            const fill = style.fill
+            if (fill) { attrs.push({ key: 'fill', val: fill }) }
+
+            const stroke = style.stroke
+            if (stroke) { attrs.push({ key: 'stroke', val: stroke }) }
+
+            const strokeWidth = style.strokeWidth
+            if (strokeWidth) { attrs.push({ key: 'strokeWidth', val: strokeWidth }) }
+
+            const strokeDasharray = style.strokeDasharray
+            if (strokeDasharray) { attrs.push({ key: 'strokeDasharray', val: strokeDasharray }) }
+
+            const strokeLinecap = style.strokeLinecap
+            if (strokeLinecap) { attrs.push({ key: 'strokeLinecap', val: strokeLinecap }) }
+        }
+
+        if (!transform) {
+            if (el.tagName === 'g') {
+                attrs.push({ key: 'transform', val: 'none' })
+            }
+        }
+        else {
+            const baseVal: SVGTransform = (el as any).transform.baseVal[0]
+            const m = baseVal.matrix
+
+            if (transform.includes('translate')) {
+                const v = `translate(${m.e.toFixed(3) ?? 0}px, ${m.f.toFixed(3) ?? 0}px)`
+                attrs.push({
+                    key: 'transform',
+                    val: v
+                })
+                el.style.transform = v
+            }
+
+            else if (transform.includes('rotate')) {
+                const v = `rotate(${roundToDecimals(1, baseVal.angle)}deg)`
+                attrs.push({
+                    key: 'transform',
+                    val: v
+                })
+                el.style.transform = v
+            }
+
+            // else if (baseVal && transform.includes('matrix')) {
+            //     const matrix =
+            //         `matrix(${m.a.toFixed(5)},
+            //         ${m.b.toFixed(5)},
+            //         ${m.c.toFixed(5)},
+            //         ${m.d.toFixed(5)},
+            //         ${m.e.toFixed(5)},
+            //         ${m.f.toFixed(5)})`
+            //     attrs.push({
+            //         key: 'transform',
+            //         val: matrix
+            //     })
+            // }
+
+        }
+
+        if (el.tagName === 'rect' || el.tagName === 'ellipse') {
+
+            const rx = (el.style as any).rx || el.getAttribute('rx')
+            if (rx) {
+                el.setAttribute('rx', rx)
+                attrs.push({ key: 'rx', val: rx })
+            }
+            const ry = (el.style as any).ry || el.getAttribute('ry')
+            if (ry) {
+                el.setAttribute('ry', ry)
+                attrs.push({ key: 'ry', val: ry })
+            }
+        }
+
+        if (el.tagName === 'path') {
+            const d = `path('${el.getAttribute('d')}')`
+            attrs.push({ key: 'd', val: d })
+        }
+
+        // names.forEach(name => {
+        //     if (allowedAttrs.includes(name)) {
+        //         // if (name === 'style') attrs = attrs.concat(this.separateStyleAttrs(el))
+        //         // else 
+        //         attrs.push({ key: name, val: el.getAttribute(name) ?? '' })
+        //     }
+        // })
+
+        return attrs
+    }
+
+    // private static async ifValueChangedRecord(elId: string, props: KeyVal[]) {
+    //     let changedProps: any = {}
+    //     props.forEach(prop =>
+    //         prop.val != this.lastValue?.[elId]?.[prop.key] ? changedProps[prop.key] = prop.val : '')
+    //     console.log(changedProps)
+    //     if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(elId, changedProps)
+    //     // AnimM.selectTime(AnimM.currentTimeMiliseconds += 50, SvElM.rootSvEl)
+    // }
+
+    // private static separateStyleAttrs(el: Element): KeyVal[] {
+    //     const stylesStr = el.getAttribute('style')
+    //     const styles: KeyVal[] = []
+
+    //     let attrs = stylesStr?.split(';')
+    //     attrs?.pop()
+    //     attrs?.forEach(attr => {
+    //         const keyVal = attr.split(':')
+    //         styles.push({ key: keyVal[0], val: keyVal[1] })
+    //     })
+    //     return styles
+    // }
 }
