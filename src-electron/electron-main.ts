@@ -70,6 +70,7 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('openSvgWithInkscape', () => svgH.openSvgWithInkscape())
   ipcMain.handle('openSvgWithDefaultProgram', () => svgH.openSvgWithDefaultProgram())
+  ipcMain.handle('resetInkscapePath', () => inkscapeH.resetInkscapePath())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
 });
@@ -92,6 +93,7 @@ import { exec } from 'child_process';
 import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams } from 'app/public/sharedModels';
 import { projectH } from './handlers/project_h';
 import { svgH } from './handlers/svgH';
+import { inkscapeH } from './handlers/inkscape_h';
 
 
 

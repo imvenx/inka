@@ -12,6 +12,7 @@
             <q-item clickable v-close-popup @click="ExportM.exportToSvg()">Export</q-item>
             <q-item clickable v-close-popup @click="ProjectM.openSvgWithInkscape()">Open SVG with
               Inkscape</q-item>
+            <q-item clickable v-close-popup @click="eapi.resetInkscapePath()">Reset Inkscape path</q-item>
             <q-item clickable v-close-popup @click="ProjectM.openSvgWithDefaultProgram()">Open SVG with default
               program</q-item>
             <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
@@ -79,7 +80,7 @@
       </div>
     </div>
     <div style="text-align:center;" id="videoPlayerButtons">
-      <q-btn v-bind="btnAttrs" title="record" @click="AnimM.isRecording = !AnimM.isRecording"
+      <q-btn disabled v-bind="btnAttrs" title="record" @click="AnimM.isRecording = !AnimM.isRecording"
         :style="`color:${AnimM.isRecording ? 'red' : ''}`">⬤</q-btn>
       <q-btn v-bind="btnAttrs" @click="AnimM.pauseOrPlayAnim()" title="play [F1]" v-if="!AnimM.isPlayingAnim">
         ▶

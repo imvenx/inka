@@ -10,7 +10,12 @@ export abstract class inkscapeH {
 
   static async getInkscapePath() {
     let inkscapePath = ''
-    try { inkscapePath = JSON.parse(await (p.readFile(this.configRootPath, 'utf-8') as any)).inkscapePath }
+    try {
+      inkscapePath = JSON.parse(await (p.readFile(this.configRootPath, 'utf-8') as any)).inkscapePath
+      if (inkscapePath) return inkscapePath
+
+      inkscapePath = await this.askInkscapePath()
+    }
     catch { inkscapePath = await this.askInkscapePath() }
     return inkscapePath
   }
@@ -38,6 +43,10 @@ export abstract class inkscapeH {
         console.log('error: ', e1)
       }
     })
+  }
+
+  static async resetInkscapePath() {
+    await this.askInkscapePath()
   }
 
   private static async setInkscapePath(path: string) {

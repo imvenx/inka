@@ -86,7 +86,7 @@ async function svgMaxSize(isMounted: boolean = false) {
 
   const svg = svgEl()
   if (!svg) return
-  const _svEl = await SvElM.getSvEls(svg, isMounted && AnimM.isRecording)
+  const _svEl = await SvElM.getSvEls(svg)
   SvElM.rootSvEl = _svEl
 
 }

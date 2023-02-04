@@ -15,7 +15,8 @@ export abstract class CsSvgParser {
 
         if (
             el.tagName === 'svg'
-            || el.id === 'layer1'
+            ||
+            el.id === 'layer1'
         ) return []
 
         let attrs: KeyVal[] = []
