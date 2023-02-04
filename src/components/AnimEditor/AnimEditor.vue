@@ -31,7 +31,6 @@ const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDeci
 
 <style scoped>
 #animatorCont {
-  border: 1px solid var(--bgColor1);
   /* box-shadow: 0 0 5px black; */
   /* height: 100%; */
   display: grid;

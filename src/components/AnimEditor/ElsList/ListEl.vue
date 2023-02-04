@@ -1,7 +1,7 @@
 <template>
   <div class="list-el" @click="toggleCollapse()" ref="cont">
     <span v-for="depth in el.depth">&nbsp;</span>
-    <span>{{ el.isUncollapsed ? '▲' : '▼' }}</span>
+    <span :class="`${ el.isUncollapsed ? 'rotate90' : '' } nav`">&gt;</span>
     <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
     {{ el.name }}
   </div>

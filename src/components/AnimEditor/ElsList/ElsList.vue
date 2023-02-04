@@ -30,7 +30,7 @@ watch(() => ConfigM.editorScroll.y, (val) => {
 
 <style scoped>
 #elsListCont {
-  /* border-right: 1px solid black; */
+  border-right: 1px dashed #333;
   white-space: nowrap;
   /* overflow: hidden; */
   overflow-x: hidden;
@@ -42,8 +42,4 @@ watch(() => ConfigM.editorScroll.y, (val) => {
   padding-bottom: v-bind(timeSideOffsetPx + 'px');
 }
 
-::-webkit-scrollbar {
-  width: 0px;
-  /* height: 0px; */
-}
 </style>

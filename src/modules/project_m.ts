@@ -22,6 +22,7 @@ export abstract class ProjectM {
 
 
     static async openSvgWithInkscape() { eapi.openSvgWithInkscape() }
+    static async askInkscapePath() { eapi.askInkscapePath() }
     static async openSvgWithDefaultProgram() { eapi.openSvgWithDefaultProgram() }
 
     static async loadProject(p?: loadProjectParams): Promise<boolean> {

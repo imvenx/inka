@@ -6,7 +6,8 @@
   --listAttrsBgColor:  rgb(180, 180, 130); */
 
   --fontColor1: rgb(167, 167, 167);
-  --bgColor1: black;
+  --lightWhite: rgb(220, 220, 220);
+  --bgColor1: rgb(20, 20, 20);
   --bgColor2: rgb(70, 70, 70);
 
   --listElBgColor: rgb(14, 14, 14);
@@ -25,7 +26,6 @@ main {
   /* box-shadow: inset 0 0 0 1px orange;
   z-index: 9999;
   border: 1px solid var(--fontColor1); */
-  padding: 3px 4px;
 }
 
 .stepStyle {
@@ -41,26 +41,16 @@ main {
   margin: 0 .2em;
 }
 
-::-webkit-scrollbar {
-  width: .5rem;
-  height: .5rem;
+.close {
+  background-color: var(--bgColor2);
 }
 
-::-webkit-scrollbar-track {
-  background: #ffffff00;
+.nav {
+  font-size:14px;
+  line-height:1;
+  margin-right:3px;
 }
-
-::-webkit-scrollbar-thumb {
-  background: rgb(0, 0, 0);
-  border-radius: 4px;
-  /* box-shadow: 0 0 5px black; IT WAS GLITCHING :( */
-  border: 1px solid grey;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: grey;
-}
-
-::-webkit-scrollbar-corner {
-  background: transparent;
+.rotate90.nav {
+  transform:rotate(90deg);
+  display:inline-block;
 }

@@ -21,6 +21,8 @@ try { watchTempSvg() } catch { }
 export const projectH = {
   async createProject({ doImportSvg }: createProjectParams) {
     let data = svgTemplate
+    writeTempSvg(data)
+    this.openSvgWithInkscape()
     if (doImportSvg) {
       const importedFilePath = (await dialog.showOpenDialog(mainWindow!,
         {
@@ -32,8 +34,9 @@ export const projectH = {
         })).filePaths[0]
       if (!importedFilePath) return false
       data = await p.readFile(importedFilePath, 'utf-8')
+      writeTempSvg(data)
+      this.openSvgWithInkscape()
     }
-    writeTempSvg(data)
     return true
   },
   async loadProject({ filePath }: loadProjectParams = {}): Promise<loadProjectResult> {
@@ -53,6 +56,7 @@ export const projectH = {
     let project = JSON.parse(projectStr) as any
 
     writeTempSvg(project.svgFile)
+    this.openSvgWithInkscape()
     // delete project.svgFile
 
     return { data: project, filePath: filePath }
@@ -157,7 +161,10 @@ export const projectH = {
 }
 
 async function refreshInkscapeUI() {
-  await exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`)
+  const inkscapePath = await projectH.getInkscapePath()
+  if (!inkscapePath) return
+  console.log("_INKSCAPE_GC=disable " + inkscapePath + " --actions='file-rebase' -q")
+  exec(`_INKSCAPE_GC=disable "${inkscapePath}" --actions='file-rebase' -q`);
 }
 
 async function writeTempSvg(data: string) {

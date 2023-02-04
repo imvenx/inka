@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('eapi', {
   exportSvg: (fileStr: string) => ipcRenderer.invoke('exportSvg', fileStr),
   openSvgWithDefaultProgram: () => ipcRenderer.invoke('openSvgWithDefaultProgram'),
   openSvgWithInkscape: () => ipcRenderer.invoke('openSvgWithInkscape'),
+  askInkscapePath: () => ipcRenderer.invoke('askInkscapePath'),
   closeApp: () => ipcRenderer.invoke('closeApp'),
   updatedSvg: (callback: any) => ipcRenderer.on('updatedSvg', callback),
 })

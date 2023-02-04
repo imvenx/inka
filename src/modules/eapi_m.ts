@@ -15,7 +15,7 @@ export const eapi = {
     loadProject: async (p?: loadProjectParams): Promise<loadProjectResult> => _eapi.loadProject(p),
     saveProject: async (p: saveProjectParams) => _eapi.saveProject(p),
     exportSvg: async (svgStr: string) => _eapi.exportSvg(svgStr),
-
+    askInkscapePath: async () => _eapi.askInkscapePath(),
     updatedSvg: async (cb: any) => _eapi.updatedSvg(cb),
 
     updateTempSvg: async (p: updateTempSvgParams) => _eapi.updateTempSvg(p),

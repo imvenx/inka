@@ -37,7 +37,7 @@ function createWindow() {
   });
 
   mainWindow.loadURL(process.env.APP_URL);
-
+  nativeTheme.themeSource = 'dark'
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
@@ -69,9 +69,11 @@ app.whenReady().then(async () => {
   ipcMain.handle('exportSvg', ({ }, fileStr: string) => projectH.exportSvg(fileStr))
 
   ipcMain.handle('openSvgWithInkscape', () => projectH.openSvgWithInkscape())
+  ipcMain.handle('askInkscapePath', () => projectH.askInkscapePath())
   ipcMain.handle('openSvgWithDefaultProgram', () => projectH.openSvgWithDefaultProgram())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
+  projectH.openSvgWithInkscape()
 });
 
 
