@@ -18,7 +18,7 @@ import ActionButtons from 'src/components/ActionButtons/ActionButtons.vue';
 <style scoped>
 #qHeader {
   height: 1.4rem;
-  background-color: black;
+  background-color: rgb(20, 20, 20);
 }
 
 #qPageContainer {

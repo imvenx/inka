@@ -53,7 +53,7 @@ export abstract class StorageM {
     static getKfs = (k: string): Keyframe[] => this.get('kfs_' + k) ?? []
     static setKfs = (k: string, v: any) => this.set('kfs_' + k, v)
 
-    static getProject = (): any => this.gGet('p')
+    static getProject = (): any => this.gGet('p') ?? {}
     static setProject = (v: any): any => this.gSet('p', v)
 
     static getProjectName = (): any => this.get('projectName')

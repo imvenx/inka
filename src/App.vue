@@ -2,15 +2,13 @@
   <router-view />
 </template>
 
-<script lang="ts" setup>import { onMounted } from 'vue';
+<script lang="ts" setup>import { computed, onMounted, ref } from 'vue';
 import { initInkaApp } from './modules/init_m';
 
 onMounted(async () => await initInkaApp())
+
 </script>
 
-<!-- <style scoped>
-* {
-  cursor: wait !important;
-  pointer-events: none;
-}
-</style> -->
+<style>
+
+</style>

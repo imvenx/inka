@@ -1,27 +1,38 @@
 <template>
   <q-page class="q-pa-xs" style="height: 100%;">
     <div style="overflow:auto; height:100%">
-      <q-list id="qList">
-        <div style="display:flex">
-          <q-btn class="homeItem" icon="add" @click="createProject()">New</q-btn>
-          <q-btn class="homeItem" icon="download" @click="createProject(true)">New from SVG</q-btn>
-          <q-input v-model="filterString" style="padding: 0 1em .5em 1em" dark dense class="homeItem">
+      <div style="display:grid; grid-template-columns: 200px 400px auto; gap:.5%">
+        <div style="display:flex; flex-direction: column;">
+          <q-btn class="headerItem" dense icon="add" @click="createProject()">New</q-btn>
+          <q-btn class="headerItem" dense icon="download" @click="createProject(true)">New from SVG</q-btn>
+        </div>
+        <div class="headerItem">
+          <q-input v-model="filterString" dark dense label="search by path">
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
           </q-input>
-          <div style="margin-left: auto; margin-top: auto; font-size: 1.5rem;">
-            Open recent:
-          </div>
         </div>
-        <div></div>
 
-        <div class="homeItem"
+        <div style=" position: relative;border:1px dashed black; background-color: grey;">
+          <img src="src/assets/inka1_1.svg"
+            style="position:absolute; left:50%; transform: translate(-50%); height:5em; " />
+        </div>
+
+      </div>
+      <div style=" margin-top: auto; font-size: 1.5rem; font-weight: 800; text-decoration: underline; color:black; text-align: center;
+        border-bottom: 1px;
+        ">
+        Open recent:
+      </div>
+      <q-list id="qList">
+
+        <div class="projectItem"
           v-for=" filePath in recentFilePaths.filter(x => x.toLowerCase().includes(filterString.toLowerCase()))">
           <div>
             {{ filePath }}
           </div>
-          <div style="display:flex; gap:1em">
+          <div style="display:flex; gap:1em; margin-left: auto;">
             <q-btn @click="loadProject(filePath)" color="primary" dense no-caps flat icon="file_open" title="open" />
             <q-btn @click="deleteRecentFilePathFromList(filePath)" color="red" dense no-caps flat icon="playlist_remove"
               title="remove from list" />
@@ -71,7 +82,16 @@ function deleteRecentFilePathFromList(path: string) {
 </script>
 
 <style scoped>
-.homeItem {
+.headerItem {
+  background-color: rgb(19, 19, 19);
+  /* margin: 2px; */
+  box-shadow: 0 0 5px black;
+  border: 1px solid grey;
+  /* display: inline-block; */
+  padding: 0 1em;
+}
+
+.projectItem {
   background-color: rgb(19, 19, 19);
   margin: 2px;
   box-shadow: 0 0 5px black;

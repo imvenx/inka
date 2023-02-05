@@ -4,37 +4,30 @@
 
       <q-btn v-bind="btnAttrs" icon="home" title="menu" @click="goToMenu()"></q-btn>
 
-      <q-btn v-bind="btnAttrs" icon="slideshow" title="animator" @click="goToAnimEditor()"></q-btn>
-
       <FileMenu />
-
-      <q-btn v-bind="btnAttrs" icon="code" title="code" @click="goToCode()"></q-btn>
 
       <!-- <q-btn v-bind="btnAttrs" icon="bug_report" title="debug" disabled></q-btn> -->
 
+      <span id="projectMenuCont"></span>
+
+      <q-btn v-bind="btnAttrs" style="border:1px solid grey" title="animator" @click="goToAnimEditor()">
+        <!-- <q-icon name="slideshow" /> -->
+        &nbsp;{{ ConfigM.projectName }}&nbsp;</q-btn>
+
       <q-btn v-bind="btnAttrs" icon="refresh" title="refresh [ctrl] + [shift] + [R]" @click="refresh()"></q-btn>
 
-      <ProjectMenu />
+      <q-btn v-bind="btnAttrs" icon="code" title="code" @click="goToCode()"></q-btn>
 
-      {{ ConfigM.projectName }}
+      <HowToMenu />
 
-      <TimerMenu />
-
-    </div>
-
-    <div style="text-align:center;" id="videoPlayerButtons">
+      <span id="timeMenuCont"></span>
 
     </div>
 
+    <div id="videoPlayerButtons"> </div>
 
-    <div style="position:absolute; display: flex; right:-.5em; ">
-      <div id="windowButtons" v-bind="btnAttrs">
-        <div icon="resize" style="margin-right:-5px" id="dragWindow" title="keyframe">
-          <q-btn v-bind="btnAttrs">⚓</q-btn>
-        </div>
-      </div>
-      <q-btn style="color:red" v-bind="btnAttrs" title="close" @click="closeApp()">✖</q-btn>
-    </div>
+    <WindowButtons />
+
   </div>
 </template>
 
@@ -50,6 +43,8 @@ import FileMenu from './FileMenu.vue';
 import ProjectMenu from './ProjectMenu.vue';
 import TimerMenu from './TimerMenu.vue';
 import { btnAttrs } from 'src/modules/constants';
+import WindowButtons from './WindowButtons.vue';
+import HowToMenu from './HowToMenu.vue';
 
 const router = useRouter()
 
@@ -87,7 +82,6 @@ window.addEventListener('keydown', (e) => {
   AnimM.pauseOrPlayAnim()
 })
 
-const closeApp = async () => await eapi.closeApp()
 
 </script>
 
@@ -101,11 +95,6 @@ const closeApp = async () => await eapi.closeApp()
   top: 0;
 }
 
-#dragWindow {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-app-region: drag;
-}
 
 /* #windowButtons {
   display: flex;

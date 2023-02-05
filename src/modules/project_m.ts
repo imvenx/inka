@@ -35,9 +35,16 @@ export abstract class ProjectM {
     }
 
     static async saveProject() {
-        const filePath = await eapi.saveProject(await this.getProjectToSave())
-        if (!filePath) return
-        StorageM.setCurrentFilePath(filePath)
+        try {
+            const filePath = await eapi.saveProject(await this.getProjectToSave())
+
+            if (!filePath) return
+
+            StorageM.setCurrentFilePath(filePath)
+        } catch (e) {
+            console.log(e)
+            alert('Error trying to save press [ctrl] + [shift] + [i] to see the full error log on the console')
+        }
     }
 
     static async getTempSvg(): Promise<string> {
