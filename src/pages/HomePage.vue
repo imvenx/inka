@@ -34,7 +34,12 @@
             {{ filePath }}
           </div>
           <div style="display:flex; gap:1em; margin-left: auto;">
-            <q-btn @click="loadRecent(filePath)" color="primary" dense no-caps flat icon="file_open" title="open" />
+            <q-btn @click="loadRecent({ filePath: filePath, openInkscape: true })" color="green" dense no-caps flat
+              icon="file_open" title="open project and open inkscape" />
+
+            <q-btn @click="loadRecent({ filePath: filePath, openInkscape: false })" dense no-caps flat icon="visibility"
+              title="open project without reopening inkscape (not recomended it may load wrong page size, only use if you don't plan to animate)" />
+
             <q-btn @click="deleteRecentFilePathFromList(filePath)" color="red" dense no-caps flat icon="playlist_remove"
               title="remove from list" />
           </div>
@@ -45,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { loadProjectParams } from 'app/public/sharedModels';
 import { ProjectM } from 'src/modules/project_m';
 import { StorageM } from 'src/modules/storage_m';
 import { ref } from 'vue';
@@ -69,15 +75,16 @@ async function loadProject() {
   }
 }
 
-async function loadRecent(path: string) {
+async function loadRecent(params: loadProjectParams) {
   try {
-    const success = await ProjectM.loadProject({ filePath: path })
+    const success = await ProjectM.loadProject(params)
     if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
   }
   catch (e) {
     console.log(e)
     if (("" + e).includes('no such file or directory')) {
-      recentFilePaths.value.splice(recentFilePaths.value.indexOf(path))
+      if (!params.filePath) return
+      recentFilePaths.value.splice(recentFilePaths.value.indexOf(params.filePath))
       StorageM.updateRecentFilePaths(recentFilePaths.value)
     }
   }

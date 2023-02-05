@@ -9,6 +9,7 @@ export class saveProjectParams {
 
 export class loadProjectParams {
     filePath?: string
+    openInkscape?: boolean
 }
 
 export class loadProjectResult {

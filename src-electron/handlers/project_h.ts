@@ -30,7 +30,7 @@ export abstract class projectH {
     return true
   }
 
-  static async loadProject({ filePath }: loadProjectParams = {}): Promise<loadProjectResult> {
+  static async loadProject({ filePath, openInkscape }: loadProjectParams = {}): Promise<loadProjectResult> {
 
 
     if (!filePath) {
@@ -48,7 +48,7 @@ export abstract class projectH {
     if (!projectStr) return {}
     let project = JSON.parse(projectStr) as any
 
-    await this.reopenInkscapeWindow()
+    if (openInkscape) await this.reopenInkscapeWindow()
 
     svgH.writeTempSvg(project.svgFile)
     // delete project.svgFile

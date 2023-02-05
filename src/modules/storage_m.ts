@@ -58,8 +58,13 @@ export abstract class StorageM {
 
     static getProjectName = (): any => this.get('projectName')
     static setProjectName = (v: any) => this.set('projectName', v)
+
     static getShowAttrs = (): any => this.get('showAttrs') ?? {}
     static setShowAttrs = (v: any) => this.set('showAttrs', v)
+
+    static getIsSelected = (): any => this.get('isSelected') ?? {}
+    static setIsSelected = (v: any) => this.set('isSelected', v)
+
     static getUncollapsed = (): any => this.get('uncollapsed') ?? {}
     static setUncollapsed = (v: any) => this.set('uncollapsed', v)
 
