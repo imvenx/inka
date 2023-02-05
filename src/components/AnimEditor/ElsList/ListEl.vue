@@ -1,13 +1,17 @@
 <template>
   <div class="list-el" @click="toggleCollapse()" ref="cont">
     <span v-for="depth in el.depth">&nbsp;</span>
-    <span>{{ el.isUncollapsed ? '▲' : '▼' }}</span>
+    <template v-if="el?.attrs?.length > 0 || el?.children?.length">
+      <span v-if="el.isUncollapsed" id="uncollapsedEl">▲</span>
+      <span v-else>▼</span>
+    </template>
+    <span v-else>&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
     {{ el.name }}
   </div>
 
   <template v-if="el.isUncollapsed">
-    <ListAttr :el="el" />
+    <ListAttr v-if="el.attrs.length > 0" :el="el" />
 
     <template v-for="child in el.children">
       <ListEl :el="child" />
@@ -63,6 +67,10 @@ function toggleCollapse() {
   /* background-color: rgb(0, 0, 0) !important;
   color: white; */
   box-shadow: inset 0 0 1px 1px black;
+}
+
+#uncollapsedEl {
+  color: var(--fontColor2)
 }
 
 /* .list-el *:hover {

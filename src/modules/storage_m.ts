@@ -46,10 +46,14 @@ export abstract class StorageM {
         this.gSet('recentFilePaths', recentFilePaths)
     }
 
+    static updateRecentFilePaths = (v: string[]) => {
+        this.gSet('recentFilePaths', v)
+    }
+
     static getKfs = (k: string): Keyframe[] => this.get('kfs_' + k) ?? []
     static setKfs = (k: string, v: any) => this.set('kfs_' + k, v)
 
-    static getProject = (): any => this.gGet('p')
+    static getProject = (): any => this.gGet('p') ?? {}
     static setProject = (v: any): any => this.gSet('p', v)
 
     static getProjectName = (): any => this.get('projectName')

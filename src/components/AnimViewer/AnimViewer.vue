@@ -6,15 +6,38 @@
     <!-- <Teleport to="#animViewerCont">
     </Teleport> -->
 
+    <Teleport to="#projectMenuCont">
+      <ProjectMenu />
+    </Teleport>
+
+    <Teleport to="#timeMenuCont">
+      <TimerMenu />
+    </Teleport>
+
     <Teleport to="#videoPlayerButtons">
-      <input type="color" style="height:1rem; width:1rem; border:none; padding: 0;" v-model="animViewerBgColor">
+      <div style="text-align:center;">
+
+        <VideoPlayerButtons />
+
+        <q-btn v-bind="btnAttrs">
+          <input title="canvas background color" type="color" id="colorPicker" v-model="animViewerBgColor"
+            class="field-radio">
+        </q-btn>
+
+      </div>
+      <!-- <q-btn :style="`background-color:${animViewerBgColor}`" v-bind="btnAttrs">bg</q-btn> -->
+      <!-- <q-color name="accent_color" v-model="animViewerBgColor" style="width: 100px; max-width: 100%;" /> -->
     </Teleport>
   </template>
 </template>
 <script lang="ts" setup>
 import { svgEl } from 'src/modules/anim_m';
+import { btnAttrs } from 'src/modules/constants';
 import { SvElM } from 'src/modules/svel_m';
 import { onMounted, onUpdated, ref } from 'vue';
+import ProjectMenu from '../ActionButtons/ProjectMenu.vue';
+import TimerMenu from '../ActionButtons/TimerMenu.vue';
+import VideoPlayerButtons from './VideoPlayerButtons.vue';
 
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 const animViewerBgColor = ref('#8c8c8c')
@@ -25,24 +48,21 @@ const animViewerBgColor = ref('#8c8c8c')
 
 onMounted(async () => {
   await svgMaxSize()
-
   // setTimeout(() => AnimM.transformOriginCenterAnimViewer(), 100);
 })
 
 onUpdated(async () => {
-  await svgMaxSize()
+  await svgMaxSize(true)
+
   // AnimM.transformOriginRevertAnimViewer()
 })
 
-window.addEventListener('resize', () => setTimeout(async () => await svgMaxSize(), 100))
+window.addEventListener('resize', () => setTimeout(async () => await svgMaxSize(true), 100))
 
 // const width = ref('auto')
 // const height = ref('100%')
 
-async function svgMaxSize() {
-
-
-
+async function svgMaxSize(isMounted: boolean = false) {
   if (SvElM.svgString) {
 
 
@@ -107,6 +127,8 @@ async function svgMaxSize() {
 #animViewerCont :nth-child(1) {
   background-color: v-bind(animViewerBgColor);
   border: 1px solid black;
+  /* box-shadow: 0 0 5px black; */
+
 }
 </style>
 
@@ -116,5 +138,26 @@ async function svgMaxSize() {
   transform-origin: v-bind(transformOrigin); */
   transform-box: fill-box;
   transform-origin: center;
+}
+
+#colorPicker {
+  height: 1rem;
+  width: 1rem;
+  vertical-align: middle;
+  padding: 0;
+  height: 15px;
+  width: 15px;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+#colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border: 1px solid grey;
+}
+
+#colorPicker::-webkit-color-swatch {
+  border: none;
 }
 </style>

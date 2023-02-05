@@ -33,3 +33,11 @@ export const allowedAttrs = [
     'strokeDasharray',
     'strokeLinecap',
 ]
+
+export const btnAttrs = {
+    size: "12px",
+    padding: "0 sm",
+    'no-caps': '',
+    flat: true,
+    color: 'grey-5'
+}

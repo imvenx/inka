@@ -5,7 +5,7 @@
     </svg>
   </div>
   <template v-if="el.isUncollapsed">
-    <AttrsKfsLine :kfs="el.kfs" />
+    <AttrsKfsLine v-if="el.attrs.length > 0" :kfs="el.kfs" />
 
     <template v-if="el.showAttrs">
       <template v-for="attr in el.attrs">

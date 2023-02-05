@@ -3,6 +3,10 @@ import path from 'path';
 import os from 'os';
 import { screen } from 'electron';
 
+import { projectH } from './handlers/project_h';
+import { svgH } from './handlers/svgH';
+import { inkscapeH } from './handlers/inkscape_h';
+
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
@@ -46,6 +50,9 @@ function createWindow() {
     // mainWindow.webContents.on('devtools-opened', () => {
     //   mainWindow?.webContents.closeDevTools();
     // });
+
+    svgH.openSvgWithInkscape()
+
   }
 
   mainWindow.on('closed', () => {
@@ -53,6 +60,7 @@ function createWindow() {
   });
 
 }
+
 
 // let filePath = ''
 // const projectsFolderPath = 'cssvg_projects'
@@ -64,12 +72,13 @@ app.whenReady().then(async () => {
   ipcMain.handle('loadProject', ({ }, p) => projectH.loadProject(p))
   ipcMain.handle('saveProject', ({ }, p) => projectH.saveProject(p))
 
-  ipcMain.handle('getTempSvg', ({ }) => projectH.getTempSvg())
-  ipcMain.handle('updateTempSvg', ({ }, p) => projectH.updateTempSvg(p))
-  ipcMain.handle('exportSvg', ({ }, fileStr: string) => projectH.exportSvg(fileStr))
+  ipcMain.handle('getTempSvg', ({ }) => svgH.getTempSvg())
+  ipcMain.handle('updateTempSvg', ({ }, p) => svgH.updateTempSvg(p))
+  ipcMain.handle('exportSvg', ({ }, fileStr: string) => svgH.exportSvg(fileStr))
 
-  ipcMain.handle('openSvgWithInkscape', () => projectH.openSvgWithInkscape())
-  ipcMain.handle('openSvgWithDefaultProgram', () => projectH.openSvgWithDefaultProgram())
+  ipcMain.handle('openSvgWithInkscape', () => svgH.openSvgWithInkscape())
+  ipcMain.handle('openSvgWithDefaultProgram', () => svgH.openSvgWithDefaultProgram())
+  ipcMain.handle('resetInkscapePath', () => inkscapeH.resetInkscapePath())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
 });
@@ -82,15 +91,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (mainWindow === undefined) {
-    // createWindow();
-  }
+  // if (mainWindow === undefined) {
+  // createWindow();
+  // }
 });
-
-import { readFileSync, unwatchFile, watchFile, writeFile, mkdir, readFile, writeFileSync } from 'fs'
-import { exec } from 'child_process';
-import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams } from 'app/public/sharedModels';
-import { projectH } from './handlers/project_h';
 
 
 
@@ -129,10 +133,6 @@ import { projectH } from './handlers/project_h';
 //   })
 //   return filePath
 // }
-
-
-
-
 
 async function closeApp() { mainWindow?.close() }
 

@@ -35,7 +35,7 @@ const zoomTime = (e: WheelEvent) => ConfigM.zoomPx -= e.deltaY / ConfigM.numDeci
   /* box-shadow: 0 0 5px black; */
   /* height: 100%; */
   display: grid;
-  grid-template-columns: 30% 70%;
+  grid-template-columns: 25% 75%;
   grid-template-rows: max-content auto;
   overflow: hidden;
   /* overflow-x: hidden; */

@@ -12,6 +12,7 @@ export const eapi = {
 
     openSvgWithInkscape: async () => _eapi.openSvgWithInkscape(),
     openSvgWithDefaultProgram: async () => _eapi.openSvgWithDefaultProgram(),
+    resetInkscapePath: async () => _eapi.resetInkscapePath(),
     loadProject: async (p?: loadProjectParams): Promise<loadProjectResult> => _eapi.loadProject(p),
     saveProject: async (p: saveProjectParams) => _eapi.saveProject(p),
     exportSvg: async (svgStr: string) => _eapi.exportSvg(svgStr),

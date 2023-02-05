@@ -1,10 +1,10 @@
 import { allowedAttrs, allowedEls } from "src/modules/constants"
-import { SvEl } from "src/models/models"
+import { KeyVal, SvEl } from "src/models/models"
 import { StorageM } from "./storage_m"
 import { AnimM } from "./anim_m"
 import { ref } from "vue"
 import { SvElM } from "./svel_m"
-import { performanceTest, roundToDecimals } from "./utils"
+import { roundToDecimals } from "./utils"
 import { svgIO } from "./svgIO_m"
 
 
@@ -46,9 +46,9 @@ export abstract class KfsM {
         svgIO.output()
     }
 
-    static async createKeyFrame(svEl: SvEl): Promise<any> {
+    static async createKeyFrames(svEl: SvEl): Promise<any> {
 
-        svEl.children?.forEach(async (child) => await this.createKeyFrame(child));
+        svEl.children?.forEach(async (child) => await this.createKeyFrames(child));
         if (!allowedEls.includes(svEl.tagName) || this.elHasNotAllowedAttrs(svEl)) return
 
         let kf = svEl.kfs.find(x => x?.offset === AnimM.currentOffset)
@@ -63,6 +63,27 @@ export abstract class KfsM {
 
         svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
         StorageM.setKfs(svEl.id, svEl.kfs)
+    }
+
+    static async createKeyFrame(elId: string, kfs: Keyframe): Promise<any> {
+
+        const svEl = await SvElM.getSvElById(SvElM.rootSvEl, elId)
+        if (!svEl) return
+        // let kf = svEl.kfs.find(x => x?.offset === AnimM.currentOffset)
+        // // const kfs = await this.attrsToKfs(svEl)
+        // let kf: any = { [key]: val }
+        // const kfs = 
+        // kf.offset = AnimM.currentOffset
+        kfs.offset = AnimM.currentOffset
+        svEl.kfs.push(kfs)
+        // // svEl.attrs.forEach(attr => kfs[attr.key] = attr.val)
+
+        // if (!kfs) return
+        // if (kf) svEl.kfs[svEl.kfs.indexOf(kf)] = kfs
+        // else svEl.kfs.push(kfs)
+
+        svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
+        this.updateKfs(elId, svEl.kfs)
     }
 
     static async updateKfs(elId: string, kf: Keyframe[]) {

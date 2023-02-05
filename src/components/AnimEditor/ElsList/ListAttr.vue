@@ -2,7 +2,8 @@
   <div class="list-el attr-cont" @click="toggleShowAttrs()"
     :title="JSON.stringify(el.attrs.map(x => `${x.key}: ${x.val}`))">
     &nbsp;<span v-for="d in el.depth">&nbsp;</span>
-    <span>{{ el.showAttrs ? '▲' : '▼' }}</span>
+    <span v-if="el.showAttrs" id="uncollapsedAttr">▲</span>
+    <span v-else>▼</span>
     <q-icon name="folder" title="attributes" /> attrs
     <!-- <q-icon name="add_circle_outline" title="add attribute" /> -->
   </div>
@@ -71,5 +72,9 @@ function getAttrIcon(attrName: string) {
 
 .list-el:hover {
   box-shadow: inset 0 0 1px 1px black;
+}
+
+#uncollapsedAttr {
+  color: var(--fontColor2)
 }
 </style>
