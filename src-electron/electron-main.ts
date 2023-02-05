@@ -26,11 +26,11 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: screen.getPrimaryDisplay().bounds.width,
-    height: screen.getPrimaryDisplay().bounds.height / 4,
+    height: 250,
     autoHideMenuBar: true,
     frame: false,
     x: 0,
-    y: screen.getPrimaryDisplay().bounds.height,
+    y: screen.getPrimaryDisplay().bounds.height - 250,
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
