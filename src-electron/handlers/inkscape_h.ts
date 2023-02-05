@@ -32,9 +32,9 @@ export abstract class inkscapeH {
   }
 
   static async refreshInkscapeUI() {
-    exec(`_INKSCAPE_GC=disable ${await inkscapeH.getInkscapePath()} -q --actions="file-rebase"`, (e1, { }, stderr) => {
+    exec(`${await inkscapeH.getInkscapePath()} -q --actions="file-rebase"`, (e1, { }, stderr) => {
       if (stderr) {
-        if (stderr.includes('Failed to load module "xapp-gtk3-module"')) return
+        // if (stderr.includes('Failed to load module "xapp-gtk3-module"')) return
         console.log('stderr: ', stderr)
       }
       if (e1) {
