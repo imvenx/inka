@@ -16,15 +16,17 @@
         </div>
         <div></div>
 
-        <q-item dense class="homeItem"
+        <div class="homeItem"
           v-for=" filePath in recentFilePaths.filter(x => x.toLowerCase().includes(filterString.toLowerCase()))">
-          {{ filePath }}
-          <div style="margin-left:auto; display:flex; gap:1em">
+          <div>
+            {{ filePath }}
+          </div>
+          <div style="display:flex; gap:1em">
             <q-btn @click="loadProject(filePath)" color="primary" dense no-caps flat icon="file_open" title="open" />
             <q-btn @click="deleteRecentFilePathFromList(filePath)" color="red" dense no-caps flat icon="playlist_remove"
               title="remove from list" />
           </div>
-        </q-item>
+        </div>
       </q-list>
     </div>
   </q-page>
@@ -74,6 +76,9 @@ function deleteRecentFilePathFromList(path: string) {
   margin: 2px;
   box-shadow: 0 0 5px black;
   border: 1px solid grey;
+  word-break: break-all;
+  padding: .3em;
+  display: flex;
 }
 
 #qList {

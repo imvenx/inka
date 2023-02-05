@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { SvElM } from "src/modules/svel_m";
-import AnimViewer from "../components/AnimViewer.vue";
+import AnimViewer from "../components/AnimViewer/AnimViewer.vue";
 
 </script>
 

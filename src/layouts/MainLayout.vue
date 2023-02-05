@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import ActionButtons from 'src/components/ActionButtons.vue';
+import ActionButtons from 'src/components/ActionButtons/ActionButtons.vue';
 </script>
 
 <style scoped>

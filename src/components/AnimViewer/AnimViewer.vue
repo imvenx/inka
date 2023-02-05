@@ -7,14 +7,16 @@
     </Teleport> -->
 
     <Teleport to="#videoPlayerButtons">
+      <VideoPlayerButtons />
       <input type="color" style="height:1rem; width:1rem; border:none; padding: 0;" v-model="animViewerBgColor">
     </Teleport>
   </template>
 </template>
 <script lang="ts" setup>
-import { AnimM, svgEl } from 'src/modules/anim_m';
+import { svgEl } from 'src/modules/anim_m';
 import { SvElM } from 'src/modules/svel_m';
 import { onMounted, onUpdated, ref } from 'vue';
+import VideoPlayerButtons from './VideoPlayerButtons.vue';
 
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 const animViewerBgColor = ref('#8c8c8c')

@@ -13,7 +13,7 @@ import AnimEditor from "src/components/AnimEditor/AnimEditor.vue";
 import { svgIO } from "src/modules/svgIO_m";
 import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import AnimViewer from "../components/AnimViewer.vue";
+import AnimViewer from "../components/AnimViewer/AnimViewer.vue";
 const route = useRoute()
 const mount = ref(!route.query.refreshApp)
 onBeforeMount(() => {
