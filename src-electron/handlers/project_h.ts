@@ -9,6 +9,7 @@ import { svgH } from "./svgH"
 export abstract class projectH {
 
   static async createProject({ doImportSvg }: createProjectParams) {
+
     let data = svgTemplate
     if (doImportSvg) {
       const importedFilePath = (await dialog.showOpenDialog(mainWindow!,
@@ -23,10 +24,15 @@ export abstract class projectH {
       data = await p.readFile(importedFilePath, 'utf-8')
     }
     svgH.writeTempSvg(data)
+
+    await this.reopenInkscapeWindow()
+
     return true
   }
 
   static async loadProject({ filePath }: loadProjectParams = {}): Promise<loadProjectResult> {
+
+
     if (!filePath) {
       filePath = (dialog.showOpenDialogSync(mainWindow!, {
         title: 'Load Project',
@@ -41,6 +47,8 @@ export abstract class projectH {
     let projectStr = await p.readFile(filePath, { encoding: 'utf-8' })
     if (!projectStr) return {}
     let project = JSON.parse(projectStr) as any
+
+    await this.reopenInkscapeWindow()
 
     svgH.writeTempSvg(project.svgFile)
     // delete project.svgFile
@@ -66,6 +74,17 @@ export abstract class projectH {
     filePath = filePath.replace('.json', '')
     await p.writeFile(`${filePath}.json`, JSON.stringify(data), { encoding: 'utf-8' })
     return filePath
+  }
+
+  private static async reopenInkscapeWindow() {
+    exec(`${await inkscapeH.getInkscapePath()} -q --actions="window-close"`, (e1, { }, stderr) => {
+      if (stderr) {
+        if (e1) console.log(e1)
+        svgH.openSvgWithInkscape()
+        if (stderr.includes('Failed to load module "xapp-gtk3-module"')) return
+        console.log('stderr: ', stderr)
+      }
+    })
   }
 }
 

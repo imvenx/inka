@@ -3,6 +3,10 @@ import path from 'path';
 import os from 'os';
 import { screen } from 'electron';
 
+import { projectH } from './handlers/project_h';
+import { svgH } from './handlers/svgH';
+import { inkscapeH } from './handlers/inkscape_h';
+
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
@@ -46,6 +50,9 @@ function createWindow() {
     // mainWindow.webContents.on('devtools-opened', () => {
     //   mainWindow?.webContents.closeDevTools();
     // });
+
+    svgH.openSvgWithInkscape()
+
   }
 
   mainWindow.on('closed', () => {
@@ -53,6 +60,7 @@ function createWindow() {
   });
 
 }
+
 
 // let filePath = ''
 // const projectsFolderPath = 'cssvg_projects'
@@ -83,17 +91,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (mainWindow === undefined) {
-    // createWindow();
-  }
+  // if (mainWindow === undefined) {
+  // createWindow();
+  // }
 });
-
-import { readFileSync, unwatchFile, watchFile, writeFile, mkdir, readFile, writeFileSync } from 'fs'
-import { exec } from 'child_process';
-import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams } from 'app/public/sharedModels';
-import { projectH } from './handlers/project_h';
-import { svgH } from './handlers/svgH';
-import { inkscapeH } from './handlers/inkscape_h';
 
 
 
@@ -132,10 +133,6 @@ import { inkscapeH } from './handlers/inkscape_h';
 //   })
 //   return filePath
 // }
-
-
-
-
 
 async function closeApp() { mainWindow?.close() }
 

@@ -4,7 +4,7 @@
         :color="`${svgIO.refreshInkscape ? 'green' : 'grey'}`"
         @click="svgIO.refreshInkscape = !svgIO.refreshInkscape"></q-btn>
 
-    <q-btn v-bind="btnAttrs" title="start recording" @click="AnimM.isRecording = !AnimM.isRecording"
+    <q-btn v-bind="btnAttrs" title="start recording" @click="AnimM.isRecording = !AnimM.isRecording" disabled
         :style="`color:${AnimM.isRecording ? 'red' : ''}`" icon="emergency_recording" v-if="!AnimM.isRecording" />
 
     <q-btn v-bind="btnAttrs" title="stop recording" @click="AnimM.isRecording = !AnimM.isRecording"

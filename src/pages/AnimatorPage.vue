@@ -16,11 +16,10 @@
 </template>
 
 <script setup lang="ts">
-import ProjectMenu from "src/components/ActionButtons/ProjectMenu.vue";
 import AnimEditor from "src/components/AnimEditor/AnimEditor.vue";
 import { AnimM } from "src/modules/anim_m";
 import { svgIO } from "src/modules/svgIO_m";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, inject, onBeforeMount, Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import AnimViewer from "../components/AnimViewer/AnimViewer.vue";
 const route = useRoute()
@@ -30,11 +29,13 @@ onBeforeMount(() => {
   svgIO.input()
 })
 
+const isFocused = inject('isWindowFocused') as Ref<boolean>
 
 const animPageBorder = computed(() => {
-  if (AnimM.isRecording) return '30px dashed red'
-  if (AnimM.isPlayingAnim) return '30px dashed orange'
+  if (AnimM.isRecording) return '10px dashed red'
+  if (AnimM.isPlayingAnim) return '10px dashed orange'
 
+  if (isFocused.value) return '10px solid white'
   return '0 dashed darkgrey'
 })
 
