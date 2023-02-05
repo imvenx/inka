@@ -1,11 +1,12 @@
 <template>
   <q-page class="q-pa-xs" style="height: 100%;">
     <div style="overflow:auto; height:100%">
-      <div style="display:grid; grid-template-columns: 200px 400px auto; gap:.5%">
+      <div style="display:grid; grid-template-columns: 24.5% 24.5% auto; gap:.5%">
         <div style="display:flex; flex-direction: column;">
           <q-btn class="headerItem" dense icon="add" @click="createProject()">New</q-btn>
           <q-btn class="headerItem" dense icon="download" @click="createProject(true)">New from SVG</q-btn>
         </div>
+        <q-btn class="headerItem" dense icon="folder_open" @click="loadProject">Load</q-btn>
         <div class="headerItem">
           <q-input v-model="filterString" dark dense label="search by path">
             <template v-slot:prepend>
@@ -14,10 +15,10 @@
           </q-input>
         </div>
 
-        <div style=" position: relative;border:1px dashed black; background-color: grey;">
+        <!-- <div style=" position: relative;border:1px dashed black; background-color: grey;">
           <img src="src/assets/inka1_1.svg"
             style="position:absolute; left:50%; transform: translate(-50%); height:5em; " />
-        </div>
+        </div> -->
 
       </div>
       <div style=" margin-top: auto; font-size: 1.5rem; font-weight: 800; text-decoration: underline; color:black; text-align: center;
@@ -33,7 +34,7 @@
             {{ filePath }}
           </div>
           <div style="display:flex; gap:1em; margin-left: auto;">
-            <q-btn @click="loadProject(filePath)" color="primary" dense no-caps flat icon="file_open" title="open" />
+            <q-btn @click="loadRecent(filePath)" color="primary" dense no-caps flat icon="file_open" title="open" />
             <q-btn @click="deleteRecentFilePathFromList(filePath)" color="red" dense no-caps flat icon="playlist_remove"
               title="remove from list" />
           </div>
@@ -46,7 +47,7 @@
 <script setup lang="ts">
 import { ProjectM } from 'src/modules/project_m';
 import { StorageM } from 'src/modules/storage_m';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -60,7 +61,15 @@ async function createProject(doImportSvg = false) {
   if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
 }
 
-const loadProject = async (path: string) => {
+async function loadProject() {
+  const success = await ProjectM.loadProject()
+  if (success) {
+    router.push({ path: '/', query: { refreshApp: true } } as any)
+    location.reload()
+  }
+}
+
+async function loadRecent(path: string) {
   try {
     const success = await ProjectM.loadProject({ filePath: path })
     if (success) await router.push({ path: '/', query: { refreshApp: true } as any })
