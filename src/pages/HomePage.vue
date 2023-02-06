@@ -35,10 +35,10 @@
           </div>
           <div style="display:flex; gap:1em; margin-left: auto;">
             <q-btn @click="loadRecent({ filePath: filePath, openInkscape: true })" color="green" dense no-caps flat
-              icon="file_open" title="open project and open inkscape" />
+              icon="file_open" title="open project in inka and open inkscape" />
 
             <q-btn @click="loadRecent({ filePath: filePath, openInkscape: false })" dense no-caps flat icon="visibility"
-              title="open project without reopening inkscape (not recomended it may load wrong page size, only use if you don't plan to animate)" />
+              title="open project without opening inkscape (in windows require manually file revert on inkscape if window was already open)" />
 
             <q-btn @click="deleteRecentFilePathFromList(filePath)" color="red" dense no-caps flat icon="playlist_remove"
               title="remove from list" />

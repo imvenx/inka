@@ -1,8 +1,7 @@
 import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams, updateTempSvgParams } from "app/public/sharedModels"
-import { exec } from "child_process"
 import { dialog } from "electron"
-import { promises as p, unwatchFile, watchFile } from "fs"
-import { mainWindow } from "../electron-main"
+import { promises as p } from "fs"
+import { mainWindow, platform } from "../electron-main"
 import { inkscapeH } from "./inkscape_h"
 import { svgH } from "./svgH"
 
@@ -23,15 +22,15 @@ export abstract class projectH {
       if (!importedFilePath) return false
       data = await p.readFile(importedFilePath, 'utf-8')
     }
-    svgH.writeTempSvg(data)
 
-    await this.reopenInkscapeWindow()
+    inkscapeH.reopenInkscape()
+
+    svgH.writeTempSvg(data)
 
     return true
   }
 
   static async loadProject({ filePath, openInkscape }: loadProjectParams = {}): Promise<loadProjectResult> {
-
 
     if (!filePath) {
       filePath = (dialog.showOpenDialogSync(mainWindow!, {
@@ -48,10 +47,16 @@ export abstract class projectH {
     if (!projectStr) return {}
     let project = JSON.parse(projectStr) as any
 
-    if (openInkscape) await this.reopenInkscapeWindow()
+    if (openInkscape) {
+      inkscapeH.reopenInkscape()
+    }
 
-    svgH.writeTempSvg(project.svgFile)
+    if (platform === 'win32') inkscapeH.fileRebase()
+    else inkscapeH.documentRevert()
+
     // delete project.svgFile
+
+    await svgH.writeTempSvg(project.svgFile)
 
     return { data: project, filePath: filePath }
   }
@@ -76,16 +81,6 @@ export abstract class projectH {
     return filePath
   }
 
-  private static async reopenInkscapeWindow() {
-    exec(`${await inkscapeH.getInkscapePath()} -q --actions="window-close"`, (e1, { }, stderr) => {
-      if (stderr) {
-        if (e1) console.log(e1)
-        svgH.openSvgWithInkscape()
-        if (stderr.includes('Failed to load module "xapp-gtk3-module"')) return
-        console.log('stderr: ', stderr)
-      }
-    })
-  }
 }
 
 const svgTemplate =

@@ -8,7 +8,7 @@ import { mainWindow } from "../electron-main";
 
 const appPrefix = 'inka';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
-const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
+export const tempFilePath = () => `${tempDirectoryPath()}/temp.svg`
 
 /* Prevents refresh when SvgIO_Module calls update file,
  since we only want to refresh when inkscape save updates file */
@@ -20,18 +20,6 @@ export abstract class svgH {
   static async getTempSvg(): Promise<string> {
     try { return await p.readFile(tempFilePath(), { encoding: 'utf-8' }) }
     catch { return '' }
-  }
-
-  static async openSvgWithInkscape() {
-    const inkscapePath = await inkscapeH.getInkscapePath()
-    if (!inkscapePath) return
-
-    exec(`"${inkscapePath}" ${tempFilePath()}`, async (e) => {
-      if (e) {
-        const newInkscapePath = await inkscapeH.askInkscapePath()
-        if (newInkscapePath) exec(`"${newInkscapePath}" ${tempFilePath()}`)
-      }
-    })
   }
 
   static async openSvgWithDefaultProgram() {
@@ -50,7 +38,7 @@ export abstract class svgH {
     skipRefresh = true
     try {
       await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
-      inkscapeH.refreshInkscapeUI()
+      await inkscapeH.fileRebase()
     } catch {
       this.writeTempSvg(data)
     }
@@ -77,7 +65,7 @@ export abstract class svgH {
     catch (e: any) { e.code == 'EEXIST' ? '' : console.log(e) }
 
     await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
-    inkscapeH.refreshInkscapeUI()
+    inkscapeH.fileRebase()
 
     unwatchFile(tempFilePath())
     this.watchTempSvg()

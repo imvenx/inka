@@ -1,23 +1,37 @@
-import { exec } from "child_process";
+import { exec as _exec } from "child_process";
+import { promisify } from "util";
+const exec = promisify(_exec);
 import electron, { dialog } from "electron";
 import { promises as p, } from "fs"
 import path from "path"
 import { mainWindow } from "../electron-main";
+import { logInkaError } from "../utils/utils";
+import { tempFilePath } from "./svgH";
 
 export abstract class inkscapeH {
 
   private static configRootPath = path.join(electron.app.getPath('userData'), 'inkaConfig.json')
+  private static inkscapePath = ''
 
-  static async getInkscapePath() {
-    let inkscapePath = ''
+  private static async getInkscapePath() {
+    if (this.inkscapePath) return this.inkscapePath
+
     try {
-      inkscapePath = JSON.parse(await (p.readFile(this.configRootPath, 'utf-8') as any)).inkscapePath
-      if (inkscapePath) return inkscapePath
+      const config = JSON.parse(await (p.readFile(this.configRootPath, 'utf-8') as any))
 
-      inkscapePath = await this.askInkscapePath()
+      if (config.inkscapePath) {
+        this.inkscapePath = config.inkscapePath
+        return this.inkscapePath
+      }
+
+      this.inkscapePath = await this.askInkscapePath()
     }
-    catch { inkscapePath = await this.askInkscapePath() }
-    return inkscapePath
+    catch {
+      this.inkscapePath
+      this.inkscapePath = await this.askInkscapePath()
+    }
+
+    return this.inkscapePath
   }
 
   static async askInkscapePath() {
@@ -31,25 +45,31 @@ export abstract class inkscapeH {
     return inkscapePath
   }
 
-  static async refreshInkscapeUI() {
-    exec(`${await inkscapeH.getInkscapePath()} -q --actions="file-rebase"`, (e1, { }, stderr) => {
-      if (stderr) {
-        // if (stderr.includes('Failed to load module "xapp-gtk3-module"')) return
-        console.log('stderr: ', stderr)
-      }
-      if (e1) {
-        exec(`gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`,
-          (e2, { }, stderr) => {
-            if (e2) console.log('error: ', e2)
-            if (stderr) console.log('stderr: ', stderr)
-          })
-        console.log('error: ', e1)
-      }
-    })
+  // static async refreshInkscapeUI() {
+  // }
+
+  static async reopenInkscape() {
+    await this.closeInkscapeWindow()
+    await this.openInkscapeWindow()
   }
 
-  static async resetInkscapePath() {
-    await this.askInkscapePath()
+  static async openInkscapeWindow() {
+
+    const inkscapePath = await inkscapeH.getInkscapePath()
+    if (!inkscapePath) return
+
+    try {
+      var { stderr } = await exec(
+        `${inkscapePath} ${tempFilePath()}`
+      )
+
+      // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
+    }
+    catch (e) {
+      logInkaError(e, 'error trying to close inkscape window')
+      // const newInkscapePath = await inkscapeH.askInkscapePath()
+      // if (newInkscapePath) exec(`"${newInkscapePath}" ${tempFilePath()}`)
+    }
   }
 
   private static async setInkscapePath(path: string) {
@@ -60,4 +80,50 @@ export abstract class inkscapeH {
     config.inkscapePath = path
     await p.writeFile(this.configRootPath, JSON.stringify(config), { encoding: 'utf-8' })
   }
+
+  private static async closeInkscapeWindow() {
+
+    const inkscapePath = await inkscapeH.getInkscapePath()
+    if (!inkscapePath) return
+
+    try {
+      var { stderr } = await exec(
+        `${inkscapePath} -q --actions="window-close"`
+      )
+
+      // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
+    }
+    catch (e) {
+      logInkaError(e, 'error on close inkscape window')
+    }
+  }
+
+  static async fileRebase(): Promise<void> {
+
+    const inkscapePath = await inkscapeH.getInkscapePath()
+    if (!inkscapePath) return
+
+    try {
+      var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
+
+      // if (stderr) logInkaError(stderr, 'stderr on file-rebase')
+    }
+    catch (e) {
+      logInkaError(e, 'error on file-rebase')
+    }
+  }
+
+  static async documentRevert() {
+    try {
+      var { stderr } = await exec(
+        `gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`
+      )
+
+      // if (stderr) logInkaError(stderr, 'stderr on document-revert')
+    }
+    catch (e) {
+      logInkaError(e, 'error on document-revert')
+    }
+  }
+
 }
