@@ -1,13 +1,19 @@
 <template>
-  <div class="list-el" @click="toggleCollapse()" ref="cont">
-    <span v-for="depth in el.depth">&nbsp;</span>
-    <template v-if="el?.attrs?.length > 0 || el?.children?.length">
-      <span v-if="el.isUncollapsed" id="uncollapsedEl">▲</span>
-      <span v-else>▼</span>
-    </template>
-    <span v-else>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
-    {{ el.name }}
+  <div class="list-el" ref="cont">
+    <!-- <input type="checkbox" v-model="el.isSelected" title="animate"> -->
+    <span @click="toggleCollapse()">
+      <span v-for="depth in el.depth">&nbsp;</span>
+      <template v-if="el?.attrs?.length > 0 || el?.children?.length">
+        <span v-if="el.isUncollapsed" id="uncollapsedEl">▲</span>
+        <span v-else>▼</span>
+      </template>
+      <span v-else>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
+      {{ el.name }}
+    </span>
+    <span style="float:right">
+      <!-- <input type="checkbox" title="solo" /> -->
+    </span>
   </div>
 
   <template v-if="el.isUncollapsed">
@@ -75,5 +81,44 @@ function toggleCollapse() {
 
 /* .list-el *:hover {
   color: red;
+} */
+
+/* input[type="checkbox"] {
+  pointer-events: none;
+} */
+
+/* input[type="checkbox"]:checked {
+  background: blue;
+  color: white;
+} */
+
+/* input[type="checkbox"] {
+  margin: 0 6px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  height: 14px;
+  width: 14px;
+  border: 1px solid grey;
+  color: white;
+}
+
+input[type="checkbox"]:after {
+  content: ' ';
+  position: relative;
+  left: 40%;
+  top: 20%;
+  width: 15%;
+  height: 40%;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(50deg);
+  display: none;
+}
+
+input[type="checkbox"]:checked:after {
+  display: block;
 } */
 </style>

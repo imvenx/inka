@@ -17,6 +17,7 @@ export abstract class SvElM {
     public static get rootSvEl() { return this._rootSvEl.value }
     public static set rootSvEl(value) { this._rootSvEl.value = value }
 
+    // Warnig: Returned element has no reactivity 
     static async getSvElById(svEl: SvEl, id: string): Promise<SvEl | void> {
         if (svEl.id == id) { return svEl }
         let result
@@ -36,6 +37,7 @@ export abstract class SvElM {
         let _svEl: SvEl = {} as SvEl
         const uncollapsed = StorageM.getUncollapsed()
         const showAttrs = StorageM.getShowAttrs()
+        // const isSelected = StorageM.getIsSelected()
 
         return await this.getSvElsLoop(el, 0, _svEl, uncollapsed, showAttrs)
     }
@@ -50,7 +52,7 @@ export abstract class SvElM {
             attrs: await CsSvgParser.getAttrsFromInkscapeToInka(el as SVGElement),
             children: children,
             id: el.id,
-            // isSelected: isSelected[el.id] ?? false,
+            // isSelected: isSelected[el.id] ?? true,
             isUncollapsed: uncollapsed[el.id],
             showAttrs: showAttrs[el.id],
             name: el.getAttribute('inkscape:label') ?? el.id,

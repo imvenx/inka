@@ -22,9 +22,9 @@ defineProps<{ kf: Keyframe }>()
 }
 
 .attrsKfDiv:hover {
-    background-color: cyan;
+    background-color: darkcyan;
     height: 10px;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 .attrsKf {

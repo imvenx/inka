@@ -106,7 +106,7 @@ export abstract class AnimM {
         this._recalculateKfsOnChangeDuration.value = v
     }
 
-    static async selectTime(miliseconds: number, svEl: SvEl) {
+    static async selectTime(miliseconds: number, svEl: SvEl, output: boolean = true) {
         // this.transformOriginCenterAnimViewer()
 
         this.stopRefreshCurrentTime()
@@ -115,7 +115,7 @@ export abstract class AnimM {
         if (this.currentTimeMiliseconds >= this.durationMiliseconds)
             this.currentTimeMiliseconds -= 1
         await this.updateAnimCurrentFrame(svEl)
-        await svgIO.output()
+        if (output) await svgIO.output()
     }
 
     //#endregion

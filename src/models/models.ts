@@ -3,6 +3,8 @@ export interface SvEl {
     children?: SvEl[]
     depth: number
     id: string
+    // mute:boolean
+    // solo:boolean
     // isSelected: boolean
     isUncollapsed: boolean
     kfs: Keyframe[]

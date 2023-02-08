@@ -45,9 +45,9 @@ async function deleteKf() {
 }
 
 .attrKfDiv:hover {
-    background-color: cyan;
+    background-color: darkcyan;
     height: 10px;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 .attrKf {

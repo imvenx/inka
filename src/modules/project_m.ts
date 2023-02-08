@@ -1,4 +1,5 @@
 import { createProjectParams, loadProjectParams, saveProjectParams } from "app/public/sharedModels"
+import { ref } from "vue"
 import { AnimM, svgEl } from "./anim_m"
 import { eapi } from "./eapi_m"
 import { StorageM } from "./storage_m"
@@ -58,9 +59,13 @@ export abstract class ProjectM {
         return tempSvg
     }
 
+    static isUpdatingInkscape = ref(false)
+
     static async updateTempSvg(_svg: string | undefined = undefined) {
+        this.isUpdatingInkscape.value = true
         const svg = _svg ?? StorageM.getProject().svgFile
         await eapi.updateTempSvg({ data: svg })
+        this.isUpdatingInkscape.value = false
     }
 
     private static async getProjectToSave(): Promise<saveProjectParams> {

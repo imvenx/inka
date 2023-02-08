@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @mousedown="onMouseDown">
+    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @mousedown="onMouseDownOnKeyframe">
         <g transform="rotate(45)">
             <rect class="elKf" width="10" height="10" />
             <foreignObject width="10" height="10">
@@ -17,7 +17,7 @@ import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ svEl: SvEl, kf: Keyframe }>()
 
-async function onMouseDown(e: MouseEvent) {
+async function onMouseDownOnKeyframe(e: MouseEvent) {
     if (e.buttons === 1) {
         window.addEventListener('mousemove', await updateKfTimeLoop, { once: true })
         refreshKfsOnMouseUp()

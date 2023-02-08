@@ -6,7 +6,7 @@ import { roundToDecimals } from "./utils"
 
 export abstract class CsSvgParser {
 
-    // private static lastValue: any = {}
+    private static lastValue: any = {}
 
     /*********
     * We update attributes because when we animate and then apply styles to get a new
@@ -37,11 +37,14 @@ export abstract class CsSvgParser {
             if (ry) el.setAttribute('ry', ry)
         }
 
+
         let d = (el.style as any).d
+        const lastD = d
         if (d) {
-            d = d.replace('path("', '').replace('")', '');
-            el.setAttribute('d', d);
-            (el.style as any).d = ''
+            d = d.replace('path("', '').replace('")', '')
+            el.setAttribute('d', d)
+
+                ; (el.style as any).d = ''
         }
 
         let transform = el.style.transform
@@ -79,6 +82,21 @@ export abstract class CsSvgParser {
             //     }
             // }
         }
+
+        this.lastValue[el.id] = {
+            x: parseFloat(x).toFixed(3),
+            y: parseFloat(y).toFixed(3),
+            width: parseFloat(width).toFixed(3)?.replaceAll('px', '') + 'px',
+            height: parseFloat(height).toFixed(3)?.replaceAll('px', '') + 'px',
+            d: lastD,
+            fill: this.colorKeywordToRGB(el.style.fill),
+            fillOpacity: el.style.fillOpacity,
+            stroke: this.colorKeywordToRGB(el.style.stroke),
+            strokeWidth: el.style.strokeWidth,
+            strokeDasharray: el.style.strokeDasharray,
+            strokeLinecap: el.style.strokeLinecap,
+        }
+
     }
 
     /**
@@ -86,37 +104,30 @@ export abstract class CsSvgParser {
     */
     static async getAttrsFromInkscapeToInka(el: SVGElement): Promise<KeyVal[]> {
 
-        if (
-            el.tagName === 'svg'
-            ||
-            el.id === 'layer1'
-        ) return []
+        if (el.id === 'layer1') return []
+
+        if (el.tagName === 'svg') return [
+            { key: 'fill', val: this.colorKeywordToRGB(el.style.fill) },
+            // { key: 'width', val: el.getAttribute('width')! },
+            // { key: 'height', val: el.getAttribute('height')! },
+        ]
 
         let attrs: KeyVal[] = []
 
         // TODO: compare with last state, return if not modified, focus on hierarcy if modified
         // const lastEl = await SvElM.getSvElById(SvElM.lastSvEl.value, el.id)
 
-        const x = (el.style as any).x || el.getAttribute('x')
-        const y = (el.style as any).y || el.getAttribute('y')
-        let width = el.style.width || el.getAttribute('width')
-        let height = el.style.height || el.getAttribute('height')
-        const style = el.style
-        const transform = el.getAttribute('transform')
+        let x: any, y, width, height, style, transform
 
-        // this.lastValue[el.id] = { x: x }
+        if (el.tagName !== 'path') {
+            x = parseFloat((el.style as any).x || el.getAttribute('x')).toFixed(3)
+            y = parseFloat((el.style as any).y || el.getAttribute('y')).toFixed(3)
+            width = parseFloat(el.style.width as any || el.getAttribute('width')).toFixed(3)
+            height = parseFloat(el.style.height as any || el.getAttribute('height')).toFixed(3)
+        }
+        style = el.style
+        transform = el.getAttribute('transform')
 
-        // if (AnimM.isRecording) {
-        //     await this.ifValueChangedRecord(el.id, [
-        //         { key: 'x', val: x },
-        //         { key: 'y', val: y },
-        //         // { key: 'width', val: width },
-        //         // { key: 'height', val: height },
-        //         // { key: 'fill', val: fill },
-        //     ])
-        //     // this.ifValueChangedRecord(el.id, 'y', y)
-        //     // const currentEl = await SvElM.getSvElById({} as SvEl, el.id) as SvEl
-        // }
 
         if (x) {
             el.setAttribute('x', x)
@@ -141,11 +152,14 @@ export abstract class CsSvgParser {
         }
 
         if (style) {
-            const fill = style.fill
+            const fill = this.colorKeywordToRGB(style.fill)
             if (fill) { attrs.push({ key: 'fill', val: fill }) }
 
+            const fillOpacity = style.fillOpacity
+            if (fillOpacity) { attrs.push({ key: 'fillOpacity', val: fillOpacity }) }
+
             const stroke = style.stroke
-            if (stroke) { attrs.push({ key: 'stroke', val: stroke }) }
+            if (stroke) { attrs.push({ key: 'stroke', val: this.colorKeywordToRGB(stroke) }) }
 
             const strokeWidth = style.strokeWidth
             if (strokeWidth) { attrs.push({ key: 'strokeWidth', val: strokeWidth }) }
@@ -167,6 +181,9 @@ export abstract class CsSvgParser {
             const m = baseVal.matrix
 
             if (transform.includes('translate')) {
+
+                console.log(el.id, m.e.toFixed(3))
+
                 const v = `translate(${m.e.toFixed(3) ?? 0}px, ${m.f.toFixed(3) ?? 0}px)`
                 attrs.push({
                     key: 'transform',
@@ -214,8 +231,8 @@ export abstract class CsSvgParser {
             }
         }
 
+        const d = `path("${el.getAttribute('d')}")`
         if (el.tagName === 'path') {
-            const d = `path('${el.getAttribute('d')}')`
             attrs.push({ key: 'd', val: d })
         }
 
@@ -227,17 +244,58 @@ export abstract class CsSvgParser {
         //     }
         // })
 
+        if (AnimM.isRecording) {
+            await this.ifValueChangedRecord(el.id, [
+                { key: 'x', val: x },
+                { key: 'y', val: y },
+                { key: 'width', val: width?.replaceAll('px', '') + 'px' },
+                { key: 'height', val: height?.replaceAll('px', '') + 'px' },
+                { key: 'd', val: d },
+                { key: 'fill', val: this.colorKeywordToRGB(style.fill) },
+                { key: 'fillOpacity', val: style.fillOpacity },
+                { key: 'stroke', val: this.colorKeywordToRGB(style.stroke) },
+                { key: 'strokeWidth', val: style.strokeWidth },
+                { key: 'strokeDasharray', val: style.strokeDasharray },
+                { key: 'strokeLinecap', val: style.strokeLinecap },
+            ])
+        }
+        this.lastValue[el.id] = {
+            x: x,
+            y: y,
+            width: width?.replaceAll('px', '') + 'px',
+            height: height?.replaceAll('px', '') + 'px',
+            d: d,
+            fill: this.colorKeywordToRGB(style.fill),
+            fillOpacity: style.fillOpacity,
+            stroke: this.colorKeywordToRGB(style.stroke),
+            strokeWidth: style.strokeWidth,
+            strokeDasharray: style.strokeDasharray,
+            strokeLinecap: style.strokeLinecap,
+        }
+
         return attrs
     }
 
-    // private static async ifValueChangedRecord(elId: string, props: KeyVal[]) {
-    //     let changedProps: any = {}
-    //     props.forEach(prop =>
-    //         prop.val != this.lastValue?.[elId]?.[prop.key] ? changedProps[prop.key] = prop.val : '')
-    //     console.log(changedProps)
-    //     if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(elId, changedProps)
-    //     // AnimM.selectTime(AnimM.currentTimeMiliseconds += 50, SvElM.rootSvEl)
-    // }
+    private static async ifValueChangedRecord(elId: string, props: KeyVal[]) {
+        let changedProps: any = {}
+
+        props.forEach(prop => {
+            if (
+                prop.val &&
+                !prop.val?.includes('undefined') &&
+                !prop.val?.includes('null') &&
+                !prop.val?.includes('NaN')
+            ) {
+                prop.val?.replace('px', '') != this.lastValue?.[elId]?.[prop.key]?.replace('px', '') ? changedProps[prop.key] = prop.val : ''
+
+                // console.log('val:', prop.val, '|last val:', this.lastValue?.[elId]?.[prop.key])
+            }
+        })
+
+        if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(SvElM.rootSvEl, elId, changedProps)
+
+        // AnimM.selectTime(AnimM.currentTimeMiliseconds += 50, SvElM.rootSvEl)
+    }
 
     // private static separateStyleAttrs(el: Element): KeyVal[] {
     //     const stylesStr = el.getAttribute('style')
@@ -251,4 +309,26 @@ export abstract class CsSvgParser {
     //     })
     //     return styles
     // }
+
+    private static colorKeywordToRGB(colorKeyword: string) {
+
+        if (colorKeyword.includes('rgb')) return colorKeyword
+
+        // CREATE TEMPORARY ELEMENT
+        let el = document.createElement('div');
+
+        // APPLY COLOR TO TEMPORARY ELEMENT
+        el.style.color = colorKeyword;
+
+        // APPEND TEMPORARY ELEMENT
+        document.body.appendChild(el);
+
+        // RESOLVE COLOR AS RGB() VALUE
+        let rgbValue = window.getComputedStyle(el).color;
+
+        // REMOVE TEMPORARY ELEMENT
+        document.body.removeChild(el);
+
+        return rgbValue;
+    }
 }

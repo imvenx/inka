@@ -23,7 +23,8 @@ export abstract class projectH {
       data = await p.readFile(importedFilePath, 'utf-8')
     }
 
-    inkscapeH.reopenInkscape()
+    if (platform === 'win32') inkscapeH.reopenInkscape()
+    else inkscapeH.documentRevert()
 
     svgH.writeTempSvg(data)
 
