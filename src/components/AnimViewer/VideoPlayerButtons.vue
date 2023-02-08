@@ -38,7 +38,7 @@ onMounted(() => {
     })
 
     document.addEventListener('keyup', (e: KeyboardEvent) => {
-        if (!e.shiftKey) svgIO.refreshInkscape = true
+        if (e.key === 'Shift') svgIO.refreshInkscape = true
     })
 
 })
