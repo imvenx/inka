@@ -104,7 +104,9 @@ export abstract class inkscapeH {
     if (!inkscapePath) return
 
     try {
-      var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
+
+      var { stderr } = await exec(`${inkscapePath} -q --actions="selection-set-backup;file-rebase;selection-restore-backup;selection-clear-backup"`)
+      // var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
 
       // if (stderr) logInkaError(stderr, 'stderr on file-rebase')
     }
