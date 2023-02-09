@@ -55,6 +55,6 @@ const animPageBorder = computed(() => {
 #q-page {
   outline: v-bind(animPageBorder);
   outline-offset: -1px;
-  margin-left: 1px;
+  /* margin-left: 1px; */
 }
 </style>
