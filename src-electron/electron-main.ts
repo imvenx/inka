@@ -8,7 +8,7 @@ import { svgH } from './handlers/svgH';
 import { inkscapeH } from './handlers/inkscape_h';
 
 // needed in case process is undefined under Linux
-const platform = process.platform || os.platform();
+export const platform = process.platform || os.platform();
 
 try {
   if (platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -26,11 +26,11 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: screen.getPrimaryDisplay().bounds.width,
-    height: screen.getPrimaryDisplay().bounds.height / 4,
+    height: 250,
     autoHideMenuBar: true,
     frame: false,
     x: 0,
-    y: screen.getPrimaryDisplay().bounds.height,
+    y: screen.getPrimaryDisplay().bounds.height - 250,
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
@@ -51,7 +51,7 @@ function createWindow() {
     //   mainWindow?.webContents.closeDevTools();
     // });
 
-    svgH.openSvgWithInkscape()
+    inkscapeH.openInkscapeWindow()
 
   }
 
@@ -76,9 +76,9 @@ app.whenReady().then(async () => {
   ipcMain.handle('updateTempSvg', ({ }, p) => svgH.updateTempSvg(p))
   ipcMain.handle('exportSvg', ({ }, fileStr: string) => svgH.exportSvg(fileStr))
 
-  ipcMain.handle('openSvgWithInkscape', () => svgH.openSvgWithInkscape())
+  ipcMain.handle('openSvgWithInkscape', () => inkscapeH.openInkscapeWindow())
   ipcMain.handle('openSvgWithDefaultProgram', () => svgH.openSvgWithDefaultProgram())
-  ipcMain.handle('resetInkscapePath', () => inkscapeH.resetInkscapePath())
+  ipcMain.handle('resetInkscapePath', () => inkscapeH.askInkscapePath())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
 });

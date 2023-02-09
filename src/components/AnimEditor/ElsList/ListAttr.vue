@@ -44,12 +44,14 @@ function toggleShowAttrs() {
 function getAttrIcon(attrName: string) {
   switch (attrName) {
     case 'fill': return 'palette'
+    case 'fillOpacity': return 'opacity'
     case 'width': return 'sync_alt'
     case 'height': return 'height'
     case 'x': return 'east'
     case 'y': return 'south'
     case 'stroke': return 'border_color'
     case 'strokeWidth': return 'highlight_alt'
+    case 'strokeLinecap': return 'crop_landscape'
     case 'd': return 'gesture'
     default: return 'help'
   }

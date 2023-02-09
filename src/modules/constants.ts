@@ -28,10 +28,12 @@ export const allowedAttrs = [
 
     'style',
     'fill',
+    'fillOpacity',
     'stroke',
     'strokeWidth',
     'strokeDasharray',
     'strokeLinecap',
+
 ]
 
 export const btnAttrs = {

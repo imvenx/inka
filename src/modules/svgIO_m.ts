@@ -30,14 +30,18 @@ export abstract class svgIO {
         if (!this.refreshInkscape) return
 
         clearTimeout(this.outputTimeout)
+
         this.outputTimeout = setTimeout(async () => {
+
             const svg = svgEl()?.cloneNode(true) as Element
             if (!svg) return
 
             ProjectM.updateTempSvg(svg.outerHTML)
 
-            SvElM.rootSvEl = await SvElM.getSvEls(svgEl()!)
+            if (!AnimM.isRecording) SvElM.rootSvEl = await SvElM.getSvEls(svgEl()!)
+
             StorageM.setCurrentTimeSeconds(AnimM.currentTimeSeconds)
+
         }, 50)
 
     }

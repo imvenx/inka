@@ -27,6 +27,7 @@ import { ProjectM } from 'src/modules/project_m';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
+
 async function loadProject() {
     const success = await ProjectM.loadProject()
     if (success) {
@@ -34,4 +35,5 @@ async function loadProject() {
         location.reload()
     }
 }
+
 </script>
