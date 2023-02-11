@@ -8,8 +8,8 @@ import { kebabize } from "./utils"
 export abstract class ExportM {
     static async exportToSvg(): Promise<void> {
         let _svgEl = svgEl()
-        const lastTime = AnimM.currentTimeMiliseconds
-        await AnimM.selectTime(0, SvElM.rootSvEl)
+        // const lastTime = AnimM.currentTimeMiliseconds
+        // await AnimM.selectTime(0, SvElM.rootSvEl)
         if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
         let animStr = this.getExportAnimString(SvElM.rootSvEl)
@@ -23,7 +23,7 @@ export abstract class ExportM {
     }
 </style>`
         await eapi.exportSvg(clone.outerHTML)
-        await AnimM.selectTime(lastTime, SvElM.rootSvEl)
+        // await AnimM.selectTime(lastTime, SvElM.rootSvEl)
     }
 
     private static getExportAnimString(el: SvEl) {
