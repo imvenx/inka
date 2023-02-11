@@ -1,11 +1,9 @@
 import { KeyVal } from "src/models/models"
-import { pathDataPolyfill } from "src/polyfills/pathData"
 import { AnimM } from "./anim_m"
 import { KfsM } from "./kfs_m"
 import { SvElM } from "./svel_m"
 import { roundToDecimals } from "./utils"
 
-pathDataPolyfill()
 export abstract class CsSvgParser {
 
     private static lastValue: any = {}
@@ -233,9 +231,12 @@ export abstract class CsSvgParser {
             }
         }
 
-        const d = `path("${el.getAttribute('d')}")`
+        // const d = `path("${el.getAttribute('d')}")`
+        // console.log('original: ', d)
+        let d = ''
+        // console.log('to bezier: ', test)
         if (el.tagName === 'path') {
-            const asd = this.convertToCubicBezier(el)
+            d = this.convertToCubicBezier(el)
             attrs.push({ key: 'd', val: d })
         }
 
@@ -335,176 +336,72 @@ export abstract class CsSvgParser {
         return rgbValue;
     }
 
-    static convertToCubicBezier = function (path: any) {
-        var x, y, x1, y1, x2, y2,
-            x0, y0,
-            bezier = [],
-            segs = path.getPathData();
+    static convertToCubicBezier(path: any): string {
 
-        for (var i = 0, len = segs.length; i < len; ++i) {
-            var seg = segs[i], c = seg.type;
-            console.log(seg)
+        // const d = path.style.d
+        // console.log(d)
 
-            seg.x = seg.values[0]
-            seg.y = seg.values[1]
-            seg.x1 = seg.values[2]
-            seg.y1 = seg.values[3]
-            seg.x2 = seg.values[4]
-            seg.y2 = seg.values[5]
+        // if (!d) return ''
+        // if (
+        //     !d.includes('L')
+        //     && !d.includes('H')
+        //     && !d.includes('V')
+        // ) return d
 
-            switch (c) {
-                // Move
-                case 'M':
-                    x = x1 = x2 = 0;
-                    y = y1 = y2 = 0;
-                    x0 = seg.x;
-                    y0 = seg.y;
-                    bezier.push({ x: 0, y: 0 });
-                    break;
-                case 'm':
-                    // Have not seen this in a path, yet
-                    break;
-                // Line segment
+        const pathData = path.getPathData()
+        let bezier = '', lastX = '', lastY = ''
+
+        pathData.forEach((n: { type: string, values: string[] }) => {
+
+            switch (n.type) {
+
+                // path("M 40.2135,58.1907 C 48.901267,58.1907 57.589033,58.1907 66.2768,58.1907")
+
+                // M 6.5298817,45.061798
+                // L 22.009636,34.852733
+                // L 9.715168,29.369627
+
+                // M 6.5298817,45.061798
+                // C 11.6898,41.658776 16.849718,38.255755 22.009636,34.852733
+                // C 17.91148,33.025031 13.813324,31.197329 9.715168,29.369627
+
                 case 'L':
-                    bezier.push({ x: x, y: y });
-                    bezier.push({ x: (seg.x - x0), y: (seg.y - y0) });
-                    bezier.push({ x: (seg.x - x0), y: (seg.y - y0) });;
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                case 'l':
-                    bezier.push({ x: x, y: y });
-                    bezier.push({ x: (x + seg.x), y: (y + seg.y) });
-                    bezier.push({ x: (x + seg.x), y: (y + seg.y) });;
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                // Cubic
-                case 'C':
-                    bezier.push({ x: (seg.x1 - x0), y: (seg.y1 - y0) });
-                    bezier.push({ x: (seg.x2 - x0), y: (seg.y2 - y0) });
-                    bezier.push({ x: (seg.x - x0), y: (seg.y - y0) });
+                    bezier += `C ${n.values[0]},${n.values[1]} ${n.values[0]},${n.values[1]} ${n.values[0]},${n.values[1]} `
+                    lastX = n.values[0]
+                    lastY = n.values[1]
+                    break
 
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                case 'c':
-                    bezier.push({ x: (x + seg.x1), y: (y + seg.y1) })
-                    bezier.push({ x: (x + seg.x2), y: (y + seg.y2) });
-                    bezier.push({ x: (x + seg.x), y: (y + seg.y) });;
-
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                // Smooth
-                case 'S':
-                    //@ts-ignore
-                    bezier.push({ x: ((x + (x - x2))), y: ((y + (y - y2))) });
-                    bezier.push({ x: (seg.x2 - x0), y: (seg.y2 - y0) });
-                    bezier.push({ x: (seg.x - x0), y: (seg.y - y0) });;
-
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                case 's':
-                    //@ts-ignore
-                    bezier.push({ x: (x + (x - x2)), y: (y + (y - y2)) });
-                    bezier.push({ x: (x + seg.x2), y: (y + seg.y2) });
-                    bezier.push({ x: (x + seg.x), y: (y + seg.y) });;
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                // Quadratic
-                case 'Q':
-                    break;
-                case 'q':
-                    break;
-
-                // Horizontal
                 case 'H':
-                    bezier.push({ x: x, y: y });
-                    bezier.push({ x: (seg.x - x0), y: y });
-                    bezier.push({ x: (seg.x - x0), y: y });
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                case 'h':
-                    bezier.push({ x: x, y: y });
-                    bezier.push({ x: (seg.x + x), y: y });
-                    bezier.push({ x: (seg.x + x), y: y });
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                // Vertical
+                    bezier += `C ${lastX},${lastY} ${lastX},${lastY} ${n.values[0]},${lastY} `
+                    lastX = n.values[0]
+                    break
+
                 case 'V':
-                    bezier.push({ x: x, y: y });
-                    bezier.push({ x: x, y: (seg.y - y0) });
-                    bezier.push({ x: x, y: (seg.y - y0) });
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                case 'v':
-                    bezier.push({ x: x, y: y });
-                    bezier.push({ x: x, y: (seg.y + y) });
-                    bezier.push({ x: x, y: (seg.y + y) });
-                    x = bezier[bezier.length - 1].x;
-                    y = bezier[bezier.length - 1].y;
-                    x1 = bezier[bezier.length - 3].x;
-                    y1 = bezier[bezier.length - 3].y;
-                    x2 = bezier[bezier.length - 2].x;
-                    y2 = bezier[bezier.length - 2].y;
-                    break;
-                // Close
+                    bezier += `C ${lastX},${lastY} ${lastX},${lastY} ${lastX},${n.values[0]} `
+                    lastY = n.values[0]
+                    break
+
+                case 'M':
+                    bezier += `M ${n.values[0]} ${n.values[1]} `
+                    lastX = n.values[0]
+                    lastY = n.values[1]
+                    break
+
+                case 'C':
+                    bezier += `C ${n.values[0]},${n.values[1]} ${n.values[2]},${n.values[3]} ${n.values[4]},${n.values[5]} `
+                    break
+
                 case 'Z':
-                    break;
-                case 'z':
-                    break;
-
-
-                case 't':
-                case 'a':
+                    bezier += 'Z '
+                    break
             }
-        }
+        });
 
-        console.log(bezier)
-
-        return bezier;
+        return `path("${bezier}")`
     }
+
+
+
+
 }
 
