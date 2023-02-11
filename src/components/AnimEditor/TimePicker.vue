@@ -41,7 +41,7 @@ const selectTime = async (e: MouseEvent) => {
 }
 
 function getPickedTime({ clientX }: MouseEvent): number {
-  return Math.round((clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
+  return Math.round((clientX - cont.value?.getBoundingClientRect().left + cont.value.scrollLeft
     - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals * 1000)
 }
 

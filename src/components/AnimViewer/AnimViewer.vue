@@ -91,8 +91,8 @@ async function svgMaxSize(isMounted: boolean = false) {
     svgEl.style.width = 'auto'
     svgEl.style.height = 'auto'
 
-    const contRect = cont.value.getBoundingClientRect()
-    const svgRect = svgEl.getBoundingClientRect()
+    const contRect = cont.value?.getBoundingClientRect()
+    const svgRect = svgEl?.getBoundingClientRect()
 
     const contRatio = contRect.width / contRect.height
     const svgRatio = svgRect.width / svgRect.height

@@ -38,7 +38,7 @@ async function updateKfTimeLoop(e: MouseEvent) {
 
 const cont = document.getElementById('foreignObjCont') as Element
 function getPickedTime(e: MouseEvent): number {
-    return (e.clientX - cont.getBoundingClientRect().left + cont.scrollLeft
+    return (e.clientX - cont?.getBoundingClientRect().left + cont.scrollLeft
         - ConfigM.timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
 }
 
