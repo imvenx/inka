@@ -42,7 +42,7 @@ export abstract class svgIO {
 
             StorageM.setCurrentTimeSeconds(AnimM.currentTimeSeconds)
 
-        }, 50)
+        }, 200)
 
     }
 
