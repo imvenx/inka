@@ -1,6 +1,7 @@
 import { KeyVal } from "src/models/models"
 import { AnimM } from "./anim_m"
 import { KfsM } from "./kfs_m"
+import { StorageM } from "./storage_m"
 import { SvElM } from "./svel_m"
 import { roundToDecimals } from "./utils"
 
@@ -18,33 +19,57 @@ export abstract class CsSvgParser {
 
         if (el.tagName === 'svg') return
 
+        if (!this.lastValue[el.id]) this.lastValue[el.id] = {}
+
         let x = (el.style as any).x?.replace('px', '')
-        if (x) el.setAttribute('x', x)
+        if (x) {
+            x = parseFloat(x).toFixed(3)
+            el.setAttribute('x', x)
+            this.lastValue[el.id].x = x
+        }
 
         let y = (el.style as any).y?.replace('px', '')
-        if (y) el.setAttribute('y', y)
+        if (y) {
+            y = parseFloat(y).toFixed(3)
+            el.setAttribute('y', y)
+            this.lastValue[el.id].y = y
+        }
 
-        let width = el.style.width?.replace('px', '')
-        if (width) el.setAttribute('width', width)
+        let width: any = el.style.width?.replace('px', '')
+        if (width) {
+            width = parseFloat(width).toFixed(3)
+            el.setAttribute('width', width)
+            this.lastValue[el.id].width = width + 'px'
+        }
 
-        let height = el.style.height?.replace('px', '')
-        if (height) el.setAttribute('height', height)
+        let height: any = el.style.height?.replace('px', '')
+        if (height) {
+            height = parseFloat(height).toFixed(3)
+            el.setAttribute('height', height)
+            this.lastValue[el.id].height = height + 'px'
+        }
 
         if (el.tagName === 'rect' || el.tagName === 'ellipse') {
             let rx = (el.style as any).rx
-            if (rx) el.setAttribute('rx', rx)
+            if (rx) {
+                el.setAttribute('rx', rx)
+                this.lastValue[el.id].rx = rx
+            }
             let ry = (el.style as any).ry
-            if (ry) el.setAttribute('ry', ry)
+            if (ry) {
+                el.setAttribute('ry', ry)
+                this.lastValue[el.id].ry = ry
+            }
         }
 
-
-        let d = (el.style as any).d
-        const lastD = d
-        if (d) {
-            d = d.replace('path("', '').replace('")', '')
-            el.setAttribute('d', d)
-
-                ; (el.style as any).d = ''
+        if (el.tagName === 'path') {
+            let d = (el.style as any).d
+            if (d) {
+                d = d.replace('path("', '').replace('")', '')
+                el.setAttribute('d', d)
+                this.lastValue[el.id].d = d
+                    ; (el.style as any).d = ''
+            }
         }
 
         let transform = el.style.transform
@@ -81,22 +106,15 @@ export abstract class CsSvgParser {
             //         )
             //     }
             // }
+
         }
 
-        this.lastValue[el.id] = {
-            x: parseFloat(x).toFixed(3),
-            y: parseFloat(y).toFixed(3),
-            width: parseFloat(width).toFixed(3)?.replaceAll('px', '') + 'px',
-            height: parseFloat(height).toFixed(3)?.replaceAll('px', '') + 'px',
-            d: lastD,
-            fill: this.colorKeywordToRGB(el.style.fill),
-            fillOpacity: el.style.fillOpacity,
-            stroke: this.colorKeywordToRGB(el.style.stroke),
-            strokeWidth: el.style.strokeWidth,
-            strokeDasharray: el.style.strokeDasharray,
-            strokeLinecap: el.style.strokeLinecap,
-        }
-
+        this.lastValue[el.id].fill = this.colorKeywordToRGB(el.style.fill)
+        this.lastValue[el.id].fillOpacity = el.style.fillOpacity
+        this.lastValue[el.id].stroke = this.colorKeywordToRGB(el.style.stroke)
+        this.lastValue[el.id].strokeWidth = el.style.strokeWidth
+        this.lastValue[el.id].strokeDasharray = el.style.strokeDasharray
+        this.lastValue[el.id].strokeLinecap = el.style.strokeLinecap
     }
 
     /**
@@ -120,14 +138,18 @@ export abstract class CsSvgParser {
         let x: any, y, width, height, style, transform
 
         if (el.tagName !== 'path') {
-            x = parseFloat((el.style as any).x || el.getAttribute('x')).toFixed(3)
-            y = parseFloat((el.style as any).y || el.getAttribute('y')).toFixed(3)
-            width = parseFloat(el.style.width as any || el.getAttribute('width')).toFixed(3)
-            height = parseFloat(el.style.height as any || el.getAttribute('height')).toFixed(3)
+            x = parseFloat((el.style as any).x || el.getAttribute('x')) as any
+            y = parseFloat((el.style as any).y || el.getAttribute('y')) as any
+            width = parseFloat(el.style.width as any || el.getAttribute('width')) as any
+            height = parseFloat(el.style.height as any || el.getAttribute('height')) as any
+
+            Number.isNaN(x) ? x = '' : x = x.toFixed(3)
+            Number.isNaN(y) ? y = '' : y = y.toFixed(3)
+            Number.isNaN(width) ? width = '' : width = width.toFixed(3)
+            Number.isNaN(height) ? height = '' : height = height.toFixed(3)
         }
         style = el.style
         transform = el.getAttribute('transform')
-
 
         if (x) {
             el.setAttribute('x', x)
@@ -231,13 +253,11 @@ export abstract class CsSvgParser {
             }
         }
 
-        // const d = `path("${el.getAttribute('d')}")`
-        // console.log('original: ', d)
-        let d = ''
-        // console.log('to bezier: ', test)
         if (el.tagName === 'path') {
-            d = this.convertToCubicBezier(el)
-            attrs.push({ key: 'd', val: d })
+            let d = this.convertToCubicBezier(el)
+            if (d) {
+                attrs.push({ key: 'd', val: d })
+            }
         }
 
         // names.forEach(name => {
@@ -249,33 +269,49 @@ export abstract class CsSvgParser {
         // })
 
         if (AnimM.isRecording) {
-            await this.ifValueChangedRecord(el.id, [
-                { key: 'x', val: x },
-                { key: 'y', val: y },
-                { key: 'width', val: width?.replaceAll('px', '') + 'px' },
-                { key: 'height', val: height?.replaceAll('px', '') + 'px' },
-                { key: 'd', val: d },
-                { key: 'fill', val: this.colorKeywordToRGB(style.fill) },
-                { key: 'fillOpacity', val: style.fillOpacity },
-                { key: 'stroke', val: this.colorKeywordToRGB(style.stroke) },
-                { key: 'strokeWidth', val: style.strokeWidth },
-                { key: 'strokeDasharray', val: style.strokeDasharray },
-                { key: 'strokeLinecap', val: style.strokeLinecap },
-            ])
+
+            await this.ifValueChangedRecord(el.id, attrs
+                //     [
+                //     { key: 'x', val: x },
+                //     { key: 'y', val: y },
+                //     { key: 'width', val: width?.replaceAll('px', '') + 'px' },
+                //     { key: 'height', val: height?.replaceAll('px', '') + 'px' },
+                //     { key: 'd', val: d },
+                //     { key: 'fill', val: this.colorKeywordToRGB(style.fill) },
+                //     { key: 'fillOpacity', val: style.fillOpacity },
+                //     { key: 'stroke', val: this.colorKeywordToRGB(style.stroke) },
+                //     { key: 'strokeWidth', val: style.strokeWidth },
+                //     { key: 'strokeDasharray', val: style.strokeDasharray },
+                //     { key: 'strokeLinecap', val: style.strokeLinecap },
+                // ]
+            )
+
         }
-        this.lastValue[el.id] = {
-            x: x,
-            y: y,
-            width: width?.replaceAll('px', '') + 'px',
-            height: height?.replaceAll('px', '') + 'px',
-            d: d,
-            fill: this.colorKeywordToRGB(style.fill),
-            fillOpacity: style.fillOpacity,
-            stroke: this.colorKeywordToRGB(style.stroke),
-            strokeWidth: style.strokeWidth,
-            strokeDasharray: style.strokeDasharray,
-            strokeLinecap: style.strokeLinecap,
-        }
+        // const kfs = StorageM.getKfs(el.id)
+        // let closest = {}
+        // kfs.reduce((c, p, i) => {
+        //     console.log(c.offset, AnimM.currentTimeSeconds, p.offset)
+        //     return Math.abs(c.offset! - AnimM.currentTimeSeconds) < Math.abs(p.offset! - AnimM.currentTimeSeconds)
+        //         ? closest = c : closest = p
+        // })
+
+        // console.log(closest)
+
+        if (!this.lastValue[el.id]) this.lastValue[el.id] = {}
+        attrs.map(attr => this.lastValue[el.id][attr.key] = attr.val)
+        // this.lastValue[el.id] = {
+        //     x: x,
+        //     y: y,
+        //     width: width?.replaceAll('px', '') + 'px',
+        //     height: height?.replaceAll('px', '') + 'px',
+        //     d: d,
+        //     fill: this.colorKeywordToRGB(style.fill),
+        //     fillOpacity: style.fillOpacity,
+        //     stroke: this.colorKeywordToRGB(style.stroke),
+        //     strokeWidth: style.strokeWidth,
+        //     strokeDasharray: style.strokeDasharray,
+        //     strokeLinecap: style.strokeLinecap,
+        // }
 
         return attrs
     }
@@ -284,16 +320,7 @@ export abstract class CsSvgParser {
         let changedProps: any = {}
 
         props.forEach(prop => {
-            if (
-                prop.val &&
-                !prop.val?.includes('undefined') &&
-                !prop.val?.includes('null') &&
-                !prop.val?.includes('NaN')
-            ) {
-                prop.val?.replace('px', '') != this.lastValue?.[elId]?.[prop.key]?.replace('px', '') ? changedProps[prop.key] = prop.val : ''
-
-                // console.log('val:', prop.val, '|last val:', this.lastValue?.[elId]?.[prop.key])
-            }
+            prop.val != this.lastValue?.[elId]?.[prop.key] ? changedProps[prop.key] = prop.val : ''
         })
 
         if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(SvElM.rootSvEl, elId, changedProps)
@@ -336,34 +363,23 @@ export abstract class CsSvgParser {
         return rgbValue;
     }
 
-    static convertToCubicBezier(path: any): string {
+    static convertToCubicBezier(pathElement: any): string {
 
-        // const d = path.style.d
-        // console.log(d)
+        const d = pathElement.getAttribute('d')
+        if (
+            !d.includes('L')
+            && !d.includes('H')
+            && !d.includes('V')
+        ) {
+            return `path("${d}")`
+        }
 
-        // if (!d) return ''
-        // if (
-        //     !d.includes('L')
-        //     && !d.includes('H')
-        //     && !d.includes('V')
-        // ) return d
-
-        const pathData = path.getPathData()
+        const pathData = pathElement.getPathData()
         let bezier = '', lastX = '', lastY = ''
 
         pathData.forEach((n: { type: string, values: string[] }) => {
 
             switch (n.type) {
-
-                // path("M 40.2135,58.1907 C 48.901267,58.1907 57.589033,58.1907 66.2768,58.1907")
-
-                // M 6.5298817,45.061798
-                // L 22.009636,34.852733
-                // L 9.715168,29.369627
-
-                // M 6.5298817,45.061798
-                // C 11.6898,41.658776 16.849718,38.255755 22.009636,34.852733
-                // C 17.91148,33.025031 13.813324,31.197329 9.715168,29.369627
 
                 case 'L':
                     bezier += `C ${n.values[0]},${n.values[1]} ${n.values[0]},${n.values[1]} ${n.values[0]},${n.values[1]} `

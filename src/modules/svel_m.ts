@@ -1,5 +1,5 @@
-import { allowedAttrs, allowedEls } from "src/modules/constants"
-import { SvEl, KeyVal } from "src/models/models"
+import { allowedEls } from "src/modules/constants"
+import { SvEl } from "src/models/models"
 import { ref } from "vue"
 import { StorageM } from "./storage_m"
 import { CsSvgParser } from "./csSvgParser"
