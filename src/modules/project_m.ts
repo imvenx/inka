@@ -71,9 +71,9 @@ export abstract class ProjectM {
     private static async getProjectToSave(): Promise<saveProjectParams> {
         const project = StorageM.getProject()
         const lastTime = AnimM.currentTimeMiliseconds
-        await AnimM.selectTime(0, SvElM.rootSvEl)
+        await AnimM.selectTime(0, SvElM.rootSvEl, true)
         project.svgFile = svgEl()?.outerHTML
-        await AnimM.selectTime(lastTime, SvElM.rootSvEl)
+        await AnimM.selectTime(lastTime, SvElM.rootSvEl, true)
         return {
             data: project,
             filePath: StorageM.getCurrentFilePath(),

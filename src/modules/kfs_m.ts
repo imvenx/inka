@@ -73,6 +73,7 @@ export abstract class KfsM {
         }
 
         if (svEl.tagName == 'svg') return
+
         if (!allowedEls.includes(svEl.tagName) || this.elHasNotAllowedAttrs(svEl)) return
 
         kfs.offset = AnimM.currentOffset

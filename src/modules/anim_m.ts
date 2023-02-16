@@ -106,16 +106,24 @@ export abstract class AnimM {
         this._recalculateKfsOnChangeDuration.value = v
     }
 
-    static async selectTime(miliseconds: number, svEl: SvEl, output: boolean = true) {
+    static commitAnimTimeout: any
+    static async selectTime(miliseconds: number, svEl: SvEl, output: boolean) {
         // this.transformOriginCenterAnimViewer()
 
         this.stopRefreshCurrentTime()
         this.isPlayingAnim = false
         this.currentTimeMiliseconds = miliseconds
-        if (this.currentTimeMiliseconds >= this.durationMiliseconds)
-            this.currentTimeMiliseconds -= 1
-        await this.updateAnimCurrentFrame(svEl)
-        if (output) await svgIO.output()
+
+        if (this.currentTimeMiliseconds >= this.durationMiliseconds) this.currentTimeMiliseconds -= 1
+
+        await this.updateAnimCurrentFrameLoop(svEl)
+
+        clearTimeout(this.commitAnimTimeout)
+        if (output) {
+            this.commitAnimTimeout = setTimeout(async () => await this.commitAnimLoop(SvElM.rootSvEl), 200);
+            await svgIO.output()
+        }
+
     }
 
     //#endregion
@@ -139,7 +147,6 @@ export abstract class AnimM {
     private static async playAnimLoop(svEl: SvEl) {
         svEl.children?.forEach(async (child) => await this.playAnimLoop(child))
         if (!allowedEls.includes(svEl.tagName)) return
-
 
         // TODO: instead of access document.getById should be svgContainer.getById or smt else
         const domEl = document.getElementById(svEl.id) as HTMLElement
@@ -171,8 +178,8 @@ export abstract class AnimM {
         if (!domEl) return
 
         domEl.getAnimations().forEach(anim => {
-            anim.pause();
-            anim.commitStyles();
+            anim.pause()
+            anim.commitStyles()
         });
 
         await CsSvgParser.updateAttrsFromInkaToInkscape(domEl)
@@ -205,8 +212,23 @@ export abstract class AnimM {
 
     private static animTime = (a: Animation) => (a.currentTime! % this.durationMiliseconds)
 
-    private static async updateAnimCurrentFrame(svEl: SvEl) {
-        await this.updateAnimCurrentFrameLoop(svEl)
+    // private static async updateAnimCurrentFrame(svEl: SvEl) {
+    //     await this.updateAnimCurrentFrameLoop(svEl)
+    // }
+
+    private static async commitAnimLoop(svEl: SvEl) {
+
+        svEl.children?.forEach(async (child: SvEl) => await this.commitAnimLoop(child))
+        if (!allowedEls.includes(svEl.tagName)) return
+
+        const domEl = document.getElementById(svEl.id) as SVGAElement | null
+        if (!domEl) return
+
+        let anim = domEl.getAnimations()[0]
+        if (!anim) return
+
+        anim.commitStyles()
+        await CsSvgParser.updateAttrsFromInkaToInkscape(domEl)
     }
 
     private static async updateAnimCurrentFrameLoop(svEl: SvEl) {
@@ -224,11 +246,9 @@ export abstract class AnimM {
                 iterations: Infinity,
             })
         }
+
         anim.currentTime = this.currentTimeMiliseconds
         anim.pause()
-        anim.commitStyles()
-
-        await CsSvgParser.updateAttrsFromInkaToInkscape(domEl)
     }
 
     private static async updateAnimDurationLoop(svEl: SvEl) {
