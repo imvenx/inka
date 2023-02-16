@@ -1,20 +1,44 @@
 <template>
-  <div class="list-el" ref="cont">
+  <div class="listEl" ref="cont">
+
+    <!--  @mouseenter="focusOnAnimViewer" @mouseleave="unfocusOnAnimViewer"-->
+
     <!-- <input type="checkbox" v-model="el.isSelected" title="animate"> -->
+
     <span @click="toggleCollapse()">
+
       <span v-for="depth in el.depth">&nbsp;</span>
+
       <template v-if="el?.attrs?.length > 0 || el?.children?.length">
+
         <span v-if="el.isUncollapsed" id="uncollapsedEl">▲</span>
         <span v-else>▼</span>
+
       </template>
+
       <span v-else>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
       <q-icon :name="getIcon(el.tagName ?? '')" :title="`<${el.tagName}>`" />
+
       {{ el.name }}
+
     </span>
-    <span style="float:right">
-      <!-- <input type="checkbox" title="solo" /> -->
-    </span>
+
+    <!-- <span style="float:right;">
+      <q-icon title="edit name" name="edit" />
+      <q-icon title="select on inkscape" name="filter_center_focus" />
+      <q-icon title="" name="adjust" />
+      <q-icon title="mute" name="block" />
+    </span> -->
+
+    <!-- <input type="checkbox" title="solo" /> -->
+
+    <!-- <svg width="14" height="14" :viewBox="`0 0 100 100`" style="background: grey; float:right" v-if="domEl"
+      v-html="domEl.outerHTML">
+    </svg> -->
+
   </div>
+
 
   <template v-if="el.isUncollapsed">
     <ListAttr v-if="el.attrs.length > 0" :el="el" />
@@ -34,18 +58,25 @@ import ListAttr from './ListAttr.vue';
 const props = defineProps<{ el: SvEl }>()
 
 const cont = ref()
+
+// const domEl = document.getElementById(props.el.id) as HTMLElement
+
+// const { width: domElWidth, height: domElHeight } = domEl?.getBoundingClientRect() ?? {}
+
 onMounted(() => {
   cont.value.addEventListener('mouseover', () => {
     cont.value.title = document.getElementById(props.el.id)?.outerHTML
   })
+
 })
 
 function getIcon(tagName: string) {
   switch (tagName) {
-    case 'svg': return 'category'
     case 'g': return 'folder'
-    case 'rect': return 'square'
     case 'path': return 'route'
+    case 'rect': return 'square'
+    case 'circle': return 'circle'
+    case 'svg': return 'category'
     default: return 'help'
   }
 }
@@ -58,10 +89,26 @@ function toggleCollapse() {
   StorageM.setUncollapsed(uncollapsed)
 }
 
+// let oldStroke = ''
+// let oldStrokeWidth = ''
+function focusOnAnimViewer() {
+  // if (!domEl) return
+  // oldStroke = domEl.style.stroke ?? ''
+  // oldStrokeWidth = domEl.style.strokeWidth ?? ''
+  // domEl.style.stroke = 'yellow'
+  // domEl.style.strokeWidth = '1'
+}
+
+function unfocusOnAnimViewer() {
+  // if (!domEl) return
+  // domEl.style.stroke = oldStroke
+  // domEl.style.strokeWidth = oldStrokeWidth
+}
+
 </script>
 
 <style scoped>
-.list-el {
+.listEl {
   /* border-bottom: 1px solid black; */
   user-select: none;
   /* background-color: rgb(137, 192, 54); */
@@ -69,19 +116,18 @@ function toggleCollapse() {
   /* height: v-bind(rowHeight + 'px'); */
 }
 
-.list-el:hover {
-  /* background-color: rgb(0, 0, 0) !important;
-  color: white; */
-  box-shadow: inset 0 0 1px 1px black;
+.listEl:hover {
+  /* box-shadow: inset 0 0 1px 1px var(--fontColor1); */
+  box-sizing: border-box;
+  /* border: 1px solid var(--fontColor1); */
+  /* background-color: var(--fontColor1);
+  color: var(--listElBgColor); */
+
 }
 
 #uncollapsedEl {
   color: var(--fontColor2)
 }
-
-/* .list-el *:hover {
-  color: red;
-} */
 
 /* input[type="checkbox"] {
   pointer-events: none;

@@ -149,7 +149,7 @@ async function svgMaxSize(isMounted: boolean = false) {
   width: 15px;
   border: none;
   outline: none;
-  -webkit-appearance: none;
+  /* -webkit-appearance: none; */
 }
 
 #colorPicker::-webkit-color-swatch-wrapper {
