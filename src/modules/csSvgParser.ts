@@ -1,7 +1,6 @@
 import { KeyVal } from "src/models/models"
 import { AnimM } from "./anim_m"
 import { KfsM } from "./kfs_m"
-import { StorageM } from "./storage_m"
 import { SvElM } from "./svel_m"
 import { roundToDecimals } from "./utils"
 
@@ -65,9 +64,9 @@ export abstract class CsSvgParser {
         if (el.tagName === 'path') {
             let d = (el.style as any).d
             if (d) {
+                this.lastValue[el.id].d = d
                 d = d.replace('path("', '').replace('")', '')
                 el.setAttribute('d', d)
-                this.lastValue[el.id].d = d
                     ; (el.style as any).d = ''
             }
         }
@@ -75,21 +74,34 @@ export abstract class CsSvgParser {
         let transform = el.style.transform
 
         if (transform.includes('translate')) {
-            el.setAttribute('transform', transform.replaceAll('px', ''))
+
+            const t = transform.replaceAll('px', '')
+            el.setAttribute('transform', t)
+
+            const baseVal: SVGTransform = (el as any).transform.baseVal[0]
+            const m = baseVal.matrix
+            const v = `translate(${m.e.toFixed(3) ?? 0}px, ${m.f.toFixed(3) ?? 0}px)`
+            this.lastValue[el.id].transform = v
         }
 
         if (transform.includes('rotate')) {
+
             const bbox = (el as SVGGraphicsElement).getBBox()
 
             const oX = bbox.x + bbox.width / 2
             const oY = bbox.y + bbox.height / 2
 
-            el.setAttribute('transform',
-                `rotate(${el.style.transform
-                    .replace('rotate(', '')
-                    .replace('deg)', '')
+            const t = `rotate(${el.style.transform
+                .replace('rotate(', '')
+                .replace('deg)', '')
                 },${oX.toFixed(3)}, ${oY.toFixed(3)})`
-            )
+
+            el.setAttribute('transform', t)
+            const baseVal: SVGTransform = (el as any).transform.baseVal[0]
+            const v = `rotate(${roundToDecimals(1, baseVal.angle)}deg)`
+
+            this.lastValue[el.id].transform = v
+            // console.log(t, v)
 
             // if (transform.includes('matrix')) {
             //     const baseVal: SVGTransform = (el as any).transform.baseVal[0]
@@ -195,7 +207,7 @@ export abstract class CsSvgParser {
 
         if (!transform) {
             if (el.tagName === 'g') {
-                attrs.push({ key: 'transform', val: 'none' })
+                attrs.push({ key: 'transform', val: 'rotate(0deg)' })
             }
         }
         else {
@@ -203,8 +215,6 @@ export abstract class CsSvgParser {
             const m = baseVal.matrix
 
             if (transform.includes('translate')) {
-
-                // console.log(el.id, m.e.toFixed(3))
 
                 const v = `translate(${m.e.toFixed(3) ?? 0}px, ${m.f.toFixed(3) ?? 0}px)`
                 attrs.push({
@@ -260,58 +270,12 @@ export abstract class CsSvgParser {
             }
         }
 
-        // names.forEach(name => {
-        //     if (allowedAttrs.includes(name)) {
-        //         // if (name === 'style') attrs = attrs.concat(this.separateStyleAttrs(el))
-        //         // else 
-        //         attrs.push({ key: name, val: el.getAttribute(name) ?? '' })
-        //     }
-        // })
-
         if (AnimM.isRecording) {
-
-            await this.ifValueChangedRecord(el.id, attrs
-                //     [
-                //     { key: 'x', val: x },
-                //     { key: 'y', val: y },
-                //     { key: 'width', val: width?.replaceAll('px', '') + 'px' },
-                //     { key: 'height', val: height?.replaceAll('px', '') + 'px' },
-                //     { key: 'd', val: d },
-                //     { key: 'fill', val: this.colorKeywordToRGB(style.fill) },
-                //     { key: 'fillOpacity', val: style.fillOpacity },
-                //     { key: 'stroke', val: this.colorKeywordToRGB(style.stroke) },
-                //     { key: 'strokeWidth', val: style.strokeWidth },
-                //     { key: 'strokeDasharray', val: style.strokeDasharray },
-                //     { key: 'strokeLinecap', val: style.strokeLinecap },
-                // ]
-            )
-
+            await this.ifValueChangedRecord(el.id, attrs)
         }
-        // const kfs = StorageM.getKfs(el.id)
-        // let closest = {}
-        // kfs.reduce((c, p, i) => {
-        //     console.log(c.offset, AnimM.currentTimeSeconds, p.offset)
-        //     return Math.abs(c.offset! - AnimM.currentTimeSeconds) < Math.abs(p.offset! - AnimM.currentTimeSeconds)
-        //         ? closest = c : closest = p
-        // })
-
-        // console.log(closest)
 
         if (!this.lastValue[el.id]) this.lastValue[el.id] = {}
         attrs.map(attr => this.lastValue[el.id][attr.key] = attr.val)
-        // this.lastValue[el.id] = {
-        //     x: x,
-        //     y: y,
-        //     width: width?.replaceAll('px', '') + 'px',
-        //     height: height?.replaceAll('px', '') + 'px',
-        //     d: d,
-        //     fill: this.colorKeywordToRGB(style.fill),
-        //     fillOpacity: style.fillOpacity,
-        //     stroke: this.colorKeywordToRGB(style.stroke),
-        //     strokeWidth: style.strokeWidth,
-        //     strokeDasharray: style.strokeDasharray,
-        //     strokeLinecap: style.strokeLinecap,
-        // }
 
         return attrs
     }
@@ -321,6 +285,9 @@ export abstract class CsSvgParser {
 
         props.forEach(prop => {
             prop.val != this.lastValue?.[elId]?.[prop.key] ? changedProps[prop.key] = prop.val : ''
+
+            if (prop.key == 'transform')
+                console.log(prop.val, this.lastValue[elId]?.[prop.key])
         })
 
         if (Object.keys(changedProps).length > 0) await KfsM.createKeyFrame(SvElM.rootSvEl, elId, changedProps)

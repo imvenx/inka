@@ -5,10 +5,16 @@
     <span class="timeStep" :style="`left: ${timeSideOffsetPx}px`" style="z-index:999">
       <div>0</div>
     </span>
-    <span v-for="deciSecond in Math.round(AnimM.durationSeconds * ConfigM.numDecimals)" class="timeStep"
-      :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
+    <span v-if="ConfigM.zoomPx > 20" v-for="deciSecond in Math.round(AnimM.durationSeconds * ConfigM.numDecimals)"
+      class="timeStep" :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
       <div>
         {{ deciSecond / ConfigM.numDecimals }}
+      </div>
+    </span>
+    <span v-else v-for="second in AnimM.durationSeconds * ConfigM.numDecimals" class="timeStep"
+      :style="`left: ${(second * ConfigM.zoomPx * 10) + timeSideOffsetPx}px`">
+      <div>
+        {{ second }}
       </div>
     </span>
     <span id="offsetRight" :style="`left: ${timePickerWidth}px`"></span>
