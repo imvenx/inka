@@ -38,12 +38,17 @@ export abstract class ConfigH {
 
     static async saveInkaWindowSize(width: number, height: number) {
         this.config.windowSize = { width: width, height: height }
-        this.save()
+        await this.save()
     }
 
     static async saveInkaWindowPosition(x: number, y: number) {
         this.config.windowPosition = { x: x, y: y }
-        this.save()
+        await this.save()
+    }
+
+    static async saveInkscapePath(path: string) {
+        this.config.inkscapePath = path
+        await this.save()
     }
 }
 

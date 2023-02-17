@@ -42,7 +42,7 @@ export abstract class inkscapeH {
         properties: ['openFile'],
         title: 'Select inkscape path',
       })).filePaths[0]
-    if (inkscapePath) this.setInkscapePath(inkscapePath)
+    if (inkscapePath) await ConfigH.saveInkscapePath(inkscapePath)
     return inkscapePath
   }
 
@@ -88,14 +88,15 @@ export abstract class inkscapeH {
     }
   }
 
-  private static async setInkscapePath(path: string) {
-    let _config: InkaConfig
-    try { _config = JSON.parse(await p.readFile(ConfigH.configRootPath, 'utf-8') as any) }
-    catch { _config = {} as any }
-    const config = _config
-    config.inkscapePath = path
-    await p.writeFile(ConfigH.configRootPath, JSON.stringify(config), { encoding: 'utf-8' })
-  }
+  // private static async setInkscapePath(path: string) {
+  // let _config: InkaConfig
+  // try { _config = JSON.parse(await p.readFile(ConfigH.configRootPath, 'utf-8') as any) }
+  // catch { _config = {} as any }
+  // const config = _config
+  // config.inkscapePath = path
+  // ConfigH.inkscapePath = path
+  // await p.writeFile(ConfigH.configRootPath, JSON.stringify(config), { encoding: 'utf-8' })
+  // }
 
   private static async closeInkscapeWindow() {
 
@@ -124,7 +125,7 @@ export abstract class inkscapeH {
       var { stderr } = await exec(`${inkscapePath} -q --actions="selection-set-backup;file-rebase;selection-restore-backup;selection-clear-backup"`)
       // var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
 
-      // if (stderr) logInkaError(stderr, 'stderr on file-rebase')
+      if (stderr) logInkaError(stderr, 'stderr on file-rebase')
     }
     catch (e) {
       logInkaError(e, 'error on file-rebase')
