@@ -8,7 +8,9 @@ import { KfsM } from "./kfs_m";
 import { CsSvgParser } from "./csSvgParser";
 import { roundToDecimals } from "./utils";
 
-export const svgEl = () => document.getElementById('svg5')
+export const svgEl = () => document.getElementById('animViewerCont')?.children[0]
+// export const svgEl = () => document.getElementById('svg5')
+
 // export const svgElCont = svgEl()?.parentElement
 
 export abstract class AnimM {
