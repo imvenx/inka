@@ -67,12 +67,23 @@ export abstract class KfsM {
 
     static async createKeyFrame(svEl: SvEl, elId: string, kfs: Keyframe): Promise<any> {
 
+        if (svEl.tagName == 'svg') {
+            if (!svEl.kfs.find(x => x.offset == AnimM.currentOffset)) {
+
+                svEl.kfs.push({ offset: AnimM.currentOffset, fill: 'rgb(0,0,0,0)' })
+
+                svEl?.kfs?.sort((a: any, b: any) => a?.offset - b?.offset)
+
+                this.updateKfs(svEl.id, svEl.kfs)
+            }
+        }
+
         if (svEl.id != elId) {
             svEl.children?.forEach(async (child) => await this.createKeyFrame(child, elId, kfs));
             return
         }
 
-        if (svEl.tagName == 'svg') return
+        // if (svEl.tagName == 'svg') return
 
         if (!allowedEls.includes(svEl.tagName) || this.elHasNotAllowedAttrs(svEl)) return
 
@@ -89,19 +100,22 @@ export abstract class KfsM {
     }
 
     static async deleteKfs(el: SvEl, offset: number | null | undefined) {
+        await this.deleteKfsLoop(el, offset)
+        await AnimM.refreshAnim(SvElM.rootSvEl)
+    }
+
+    static async deleteKfsLoop(el: SvEl, offset: number | null | undefined) {
 
         if (offset === null || offset === undefined) {
             console.log('csSvg: error offset undefined'); return
         }
 
-        el.children?.forEach(async (child) => await this.deleteKfs(child, offset));
+        el.children?.forEach(async (child) => await this.deleteKfsLoop(child, offset));
         if (!allowedEls.includes(el.tagName)) return
 
         // TODO: delete instead of filter, because this is leaving {} empty objects on the file
         el.kfs = el.kfs.filter(x => x.offset !== offset)
         StorageM.setKfs(el.id, el.kfs)
-
-        await AnimM.refreshAnim(SvElM.rootSvEl)
     }
 
     static async deleteKf(el: SvEl, offset: number, kfToDeleteName: string) {
