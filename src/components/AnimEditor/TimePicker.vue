@@ -38,9 +38,6 @@ const selectTime = async (e: MouseEvent) => {
   if (e.buttons !== 1) return
   let pickedTime = getPickedTime(e)
 
-
-  if (pickedTime < 0) pickedTime = 0
-  if (pickedTime > AnimM.durationMiliseconds) pickedTime = AnimM.durationMiliseconds
   await AnimM.selectTime(pickedTime, SvElM.rootSvEl, !e.shiftKey)
 
   window.addEventListener('mousemove', selectTime, { once: true })

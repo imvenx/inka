@@ -1,5 +1,6 @@
 <template>
-    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @mousedown="onMouseDownOnKeyframe">
+    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @mousedown="onMouseDownOnKeyframe"
+        @dblclick="setKfTimeAsCurrentTime">
         <g transform="rotate(45)">
             <rect class="elKf" width="10" height="10" />
             <foreignObject width="10" height="10">
@@ -13,6 +14,7 @@ import { SvEl } from 'src/models/models';
 import { AnimM } from 'src/modules/anim_m';
 import { ConfigM } from 'src/modules/config_m';
 import { KfsM } from 'src/modules/kfs_m';
+import { SvElM } from 'src/modules/svel_m';
 import { kfPos } from '../kf_shared';
 
 const props = defineProps<{ svEl: SvEl, kf: Keyframe }>()
@@ -40,6 +42,10 @@ const cont = document.getElementById('foreignObjCont') as Element
 function getPickedTime(e: MouseEvent): number {
     return (e.clientX - cont?.getBoundingClientRect().left + cont.scrollLeft
         - ConfigM.timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals
+}
+
+function setKfTimeAsCurrentTime() {
+    if (props.kf.offset) AnimM.selectTime((props.kf.offset * AnimM.durationSeconds * 1000), SvElM.rootSvEl, true)
 }
 
 </script>

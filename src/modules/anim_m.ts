@@ -110,6 +110,8 @@ export abstract class AnimM {
 
     static commitAnimTimeout: any
     static async selectTime(miliseconds: number, svEl: SvEl, output: boolean) {
+        if (miliseconds < 0) miliseconds = 0
+        if (miliseconds > this.durationMiliseconds) miliseconds = this.durationMiliseconds
         // this.transformOriginCenterAnimViewer()
 
         this.stopRefreshCurrentTime()
