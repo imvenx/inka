@@ -25,7 +25,6 @@ function createWindow() {
    * Initial window options
    */
 
-  screen.getPrimaryDisplay().workAreaSize.height
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: ConfigH.windowSize()?.width ?? screen.getPrimaryDisplay().workAreaSize.width,
