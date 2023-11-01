@@ -63,13 +63,13 @@ export abstract class inkscapeH {
 
       setTimeout(async () => {
         var { stderr } = await exec(
-          `${inkscapePath} --actions="window-set-geometry:0,0,${ConfigH.windowSize()?.width},
+          `"${inkscapePath}" --actions="window-set-geometry:0,0,${ConfigH.windowSize()?.width},
           ${screen.getPrimaryDisplay().workAreaSize.height - (ConfigH.windowSize()?.height ?? 250) - 30}" -q`
         )
       }, 1000)
 
       var { stderr } = await exec(
-        `${inkscapePath} ${tempFilePath()} `
+        `"${inkscapePath}" "${tempFilePath()}" `
       )
       // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
 
@@ -105,7 +105,7 @@ export abstract class inkscapeH {
 
     try {
       var { stderr } = await exec(
-        `${inkscapePath} -q --actions="window-close"`
+        `"${inkscapePath}" -q --actions="window-close"`
       )
 
       // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
@@ -122,7 +122,7 @@ export abstract class inkscapeH {
 
     try {
 
-      var { stderr } = await exec(`${inkscapePath} -q --actions="selection-set-backup;file-rebase;selection-restore-backup;selection-clear-backup"`)
+      var { stderr } = await exec(`"${inkscapePath}" -q --actions="selection-set-backup;file-rebase;selection-restore-backup;selection-clear-backup"`)
       // var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
 
       if (stderr) logInkaError(stderr, 'stderr on file-rebase')
@@ -146,7 +146,7 @@ export abstract class inkscapeH {
   }
 
   static async selectElement(id: string) {
-    await exec(`${ConfigH.inkscapePath()} --actions="select-by-id:circle6" -q`)
+    await exec(`"${ConfigH.inkscapePath()}" --actions="select-by-id:circle6" -q`)
 
   }
 
