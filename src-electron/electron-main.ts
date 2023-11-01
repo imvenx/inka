@@ -63,11 +63,51 @@ function createWindow() {
 
 }
 
-
+app.commandLine.appendSwitch('ignore-gpu-blacklist');
+app.commandLine.appendSwitch('disable-gpu');
+app.commandLine.appendSwitch('disable-gpu-compositing');
 // let filePath = ''
 // const projectsFolderPath = 'cssvg_projects'
 // export const tempFilePath = () => `${projectsFolderPath}/temp.svg`
 
+function resetWindow() {
+  try {
+    mainWindow.setSize(screen.getPrimaryDisplay().workAreaSize.width, mainWindow.getSize()[1]);
+    mainWindow.setPosition(0,screen.getPrimaryDisplay().workAreaSize.height - mainWindow.getSize()[1] + 36);
+  }
+  catch (e) {
+      console.log(e, 'Error on try set config')
+      return false
+  }
+}
+
+function onTop() {
+  try {
+    mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    mainWindow.setAlwaysOnTop(true, "floating");
+    mainWindow.setFullScreenable(false);
+    // Below statement completes the flow
+    mainWindow.moveTop();
+  }
+  catch (e) {
+      console.log(e, 'Error on try set config')
+      return false
+  }
+}
+
+function onFloat() {
+  try {
+    mainWindow.setVisibleOnAllWorkspaces(false, { visibleOnFullScreen: false });
+    mainWindow.setAlwaysOnTop(false, "floating");
+    mainWindow.setFullScreenable(true);
+    // Below statement completes the flow
+    //mainWindow.moveTop();
+  }
+  catch (e) {
+      console.log(e, 'Error on try set config')
+      return false
+  }
+}
 app.whenReady().then(async () => {
   createWindow()
   ipcMain.handle('createProject', ({ }, p) => projectH.createProject(p))
@@ -76,22 +116,52 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('getTempSvg', ({ }) => svgH.getTempSvg())
   ipcMain.handle('updateTempSvg', ({ }, p) => svgH.updateTempSvg(p))
+  ipcMain.handle('resetInkscapePath', ({ }) => inkscapeH.resetInkscapePath())
   ipcMain.handle('exportSvg', ({ }, fileStr: string) => svgH.exportSvg(fileStr))
 
   ipcMain.handle('openSvgWithInkscape', () => inkscapeH.openInkscapeWindow())
   ipcMain.handle('openSvgWithDefaultProgram', () => svgH.openSvgWithDefaultProgram())
-  ipcMain.handle('resetInkscapePath', () => inkscapeH.askInkscapePath())
-  ipcMain.handle('closeApp', () => closeApp())
-  mainWindow?.webContents.send('updatedSvg')
-
+  const windowSize = mainWindow?.getSize()
+  ipcMain.handle('dock', () => {
+    const windowSize = mainWindow?.getSize()
+    onTop()
+    resetWindow()
+    inkscapeH.dock(windowSize ? windowSize[1] + 5 : 0)
+    //app.relaunch()
+  })
+  ipcMain.handle('undock', () => {
+    onFloat()
+    inkscapeH.undock()
+  })
   mainWindow?.on('resize', () => {
     const windowSize = mainWindow?.getSize()
+    let undock = ConfigH.windowSize.length == 2 && windowSize &&
+        (ConfigH.windowSize.width != windowSize[0] ||
+        ConfigH.windowSize.height != windowSize[1])
     if (windowSize) ConfigH.saveInkaWindowSize(windowSize[0], windowSize[1])
+    if (undock) {
+      onFloat();
+      inkscapeH.undock()
+    }
   })
   mainWindow?.on('move', () => {
     const windowPosition = mainWindow?.getPosition()
+    const windowSize = mainWindow?.getSize()
+    let undock = ConfigH.windowSize.length == 2 && windowSize &&
+        (ConfigH.windowSize.width != windowSize[0] ||
+        ConfigH.windowSize.height != windowSize[1])
     if (windowPosition) ConfigH.saveInkaWindowPosition(windowPosition[0], windowPosition[1])
+    if (undock) {
+      onFloat();
+      inkscapeH.undock()
+    }
   })
+  mainWindow?.on('close', () => {
+    inkscapeH.undock()
+  })
+  ipcMain.handle('closeApp', () => closeApp())
+  mainWindow?.webContents.send('updatedSvg')
+
 });
 
 

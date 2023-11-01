@@ -9,10 +9,12 @@
                 <q-item clickable v-close-popup @click="ExportM.exportToSvg()">Export</q-item>
                 <q-item clickable v-close-popup @click="ProjectM.openSvgWithInkscape()">Open SVG with
                     Inkscape</q-item>
+
                 <q-item clickable v-close-popup @click="eapi.resetInkscapePath()">Reset Inkscape path</q-item>
                 <q-item clickable v-close-popup @click="ProjectM.openSvgWithDefaultProgram()">Open SVG with default
-                    program</q-item>
-                <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
+                  program</q-item>
+                <q-item clickable v-close-popup @click="eapi.dock()">Dock to bottom (restart app)</q-item>
+                  <!-- <q-item clickable v-close-popup @click="deleteAll()">Delete All</q-item> -->
                 <!-- <q-item clickable v-close-popup @click="deleteAnim()">Delete Anim</q-item> -->
             </q-list>
         </q-menu>

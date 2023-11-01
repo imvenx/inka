@@ -1,6 +1,6 @@
 import { createProjectParams, loadProjectParams, loadProjectResult, saveProjectParams, updateTempSvgParams } from "app/public/sharedModels"
 
-// Electron API 
+// Electron API
 const _eapi = (window as any).eapi
 
 export const eapi = {
@@ -13,6 +13,8 @@ export const eapi = {
     openSvgWithInkscape: async () => _eapi.openSvgWithInkscape(),
     openSvgWithDefaultProgram: async () => _eapi.openSvgWithDefaultProgram(),
     resetInkscapePath: async () => _eapi.resetInkscapePath(),
+    dock: async () => _eapi.dock(),
+    undock: async () => _eapi.undock(),
     loadProject: async (p?: loadProjectParams): Promise<loadProjectResult> => _eapi.loadProject(p),
     saveProject: async (p: saveProjectParams) => _eapi.saveProject(p),
     exportSvg: async (svgStr: string) => _eapi.exportSvg(svgStr),
