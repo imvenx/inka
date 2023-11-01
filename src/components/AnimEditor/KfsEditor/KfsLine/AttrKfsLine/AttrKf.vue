@@ -1,5 +1,5 @@
 <template>
-    <g :transform="`translate(${kfPos(kf.offset!)}, 2)`" @click.right="deleteKf()">
+    <g @click="edit" :transform="`translate(${kfPos(kf.offset!)}, 2)`" @click.right="deleteKf()">
         <!-- <text style="transform:translate(0, 60%); user-select: none; 
         transform-origin: center;" text-anchor="middle" opacity=".8" font-size=".8em">
             {{ title[1] }}</text> -->
@@ -34,6 +34,10 @@ async function deleteKf() {
     // console.log(Object.entries(props.kf)[1][0])
     KfsM.deleteKf(el!, props.kf.offset!, Object.entries(props.kf)[1][0])
 
+}
+
+function edit() {
+    console.log(props)
 }
 
 </script>

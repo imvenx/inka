@@ -38,7 +38,8 @@ import { onMounted, onUpdated, ref } from 'vue';
 import ProjectMenu from '../ActionButtons/ProjectMenu.vue';
 import TimerMenu from '../ActionButtons/TimerMenu.vue';
 import VideoPlayerButtons from './VideoPlayerButtons.vue';
-
+import { SvgToVideoOptions } from './SvgToMp4';
+import { ExportM } from 'src/modules/export_m'
 const cont = ref<HTMLDivElement>({} as HTMLDivElement)
 const animViewerBgColor = ref('#8c8c8c')
 // const parentHeight = ref('200px')
@@ -56,6 +57,13 @@ onUpdated(async () => {
 
   // AnimM.transformOriginRevertAnimViewer()
 })
+
+
+function enterFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) el.requestFullscreen()
+  else if (document.exitFullscreen) document.exitFullscreen();
+
+}
 
 window.addEventListener('resize', () => setTimeout(async () => await svgMaxSize(true), 100))
 
@@ -91,6 +99,7 @@ async function svgMaxSize(isMounted: boolean = false) {
     svgEl.style.width = 'auto'
     svgEl.style.height = 'auto'
 
+
     const contRect = cont.value?.getBoundingClientRect()
     const svgRect = svgEl?.getBoundingClientRect()
 
@@ -105,12 +114,16 @@ async function svgMaxSize(isMounted: boolean = false) {
       svgEl.style.width = 'auto'
       svgEl.style.height = '100%'
     }
+
+    svgEl.addEventListener('click', () => enterFullscreen(svgEl.parentElement!))
+
   }
 
   const svg = svgEl()
   if (!svg) return
   const _svEl = await SvElM.getSvEls(svg)
   SvElM.rootSvEl = _svEl
+
 
 }
 

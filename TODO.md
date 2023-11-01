@@ -1,3 +1,35 @@
+prevent continue animating after last kf if there is no kf
+
+refresh inkscape path not working properly, need to close and reopen program to actually work
+
+establish a cd/ci pipeline
+
+prevent exported svg grow 
+
+add option to only record selected els
+
+add again some kf on svg parent so massive delete/drag is easier
+
+add search input on how to.. window
+
+add modals on how to.. window for giff tutorials, or even better, open them in a new electron window 
+
+add support for text element
+
+add support for opacity
+
+use  todo file more, put todos on readme, github issues is useless
+
+add save last inka window size and position
+
+add project name and thumbnail to recent projects
+
+add mute and solo options for animate els
+
+add logs from front end and backend on a tab on header menu
+
+create keyframe on selected empty line with right click menu
+
 
 add undo/redo <- -> functionality to revert changes (ctrl z, shift ctrl z)
 
