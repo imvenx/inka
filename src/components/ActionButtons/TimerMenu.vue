@@ -62,7 +62,7 @@ import { SvElM } from 'src/modules/svel_m';
 import { btnAttrs } from 'src/modules/constants';
 import { ref } from 'vue';
 
-function selectTime() { AnimM.selectTime(AnimM.currentTimeMiliseconds, SvElM.rootSvEl) }
+function selectTime() { AnimM.selectTime(AnimM.currentTimeMiliseconds, SvElM.rootSvEl, false) }
 
 const isDurationModified = ref(false)
 function modifyDuration(e: any) {

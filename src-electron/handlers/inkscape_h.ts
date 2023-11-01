@@ -1,23 +1,24 @@
 import { exec as _exec } from "child_process";
 import { promisify } from "util";
 const exec = promisify(_exec);
-import electron, { dialog } from "electron";
+import { dialog } from "electron";
 import { promises as p, } from "fs"
-import path from "path"
 import { mainWindow } from "../electron-main";
 import { logInkaError } from "../utils/utils";
 import { tempFilePath } from "./svgH";
+import { ConfigH } from "./config_h";
+import { InkaConfig } from "../models/InkaConfig";
+import { screen } from 'electron';
 
 export abstract class inkscapeH {
 
-  private static configRootPath = path.join(electron.app.getPath('userData'), 'inkaConfig.json')
   private static inkscapePath = ''
 
   private static async getInkscapePath() {
     if (this.inkscapePath) return this.inkscapePath
 
     try {
-      const config = JSON.parse(await (p.readFile(this.configRootPath, 'utf-8') as any))
+      const config: InkaConfig = JSON.parse(await (p.readFile(ConfigH.configRootPath, 'utf-8') as any))
 
       if (config.inkscapePath) {
         this.inkscapePath = config.inkscapePath
@@ -35,13 +36,13 @@ export abstract class inkscapeH {
   }
 
   static async askInkscapePath() {
-    await dialog.showMessageBox(mainWindow!, { message: 'Please select inkscape executable file', })
+    await dialog.showMessageBox(mainWindow!, { message: 'Please select inkscape executable file' })
     const inkscapePath = (await dialog.showOpenDialog(mainWindow!,
       {
         properties: ['openFile'],
         title: 'Select inkscape path',
       })).filePaths[0]
-    if (inkscapePath) this.setInkscapePath(inkscapePath)
+    if (inkscapePath) await ConfigH.saveInkscapePath(inkscapePath)
     return inkscapePath
   }
 
@@ -59,27 +60,43 @@ export abstract class inkscapeH {
     if (!inkscapePath) return
 
     try {
+
+      setTimeout(async () => {
+        var { stderr } = await exec(
+          `"${inkscapePath}" --actions="window-set-geometry:0,0,${ConfigH.windowSize()?.width},
+          ${screen.getPrimaryDisplay().workAreaSize.height - (ConfigH.windowSize()?.height ?? 250) - 30}" -q`
+        )
+      }, 1000)
+
       var { stderr } = await exec(
         `"${inkscapePath}" "${tempFilePath()}"`
       )
-
       // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
+
+
+
+
     }
-    catch (e) {
-      logInkaError(e, 'error trying to close inkscape window')
+    catch (e: any) {
+      if (e.toString().includes('not found')) {
+        await this.askInkscapePath()
+        await this.openInkscapeWindow()
+      }
+      logInkaError(e, 'error trying to open inkscape window')
       // const newInkscapePath = await inkscapeH.askInkscapePath()
       // if (newInkscapePath) exec(`"${newInkscapePath}" ${tempFilePath()}`)
     }
   }
 
-  private static async setInkscapePath(path: string) {
-    let _config
-    try { _config = JSON.parse(await p.readFile(this.configRootPath, 'utf-8') as any) }
-    catch { _config = {} as any }
-    const config = _config
-    config.inkscapePath = path
-    await p.writeFile(this.configRootPath, JSON.stringify(config), { encoding: 'utf-8' })
-  }
+  // private static async setInkscapePath(path: string) {
+  // let _config: InkaConfig
+  // try { _config = JSON.parse(await p.readFile(ConfigH.configRootPath, 'utf-8') as any) }
+  // catch { _config = {} as any }
+  // const config = _config
+  // config.inkscapePath = path
+  // ConfigH.inkscapePath = path
+  // await p.writeFile(ConfigH.configRootPath, JSON.stringify(config), { encoding: 'utf-8' })
+  // }
 
   private static async closeInkscapeWindow() {
 
@@ -104,9 +121,11 @@ export abstract class inkscapeH {
     if (!inkscapePath) return
 
     try {
-      var { stderr } = await exec(`"${inkscapePath}" -q --actions="file-rebase"`)
 
-      // if (stderr) logInkaError(stderr, 'stderr on file-rebase')
+      var { stderr } = await exec(`"${inkscapePath}" -q --actions="selection-set-backup;file-rebase;selection-restore-backup;selection-clear-backup"`)
+      // var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
+
+      if (stderr) logInkaError(stderr, 'stderr on file-rebase')
     }
     catch (e) {
       logInkaError(e, 'error on file-rebase')
@@ -124,6 +143,11 @@ export abstract class inkscapeH {
     catch (e) {
       logInkaError(e, 'error on document-revert')
     }
+  }
+
+  static async selectElement(id: string) {
+    await exec(`"${ConfigH.inkscapePath()}" --actions="select-by-id:circle6" -q`)
+
   }
 
 }

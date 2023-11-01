@@ -8,12 +8,24 @@ import { kebabize } from "./utils"
 export abstract class ExportM {
     static async exportToSvg(): Promise<void> {
         let _svgEl = svgEl()
-        const lastTime = AnimM.currentTimeMiliseconds
-        await AnimM.selectTime(0, SvElM.rootSvEl)
+        // const lastTime = AnimM.currentTimeMiliseconds
+        // await AnimM.selectTime(0, SvElM.rootSvEl)
         if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
 
-        let animStr = this.getExportAnimString(SvElM.rootSvEl)
+
         let clone = _svgEl.cloneNode(true) as HTMLElement
+        clone.innerHTML += this.getExportAnimString()
+        await eapi.exportSvg(clone.outerHTML)
+        // await AnimM.selectTime(lastTime, SvElM.rootSvEl)
+    }
+
+
+    static getExportAnimString() {
+        let _svgEl = svgEl()
+        if (!_svgEl) { alert("Internal Error, svgEl is null"); return }
+        let clone = _svgEl.cloneNode(true) as HTMLElement
+        let animStr = this.getExportAnimStringBase(SvElM.rootSvEl)
+
         clone.innerHTML += `
 <style> ${animStr}
    
@@ -22,14 +34,13 @@ export abstract class ExportM {
         transform-origin: center;
     }
 </style>`
-        await eapi.exportSvg(clone.outerHTML)
-        await AnimM.selectTime(lastTime, SvElM.rootSvEl)
-    }
 
-    private static getExportAnimString(el: SvEl) {
+        return clone.outerHTML
+    }
+    private static getExportAnimStringBase(el: SvEl) {
         let res = ''
 
-        el.children?.forEach((child: SvEl) => res += this.getExportAnimString(child))
+        el.children?.forEach((child: SvEl) => res += this.getExportAnimStringBase(child))
         if (allowedEls.includes(el.tagName) && el.id) {
 
             let kfsStr = ` 

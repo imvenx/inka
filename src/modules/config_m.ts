@@ -15,6 +15,8 @@ export abstract class ConfigM {
     static get editorScroll() { return this._editorScroll.value }
     static set editorScroll(v: Vector2) { this._editorScroll.value = v }
 
+    // private static _convertPathsToBezierCurve = StorageM
+
     private static _rowHeight = 19.19
     static get rowHeight() {
         return this._rowHeight

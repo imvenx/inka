@@ -5,10 +5,16 @@
     <span class="timeStep" :style="`left: ${timeSideOffsetPx}px`" style="z-index:999">
       <div>0</div>
     </span>
-    <span v-for="deciSecond in Math.round(AnimM.durationSeconds * ConfigM.numDecimals)" class="timeStep"
-      :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
+    <span v-if="ConfigM.zoomPx > 20" v-for="deciSecond in Math.round(AnimM.durationSeconds * ConfigM.numDecimals)"
+      class="timeStep" :style="`left: ${deciSecond * ConfigM.zoomPx + timeSideOffsetPx}px`">
       <div>
         {{ deciSecond / ConfigM.numDecimals }}
+      </div>
+    </span>
+    <span v-else v-for="second in AnimM.durationSeconds * ConfigM.numDecimals" class="timeStep"
+      :style="`left: ${(second * ConfigM.zoomPx * 10) + timeSideOffsetPx}px`">
+      <div>
+        {{ second }}
       </div>
     </span>
     <span id="offsetRight" :style="`left: ${timePickerWidth}px`"></span>
@@ -32,16 +38,13 @@ const selectTime = async (e: MouseEvent) => {
   if (e.buttons !== 1) return
   let pickedTime = getPickedTime(e)
 
-
-  if (pickedTime < 0) pickedTime = 0
-  if (pickedTime > AnimM.durationMiliseconds) pickedTime = AnimM.durationMiliseconds
   await AnimM.selectTime(pickedTime, SvElM.rootSvEl, !e.shiftKey)
 
   window.addEventListener('mousemove', selectTime, { once: true })
 }
 
 function getPickedTime({ clientX }: MouseEvent): number {
-  return Math.round((clientX - cont.value.getBoundingClientRect().left + cont.value.scrollLeft
+  return Math.round((clientX - cont.value?.getBoundingClientRect().left + cont.value.scrollLeft
     - timeSideOffsetPx) / ConfigM.zoomPx / ConfigM.numDecimals * 1000)
 }
 

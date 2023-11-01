@@ -9,6 +9,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.11.6",
     "@quasar/extras": "^1.15.7",
     "pinia": "^2.0.11",
     "quasar": "^2.10.2",

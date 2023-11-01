@@ -6,6 +6,7 @@ import { screen } from 'electron';
 import { projectH } from './handlers/project_h';
 import { svgH } from './handlers/svgH';
 import { inkscapeH } from './handlers/inkscape_h';
+import { ConfigH } from './handlers/config_h';
 
 // needed in case process is undefined under Linux
 export const platform = process.platform || os.platform();
@@ -23,14 +24,15 @@ function createWindow() {
   /**
    * Initial window options
    */
+
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: screen.getPrimaryDisplay().bounds.width,
-    height: 250,
+    width: ConfigH.windowSize()?.width ?? screen.getPrimaryDisplay().workAreaSize.width,
+    height: ConfigH.windowSize()?.height ?? 214,
+    x: ConfigH.windowPosition()?.x ?? 0,
+    y: ConfigH.windowPosition()?.y ?? screen.getPrimaryDisplay().workAreaSize.height - 250,
     autoHideMenuBar: true,
     frame: false,
-    x: 0,
-    y: screen.getPrimaryDisplay().bounds.height - 250,
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
@@ -81,6 +83,15 @@ app.whenReady().then(async () => {
   ipcMain.handle('resetInkscapePath', () => inkscapeH.askInkscapePath())
   ipcMain.handle('closeApp', () => closeApp())
   mainWindow?.webContents.send('updatedSvg')
+
+  mainWindow?.on('resize', () => {
+    const windowSize = mainWindow?.getSize()
+    if (windowSize) ConfigH.saveInkaWindowSize(windowSize[0], windowSize[1])
+  })
+  mainWindow?.on('move', () => {
+    const windowPosition = mainWindow?.getPosition()
+    if (windowPosition) ConfigH.saveInkaWindowPosition(windowPosition[0], windowPosition[1])
+  })
 });
 
 
