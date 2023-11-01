@@ -60,7 +60,7 @@ export abstract class inkscapeH {
 
     try {
       var { stderr } = await exec(
-        `${inkscapePath} ${tempFilePath()}`
+        `"${inkscapePath}" "${tempFilePath()}"`
       )
 
       // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
@@ -88,7 +88,7 @@ export abstract class inkscapeH {
 
     try {
       var { stderr } = await exec(
-        `${inkscapePath} -q --actions="window-close"`
+        `"${inkscapePath}" -q --actions="window-close"`
       )
 
       // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
@@ -104,7 +104,7 @@ export abstract class inkscapeH {
     if (!inkscapePath) return
 
     try {
-      var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
+      var { stderr } = await exec(`"${inkscapePath}" -q --actions="file-rebase"`)
 
       // if (stderr) logInkaError(stderr, 'stderr on file-rebase')
     }
