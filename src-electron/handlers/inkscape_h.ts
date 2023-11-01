@@ -2,7 +2,7 @@ import { exec as _exec } from "child_process";
 import { promisify } from "util";
 const exec = promisify(_exec);
 import { dialog } from "electron";
-import { promises as p, } from "fs"
+import { promises as p, unlink, existsSync} from "fs"
 import { mainWindow } from "../electron-main";
 import { logInkaError } from "../utils/utils";
 import { tempFilePath } from "./svgH";
@@ -13,6 +13,13 @@ import { screen } from 'electron';
 export abstract class inkscapeH {
 
   private static inkscapePath = ''
+  public static onDoking = true
+
+  static async resetInkscapePath() {
+    ConfigH.resetInkscapePath()
+    inkscapeH.inkscapePath = ''
+    this.openInkscapeWindow()
+  }
 
   private static async getInkscapePath() {
     if (this.inkscapePath) return this.inkscapePath
@@ -61,12 +68,6 @@ export abstract class inkscapeH {
 
     try {
 
-      setTimeout(async () => {
-        var { stderr } = await exec(
-          `"${inkscapePath}" --actions="window-set-geometry:0,0,${ConfigH.windowSize()?.width},
-          ${screen.getPrimaryDisplay().workAreaSize.height - (ConfigH.windowSize()?.height ?? 250) - 30}" -q`
-        )
-      }, 1000)
 
       var { stderr } = await exec(
         `"${inkscapePath}" "${tempFilePath()}"`
@@ -115,6 +116,52 @@ export abstract class inkscapeH {
     }
   }
 
+  static async dock(height : number) {
+    try {
+      const configInkDirUICSS = await ConfigH.configInkDirUICSS
+        if (!configInkDirUICSS ) return
+        await p.writeFile(configInkDirUICSS, `#DesktopMainBox {padding-bottom:${height}px;}`, { encoding: 'utf-8' })
+        await this.reopenInkscape()
+        return true
+    }
+    catch (e) {
+        logInkaError(e, 'Error on try set config')
+        return false
+    }
+  }
+
+  static async undock() {
+    try {
+        const configInkDirUICSS = await ConfigH.configInkDirUICSS
+        if (existsSync(configInkDirUICSS)) {
+          unlink(configInkDirUICSS, (err) => {
+              if (err) {
+                  console.log(err);
+                  return;
+              }
+          });
+        }
+        return true
+    }
+    catch (e) {
+        logInkaError(e, 'Error on try set config')
+        return false
+    }
+  }
+
+  static async docked() {
+    try {
+        const configInkDirUICSS = await ConfigH.configInkDirUICSS
+        if (existsSync(configInkDirUICSS)) {
+          return true
+        }
+        return false
+    }
+    catch (e) {
+        logInkaError(e, 'Error on try set config')
+        return false
+    }
+  }
   static async fileRebase(): Promise<void> {
 
     const inkscapePath = await inkscapeH.getInkscapePath()
@@ -122,7 +169,7 @@ export abstract class inkscapeH {
 
     try {
 
-      var { stderr } = await exec(`"${inkscapePath}" -q --actions="selection-set-backup;file-rebase;selection-restore-backup;selection-clear-backup"`)
+      var { stderr } = await exec(`"${inkscapePath}" -q --actions="selection-set-backup;file-rebase;selection-restore-backup;"`)
       // var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
 
       if (stderr) logInkaError(stderr, 'stderr on file-rebase')

@@ -1,20 +1,26 @@
 import electron from "electron";
 import path from "path"
 import { InkaConfig } from "../models/InkaConfig";
-import { promises as p, readFileSync } from "fs"
+import { promises as p, readFileSync, mkdir , existsSync} from "fs"
 import { logInkaError } from "../utils/utils";
 
 export abstract class ConfigH {
 
     static configRootPath = path.join(electron.app.getPath('userData'), 'inkaConfig.json')
+    static configInkDir = path.join(electron.app.getPath('userData'), 'inkscape')
+    static configInkDirUI = path.join(electron.app.getPath('userData'), 'inkscape', 'ui')
+    static configInkDirUICSS = path.join(electron.app.getPath('userData'), 'inkscape', 'ui', 'user.css')
+
     private static config: InkaConfig = this.get()
 
-    static readonly inkscapePath = () => this.config.inkscapePath
+    static readonly inkscapePath = () => this.config?.inkscapePath
     static readonly windowSize = () => this.config?.windowSize
     static readonly windowPosition = () => this.config?.windowPosition
 
     private static get(): InkaConfig {
         try {
+            if (!existsSync(ConfigH.configInkDir)) mkdir(ConfigH.configInkDir, (err) => console.log(err));
+            if (!existsSync(ConfigH.configInkDirUI)) mkdir(ConfigH.configInkDirUI, (err) => console.log(err));
             const configFileString = readFileSync(ConfigH.configRootPath, 'utf-8')
             return JSON.parse(configFileString)
         } catch (e) {
@@ -47,8 +53,14 @@ export abstract class ConfigH {
     }
 
     static async saveInkscapePath(path: string) {
-        this.config.inkscapePath = path
-        await this.save()
+      this.config.inkscapePath = path
+      await this.save()
+
+    }
+
+    static async resetInkscapePath() {
+      this.config.inkscapePath = undefined
+      await this.save()
     }
 }
 

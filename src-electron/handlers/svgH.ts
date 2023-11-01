@@ -4,7 +4,7 @@ import { promises as p, unwatchFile, watchFile, } from "fs"
 import { exec } from "child_process";
 import { updateTempSvgParams } from "app/public/sharedModels";
 import { dialog } from "electron";
-import { mainWindow } from "../electron-main";
+import { mainWindow, platform } from "../electron-main"
 
 const appPrefix = 'inka';
 const tempDirectoryPath = () => `${tmpdir()}/${appPrefix}`
@@ -38,7 +38,8 @@ export abstract class svgH {
     skipRefresh = true
     try {
       await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
-      await inkscapeH.fileRebase()
+      if (platform === 'win32') inkscapeH.fileRebase()
+      else inkscapeH.documentRevert()
     } catch {
       this.writeTempSvg(data)
     }
@@ -65,7 +66,8 @@ export abstract class svgH {
     catch (e: any) { e.code == 'EEXIST' ? '' : console.log(e) }
 
     await p.writeFile(tempFilePath(), data, { encoding: 'utf-8' })
-    inkscapeH.fileRebase()
+    if (platform === 'win32') inkscapeH.fileRebase()
+    else inkscapeH.documentRevert()
 
     unwatchFile(tempFilePath())
     this.watchTempSvg()
