@@ -126,6 +126,7 @@ export abstract class CsSvgParser {
         this.lastValue[el.id].stroke = this.colorKeywordToRGB(el.style.stroke)
         this.lastValue[el.id].strokeWidth = el.style.strokeWidth
         this.lastValue[el.id].strokeDasharray = el.style.strokeDasharray
+        this.lastValue[el.id].strokeDashoffset = el.style.strokeDashoffset
         this.lastValue[el.id].strokeLinecap = el.style.strokeLinecap
     }
 
@@ -200,6 +201,9 @@ export abstract class CsSvgParser {
 
             const strokeDasharray = style.strokeDasharray
             if (strokeDasharray) { attrs.push({ key: 'strokeDasharray', val: strokeDasharray }) }
+
+            const strokeDashoffset = style.strokeDashoffset
+            if (strokeDashoffset) { attrs.push({ key: 'strokeDashoffset', val: strokeDashoffset }) }
 
             const strokeLinecap = style.strokeLinecap
             if (strokeLinecap) { attrs.push({ key: 'strokeLinecap', val: strokeLinecap }) }

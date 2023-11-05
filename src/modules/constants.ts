@@ -32,6 +32,7 @@ export const allowedAttrs = [
     'stroke',
     'strokeWidth',
     'strokeDasharray',
+    'strokeDashoffset',
     'strokeLinecap',
 
 ]

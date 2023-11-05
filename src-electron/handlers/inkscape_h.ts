@@ -2,13 +2,12 @@ import { exec as _exec } from "child_process";
 import { promisify } from "util";
 const exec = promisify(_exec);
 import { dialog } from "electron";
-import { promises as p, unlink, existsSync} from "fs"
-import { mainWindow } from "../electron-main";
+import { promises as p, existsSync} from "fs"
+import { mainWindow, platform } from "../electron-main";
 import { logInkaError } from "../utils/utils";
 import { tempFilePath } from "./svgH";
 import { ConfigH } from "./config_h";
 import { InkaConfig } from "../models/InkaConfig";
-import { screen } from 'electron';
 
 export abstract class inkscapeH {
 
@@ -34,8 +33,8 @@ export abstract class inkscapeH {
 
       this.inkscapePath = await this.askInkscapePath()
     }
-    catch {
-      this.inkscapePath
+    catch (e) {
+      logInkaError(e, 'error on close inkscape window')
       this.inkscapePath = await this.askInkscapePath()
     }
 
@@ -66,17 +65,19 @@ export abstract class inkscapeH {
     const inkscapePath = await inkscapeH.getInkscapePath()
     if (!inkscapePath) return
 
+    const configInkDir = await ConfigH.configInkDir
+    if (!configInkDir) return
+
     try {
-
-
-      var { stderr } = await exec(
-        `"${inkscapePath}" "${tempFilePath()}"`
+      let cmd = `INKSCAPE_PROFILE_DIR="${configInkDir}" "${inkscapePath}"`
+      let enviroment = {}
+      if (platform == "win32") {
+        cmd = `"${inkscapePath}"`
+        enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
+      }
+      await exec(
+        `${cmd} "${tempFilePath()}"`,  enviroment
       )
-      // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
-
-
-
-
     }
     catch (e: any) {
       if (e.toString().includes('not found')) {
@@ -104,12 +105,19 @@ export abstract class inkscapeH {
     const inkscapePath = await inkscapeH.getInkscapePath()
     if (!inkscapePath) return
 
-    try {
-      var { stderr } = await exec(
-        `"${inkscapePath}" -q --actions="window-close"`
-      )
+    const configInkDir = await ConfigH.configInkDir
+    if (!configInkDir) return
 
-      // if (stderr) logInkaError(stderr, 'stderr on close inkscape window')
+    try {
+      let cmd = `INKSCAPE_PROFILE_DIR="${configInkDir}" "${inkscapePath}"`
+      let enviroment = {}
+      if (platform == "win32") {
+        cmd = `"${inkscapePath}"`
+        enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
+      }
+      await exec(
+        `${cmd} -q --actions="window-close"`,  enviroment
+      )
     }
     catch (e) {
       logInkaError(e, 'error on close inkscape window')
@@ -118,9 +126,9 @@ export abstract class inkscapeH {
 
   static async dock(height : number) {
     try {
-      const configInkDirUICSS = await ConfigH.configInkDirUICSS
-        if (!configInkDirUICSS ) return
-        await p.writeFile(configInkDirUICSS, `#DesktopMainBox {padding-bottom:${height}px;}`, { encoding: 'utf-8' })
+      const configInkCSS = await ConfigH.configInkCSS
+        if (!configInkCSS ) return
+        await p.writeFile(configInkCSS, `#DesktopMainBox {padding-bottom:${height}px;}`, { encoding: 'utf-8' })
         await this.reopenInkscape()
         return true
     }
@@ -132,14 +140,9 @@ export abstract class inkscapeH {
 
   static async undock() {
     try {
-        const configInkDirUICSS = await ConfigH.configInkDirUICSS
-        if (existsSync(configInkDirUICSS)) {
-          unlink(configInkDirUICSS, (err) => {
-              if (err) {
-                  console.log(err);
-                  return;
-              }
-          });
+        const configInkCSS = await ConfigH.configInkCSS
+        if (existsSync(configInkCSS)) {
+          await p.unlink(configInkCSS);
         }
         return true
     }
@@ -151,8 +154,8 @@ export abstract class inkscapeH {
 
   static async docked() {
     try {
-        const configInkDirUICSS = await ConfigH.configInkDirUICSS
-        if (existsSync(configInkDirUICSS)) {
+        const configInkCSS = await ConfigH.configInkCSS
+        if (existsSync(configInkCSS)) {
           return true
         }
         return false
@@ -162,17 +165,38 @@ export abstract class inkscapeH {
         return false
     }
   }
+
+  static async profileDir() {
+    try {
+        if (!existsSync(ConfigH.configInkDir)) await p.mkdir(ConfigH.configInkDir)
+        if (!existsSync(ConfigH.configInkDirUI)) await  p.mkdir(ConfigH.configInkDirUI)
+        if (!existsSync(ConfigH.configInkPREFS))  await p.copyFile(ConfigH.configInkSRCPREFS, ConfigH.configInkPREFS)
+        return true
+    }
+    catch (e) {
+        logInkaError(e, 'Error on try set profile')
+        return false
+    }
+  }
+
   static async fileRebase(): Promise<void> {
 
     const inkscapePath = await inkscapeH.getInkscapePath()
     if (!inkscapePath) return
 
+    const configInkDir = await ConfigH.configInkDir
+    if (!configInkDir) return
+
     try {
-
-      var { stderr } = await exec(`"${inkscapePath}" -q --actions="selection-set-backup;file-rebase;selection-restore-backup;"`)
-      // var { stderr } = await exec(`${inkscapePath} -q --actions="file-rebase"`)
-
-      if (stderr) logInkaError(stderr, 'stderr on file-rebase')
+      let cmd = `INKSCAPE_PROFILE_DIR="${configInkDir}" "${inkscapePath}"`
+      let enviroment = {}
+      if (platform == "win32") {
+        cmd = `"${inkscapePath}"`
+        enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
+      }
+      await exec(
+        `${cmd} -q --actions="selection-set-backup;file-rebase;selection-restore-backup;"`,  enviroment
+      )
     }
     catch (e) {
       logInkaError(e, 'error on file-rebase')
@@ -181,7 +205,7 @@ export abstract class inkscapeH {
 
   static async documentRevert() {
     try {
-      var { stderr } = await exec(
+      await exec(
         `gdbus call --session --dest org.inkscape.Inkscape --object-path /org/inkscape/Inkscape/window/1 --method org.gtk.Actions.Activate document-revert [] {}`
       )
 
@@ -193,8 +217,7 @@ export abstract class inkscapeH {
   }
 
   static async selectElement(id: string) {
-    await exec(`"${ConfigH.inkscapePath()}" --actions="select-by-id:circle6" -q`)
-
+    await exec(`"${ConfigH.inkscapePath()}" -q --actions="select-by-id:${id}"`)
   }
 
 }

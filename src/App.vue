@@ -10,5 +10,7 @@ onMounted(async () => await initInkaApp())
 </script>
 
 <style>
-
+.q-menu {
+  max-height:90vh;
+}
 </style>
