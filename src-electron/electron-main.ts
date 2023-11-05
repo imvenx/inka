@@ -1,8 +1,7 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, } from 'electron';
 import path from 'path';
 import os from 'os';
-import { screen } from 'electron';
-
+import { promises as p, mkdir, copyFile, existsSync} from "fs"
 import { projectH } from './handlers/project_h';
 import { svgH } from './handlers/svgH';
 import { inkscapeH } from './handlers/inkscape_h';
@@ -24,13 +23,15 @@ function createWindow() {
   /**
    * Initial window options
    */
-
+  ConfigH.setWorkspace()
+  let initial = 214
+  let posy = ConfigH.workArea.height - initial - 4
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: ConfigH.windowSize()?.width ?? screen.getPrimaryDisplay().workAreaSize.width,
-    height: ConfigH.windowSize()?.height ?? 214,
-    x: ConfigH.windowPosition()?.x ?? 0,
-    y: ConfigH.windowPosition()?.y ?? screen.getPrimaryDisplay().workAreaSize.height - 250,
+    width: ConfigH.windowSize()?.width ?? ConfigH.workArea.width,
+    height: ConfigH.windowSize()?.height ?? initial,
+    x: ConfigH.windowPosition()?.x ?? ConfigH.workArea.x,
+    y: ConfigH.windowPosition()?.y ?? posy,
     autoHideMenuBar: true,
     frame: false,
     useContentSize: true,
@@ -52,8 +53,8 @@ function createWindow() {
     // mainWindow.webContents.on('devtools-opened', () => {
     //   mainWindow?.webContents.closeDevTools();
     // });
-
-    inkscapeH.openInkscapeWindow()
+    // we dont want get opened on start
+    //inkscapeH.openInkscapeWindow()
 
   }
 
@@ -72,12 +73,28 @@ app.commandLine.appendSwitch('disable-gpu-compositing');
 
 function resetWindow() {
   try {
-    mainWindow.setSize(screen.getPrimaryDisplay().workAreaSize.width, mainWindow.getSize()[1]);
-    mainWindow.setPosition(0,screen.getPrimaryDisplay().workAreaSize.height - mainWindow.getSize()[1] + 36);
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    }
+    let minheigth = parseInt(740 / ConfigH.scaleFactor)
+    let maxheight = ConfigH.workArea.height - mainWindow.getSize()[1]
+    if (maxheight < minheigth) {
+      maxheight = ConfigH.workArea.height - minheigth
+    } else {
+      maxheight = mainWindow.getSize()[1]
+    }
+    if (ConfigH.barPos == "top") {
+      mainWindow.setSize(ConfigH.workArea.width, maxheight);
+      mainWindow.setPosition(ConfigH.workArea.x, ConfigH.workArea.height - maxheight + ConfigH.barSize)
+    } else {
+      mainWindow.setSize(ConfigH.workArea.width, maxheight);
+      mainWindow.setPosition(ConfigH.workArea.x, ConfigH.workArea.height - maxheight);
+    }
+    return maxheight
   }
   catch (e) {
-      console.log(e, 'Error on try set config')
-      return false
+      console.log(e, 'Error on try reset window')
+      return -1
   }
 }
 
@@ -110,6 +127,7 @@ function onFloat() {
 }
 app.whenReady().then(async () => {
   createWindow()
+  inkscapeH.profileDir()
   ipcMain.handle('createProject', ({ }, p) => projectH.createProject(p))
   ipcMain.handle('loadProject', ({ }, p) => projectH.loadProject(p))
   ipcMain.handle('saveProject', ({ }, p) => projectH.saveProject(p))
@@ -119,14 +137,17 @@ app.whenReady().then(async () => {
   ipcMain.handle('resetInkscapePath', ({ }) => inkscapeH.resetInkscapePath())
   ipcMain.handle('exportSvg', ({ }, fileStr: string) => svgH.exportSvg(fileStr))
 
-  ipcMain.handle('openSvgWithInkscape', () => inkscapeH.openInkscapeWindow())
+  ipcMain.handle('openSvgWithInkscape', () => {
+    inkscapeH.undock()
+    inkscapeH.openInkscapeWindow()
+  })
   ipcMain.handle('openSvgWithDefaultProgram', () => svgH.openSvgWithDefaultProgram())
   const windowSize = mainWindow?.getSize()
   ipcMain.handle('dock', () => {
     const windowSize = mainWindow?.getSize()
     onTop()
-    resetWindow()
-    inkscapeH.dock(windowSize ? windowSize[1] + 5 : 0)
+    let heightof = resetWindow()
+    inkscapeH.dock(parseInt(heightof * ConfigH.scaleFactor) + 5)
     //app.relaunch()
   })
   ipcMain.handle('undock', () => {
