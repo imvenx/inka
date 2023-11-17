@@ -4,6 +4,7 @@ import { promises as p } from "fs"
 import { mainWindow, platform } from "../electron-main"
 import { inkscapeH } from "./inkscape_h"
 import { svgH } from "./svgH"
+import { ConfigH } from "./config_h";
 
 export abstract class projectH {
 
@@ -23,8 +24,7 @@ export abstract class projectH {
       data = await p.readFile(importedFilePath, 'utf-8')
     }
 
-    if (platform === 'win32') inkscapeH.reopenInkscape()
-    else inkscapeH.documentRevert()
+    inkscapeH.fileRebase()
 
     svgH.writeTempSvg(data)
 
@@ -52,8 +52,7 @@ export abstract class projectH {
       inkscapeH.reopenInkscape()
     }
 
-    if (platform === 'win32') inkscapeH.fileRebase()
-    else inkscapeH.documentRevert()
+    inkscapeH.fileRebase()
 
     // delete project.svgFile
 

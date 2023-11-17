@@ -20,12 +20,21 @@ export abstract class inkscapeH {
     this.openInkscapeWindow()
   }
 
+  private static realPathApp(path : string) {
+    if (platform == "linux") {
+      if (path.indexOf(".AppImage") !== -1) {
+        return `b=\`mount | grep \"${path.split('/').pop()}\"\`;a=\($b\);\${a[2]}/AppRun`
+      }
+    }
+    return `"${path}"`
+  }
+
   private static async getInkscapePath() {
     if (this.inkscapePath) return this.inkscapePath
 
     try {
-      const config: InkaConfig = JSON.parse(await (p.readFile(ConfigH.configRootPath, 'utf-8') as any))
-
+      let configdata = await (p.readFile(ConfigH.configRootPath, 'utf-8') as any)
+      const config: InkaConfig = JSON.parse(configdata)
       if (config.inkscapePath) {
         this.inkscapePath = config.inkscapePath
         return this.inkscapePath
@@ -181,15 +190,17 @@ export abstract class inkscapeH {
 
   static async fileRebase(): Promise<void> {
 
-    const inkscapePath = await inkscapeH.getInkscapePath()
+    let inkscapePath = await inkscapeH.getInkscapePath()
+    inkscapePath = inkscapeH.realPathApp(inkscapePath)
+    //inkscapePath = `mount`
     if (!inkscapePath) return
 
     const configInkDir = await ConfigH.configInkDir
     if (!configInkDir) return
 
     try {
-      let cmd = `INKSCAPE_PROFILE_DIR="${configInkDir}" "${inkscapePath}"`
-      let enviroment = {}
+      let cmd = `INKSCAPE_PROFILE_DIR="${configInkDir}" ${inkscapePath}`
+      let enviroment : any = {shell: "/bin/bash"}
       if (platform == "win32") {
         cmd = `"${inkscapePath}"`
         enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
