@@ -2,7 +2,7 @@ import { exec as _exec } from "child_process";
 import { promisify } from "util";
 const exec = promisify(_exec);
 import { dialog } from "electron";
-import { promises as p, existsSync} from "fs"
+import { promises as p, existsSync } from "fs"
 import { mainWindow, platform } from "../electron-main";
 import { logInkaError } from "../utils/utils";
 import { tempFilePath } from "./svgH";
@@ -20,13 +20,13 @@ export abstract class inkscapeH {
     this.openInkscapeWindow()
   }
 
-  private static realPathApp(path : string) {
+  private static realPathApp(path: string) {
     if (platform == "linux") {
       if (path.indexOf(".AppImage") !== -1) {
         return `b=\`mount | grep \"${path.split('/').pop()}\"\`;a=\($b\);\${a[2]}/AppRun`
       }
     }
-    return `"${path}"`
+    return path
   }
 
   private static async getInkscapePath() {
@@ -85,7 +85,7 @@ export abstract class inkscapeH {
         enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
       }
       await exec(
-        `${cmd} "${tempFilePath()}"`,  enviroment
+        `${cmd} "${tempFilePath()}"`, enviroment
       )
     }
     catch (e: any) {
@@ -125,7 +125,7 @@ export abstract class inkscapeH {
         enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
       }
       await exec(
-        `${cmd} -q --actions="window-close"`,  enviroment
+        `${cmd} -q --actions="window-close"`, enviroment
       )
     }
     catch (e) {
@@ -133,58 +133,58 @@ export abstract class inkscapeH {
     }
   }
 
-  static async dock(height : number) {
+  static async dock(height: number) {
     try {
       const configInkCSS = await ConfigH.configInkCSS
-        if (!configInkCSS ) return
-        await p.writeFile(configInkCSS, `#DesktopMainBox {padding-bottom:${height}px;}`, { encoding: 'utf-8' })
-        await this.reopenInkscape()
-        return true
+      if (!configInkCSS) return
+      await p.writeFile(configInkCSS, `#DesktopMainBox {padding-bottom:${height}px;}`, { encoding: 'utf-8' })
+      await this.reopenInkscape()
+      return true
     }
     catch (e) {
-        logInkaError(e, 'Error on try set config')
-        return false
+      logInkaError(e, 'Error on try set config')
+      return false
     }
   }
 
   static async undock() {
     try {
-        const configInkCSS = await ConfigH.configInkCSS
-        if (existsSync(configInkCSS)) {
-          await p.unlink(configInkCSS);
-        }
-        return true
+      const configInkCSS = await ConfigH.configInkCSS
+      if (existsSync(configInkCSS)) {
+        await p.unlink(configInkCSS);
+      }
+      return true
     }
     catch (e) {
-        logInkaError(e, 'Error on try set config')
-        return false
+      logInkaError(e, 'Error on try set config')
+      return false
     }
   }
 
   static async docked() {
     try {
-        const configInkCSS = await ConfigH.configInkCSS
-        if (existsSync(configInkCSS)) {
-          return true
-        }
-        return false
+      const configInkCSS = await ConfigH.configInkCSS
+      if (existsSync(configInkCSS)) {
+        return true
+      }
+      return false
     }
     catch (e) {
-        logInkaError(e, 'Error on try set config')
-        return false
+      logInkaError(e, 'Error on try set config')
+      return false
     }
   }
 
   static async profileDir() {
     try {
-        if (!existsSync(ConfigH.configInkDir)) await p.mkdir(ConfigH.configInkDir)
-        if (!existsSync(ConfigH.configInkDirUI)) await  p.mkdir(ConfigH.configInkDirUI)
-        if (!existsSync(ConfigH.configInkPREFS))  await p.copyFile(ConfigH.configInkSRCPREFS, ConfigH.configInkPREFS)
-        return true
+      if (!existsSync(ConfigH.configInkDir)) await p.mkdir(ConfigH.configInkDir)
+      if (!existsSync(ConfigH.configInkDirUI)) await p.mkdir(ConfigH.configInkDirUI)
+      if (!existsSync(ConfigH.configInkPREFS)) await p.copyFile(ConfigH.configInkSRCPREFS, ConfigH.configInkPREFS)
+      return true
     }
     catch (e) {
-        logInkaError(e, 'Error on try set profile')
-        return false
+      logInkaError(e, 'Error on try set profile')
+      return false
     }
   }
 
@@ -200,13 +200,13 @@ export abstract class inkscapeH {
 
     try {
       let cmd = `INKSCAPE_PROFILE_DIR="${configInkDir}" ${inkscapePath}`
-      let enviroment : any = {shell: "/bin/bash"}
+      let enviroment: any = { shell: "/bin/bash" }
       if (platform == "win32") {
         cmd = `"${inkscapePath}"`
         enviroment = { env: { INKSCAPE_PROFILE_DIR: configInkDir } }
       }
       await exec(
-        `${cmd} -q --actions="selection-set-backup;file-rebase;selection-restore-backup;"`,  enviroment
+        `${cmd} -q --actions="selection-set-backup;file-rebase;selection-restore-backup;"`, enviroment
       )
     }
     catch (e) {

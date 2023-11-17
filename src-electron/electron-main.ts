@@ -1,11 +1,12 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, } from 'electron';
 import path from 'path';
 import os from 'os';
-import { promises as p, mkdir, copyFile, existsSync} from "fs"
+import { promises as p, mkdir, copyFile, existsSync } from "fs"
 import { projectH } from './handlers/project_h';
 import { svgH } from './handlers/svgH';
 import { inkscapeH } from './handlers/inkscape_h';
 import { ConfigH } from './handlers/config_h';
+import { logInkaError } from './utils/utils';
 
 // needed in case process is undefined under Linux
 export const platform = process.platform || os.platform();
@@ -71,35 +72,39 @@ app.commandLine.appendSwitch('disable-gpu-compositing');
 // const projectsFolderPath = 'cssvg_projects'
 // export const tempFilePath = () => `${projectsFolderPath}/inka.svg`
 
-function resetWindow() {
+function resetWindow(): number {
   try {
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
+
+    if (mainWindow!.isMaximized()) {
+      mainWindow!.unmaximize();
     }
-    let minheigth = parseInt(740 / ConfigH.scaleFactor)
-    let maxheight = ConfigH.workArea.height - mainWindow.getSize()[1]
-    if (maxheight < minheigth) {
-      maxheight = ConfigH.workArea.height - minheigth
+    let minHeight = 740 / ConfigH.scaleFactor
+    let maxHeight = ConfigH.workArea.height - mainWindow!.getSize()[1]
+    if (maxHeight < minHeight) {
+      maxHeight = ConfigH.workArea.height - minHeight
     } else {
-      maxheight = mainWindow.getSize()[1]
+      maxHeight = mainWindow!.getSize()[1]
     }
     if (ConfigH.barPos == "top") {
-      mainWindow.setSize(ConfigH.workArea.width, maxheight);
-      mainWindow.setPosition(ConfigH.workArea.x, ConfigH.workArea.height - maxheight + ConfigH.barSize)
+      mainWindow!.setSize(ConfigH.workArea.width, maxHeight);
+      mainWindow!.setPosition(ConfigH.workArea.x, ConfigH.workArea.height - maxHeight + ConfigH.barSize)
     } else {
-      mainWindow.setSize(ConfigH.workArea.width, maxheight);
-      mainWindow.setPosition(ConfigH.workArea.x, ConfigH.workArea.height - maxheight);
+      mainWindow!.setSize(ConfigH.workArea.width, maxHeight);
+      mainWindow!.setPosition(ConfigH.workArea.x, ConfigH.workArea.height - maxHeight);
     }
-    return maxheight
+    return maxHeight
   }
   catch (e) {
-      console.log(e, 'Error on try reset window')
-      return -1
+    console.log(e, 'Error on try reset window')
+    return -1
   }
 }
 
 function onTop() {
   try {
+
+    if (!mainWindow) return logInkaError("mainWindow is undefined", "")
+
     mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     mainWindow.setAlwaysOnTop(true, "floating");
     mainWindow.setFullScreenable(false);
@@ -107,22 +112,23 @@ function onTop() {
     mainWindow.moveTop();
   }
   catch (e) {
-      console.log(e, 'Error on try set config')
-      return false
+    console.log(e, 'Error on try set config')
+    return false
   }
 }
 
 function onFloat() {
   try {
-    mainWindow.setVisibleOnAllWorkspaces(false, { visibleOnFullScreen: false });
-    mainWindow.setAlwaysOnTop(false, "floating");
-    mainWindow.setFullScreenable(true);
+
+    mainWindow!.setVisibleOnAllWorkspaces(false, { visibleOnFullScreen: false });
+    mainWindow!.setAlwaysOnTop(false, "floating");
+    mainWindow!.setFullScreenable(true);
     // Below statement completes the flow
-    //mainWindow.moveTop();
+    //mainWindow!.moveTop();
   }
   catch (e) {
-      console.log(e, 'Error on try set config')
-      return false
+    console.log(e, 'Error on try set config')
+    return false
   }
 }
 app.whenReady().then(async () => {
@@ -146,8 +152,8 @@ app.whenReady().then(async () => {
   ipcMain.handle('dock', () => {
     const windowSize = mainWindow?.getSize()
     onTop()
-    let heightof = resetWindow()
-    inkscapeH.dock(parseInt(heightof * ConfigH.scaleFactor) + 5)
+    let heightOf = resetWindow()
+    inkscapeH.dock(heightOf * ConfigH.scaleFactor + 5)
     //app.relaunch()
   })
   ipcMain.handle('undock', () => {
@@ -157,8 +163,8 @@ app.whenReady().then(async () => {
   mainWindow?.on('resize', () => {
     const windowSize = mainWindow?.getSize()
     let undock = ConfigH.windowSize.length == 2 && windowSize &&
-        (ConfigH.windowSize.width != windowSize[0] ||
-        ConfigH.windowSize.height != windowSize[1])
+      (ConfigH.windowSize()?.width != windowSize[0] ||
+        ConfigH.windowSize()?.height != windowSize[1])
     if (windowSize) ConfigH.saveInkaWindowSize(windowSize[0], windowSize[1])
     if (undock) {
       onFloat();
@@ -169,8 +175,8 @@ app.whenReady().then(async () => {
     const windowPosition = mainWindow?.getPosition()
     const windowSize = mainWindow?.getSize()
     let undock = ConfigH.windowSize.length == 2 && windowSize &&
-        (ConfigH.windowSize.width != windowSize[0] ||
-        ConfigH.windowSize.height != windowSize[1])
+      (ConfigH.windowSize()?.width != windowSize[0] ||
+        ConfigH.windowSize()?.height != windowSize[1])
     if (windowPosition) ConfigH.saveInkaWindowPosition(windowPosition[0], windowPosition[1])
     if (undock) {
       onFloat();
