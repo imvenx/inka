@@ -6,7 +6,9 @@
   "author": "imv",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev -m electron",
+    "publish": "quasar build -m electron --publish always"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.11.6",
