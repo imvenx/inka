@@ -69,7 +69,7 @@ app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('disable-gpu');
 app.commandLine.appendSwitch('disable-gpu-compositing');
 // let filePath = ''
-// const projectsFolderPath = 'cssvg_projects'
+// const projectsFolderPath = 'inka_projects'
 // export const tempFilePath = () => `${projectsFolderPath}/inka.svg`
 
 function resetWindow(): number {
