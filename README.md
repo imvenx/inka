@@ -1,5 +1,5 @@
-# csSvg 
-- ## Web: https://imvenx.github.io/cssvgweb/#/
+# inka
+- ## Web: https://imvenx.github.io/inkaweb/#/
 
 ---
 
@@ -12,13 +12,13 @@ npm install
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
-quasar dev
+npm run dev
 ```
 
 
 ### Build the app for production
 ```bash
-quasar build
+quasar build -m electron
 ```
 
 ### Customize the configuration
