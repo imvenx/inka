@@ -133,13 +133,28 @@ export abstract class inkscapeH {
     }
   }
 
-  static async dock(height: number) {
+  static async dock(x: number,y: number,width: number,height: number) {
     try {
-      const configInkCSS = await ConfigH.configInkCSS
-      if (!configInkCSS) return
-      await p.writeFile(configInkCSS, `#DesktopMainBox {padding-bottom:${height}px;}`, { encoding: 'utf-8' })
-      await this.reopenInkscape()
-      return true
+      const configInkPREFS = await ConfigH.configInkPREFS
+      if (!configInkPREFS) return
+      await inkscapeH.undock()
+      try {
+        let geo = `<group
+                  width="${width}"
+                  height="${height}"
+                  x="${x}"
+                  y="${y}"
+                  maximized="0"
+                  fullscreen="0"
+                  id="geometry" />`
+        const wpos = await p.readFile(configInkPREFS, 'utf-8')
+        let nwpos = wpos.replace(/\<group[^\>]*id="geometry"[^\>]*\>/gms,geo)
+        await p.writeFile(configInkPREFS, nwpos, { encoding: 'utf-8' })
+        await this.reopenInkscape()
+        return true
+      } catch (e) {
+          console.log(e, 'Error on geting window position file')
+      }
     }
     catch (e) {
       logInkaError(e, 'Error on try set config')
@@ -149,25 +164,11 @@ export abstract class inkscapeH {
 
   static async undock() {
     try {
-      const configInkCSS = await ConfigH.configInkCSS
-      if (existsSync(configInkCSS)) {
-        await p.unlink(configInkCSS);
+      const configInkWPOS = await ConfigH.configInkWPOS
+      if (existsSync(configInkWPOS)) {
+        await p.unlink(configInkWPOS);
       }
       return true
-    }
-    catch (e) {
-      logInkaError(e, 'Error on try set config')
-      return false
-    }
-  }
-
-  static async docked() {
-    try {
-      const configInkCSS = await ConfigH.configInkCSS
-      if (existsSync(configInkCSS)) {
-        return true
-      }
-      return false
     }
     catch (e) {
       logInkaError(e, 'Error on try set config')

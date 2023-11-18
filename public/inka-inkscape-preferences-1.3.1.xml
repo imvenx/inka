@@ -382,9 +382,7 @@
     <eventcontext
        id="select"
        selcue="1"
-       gradientdrag="0"
-       changelayer="1"
-       changepage="1" />
+       gradientdrag="0" />
     <eventcontext
        id="connector"
        style="fill:none;fill-rule:evenodd;stroke:black;stroke-opacity:1;stroke-linejoin:miter;stroke-width:1px;stroke-linecap:butt;"
@@ -561,8 +559,7 @@
     </group>
   </group>
   <group
-     id="dialogs"
-     traceliveUpdate="1">
+     id="dialogs">
     <group
        id="toolbox" />
     <group
@@ -580,7 +577,8 @@
     <group
        id="xml"
        h="500"
-       w="300" />
+       w="300"
+       mono-font="1" />
     <group
        id="find" />
     <group
@@ -677,8 +675,6 @@
     <group
        id="objects"
        expand_to_layer="1" />
-    <group
-       id="livepatheffect" />
   </group>
   <group
      id="printing">
@@ -746,7 +742,7 @@
        uri="" />
     <group
        id="savewindowgeometry"
-       value="0" />
+       value="2" />
     <group
        id="defaultoffsetwidth"
        value="2px" />
@@ -816,7 +812,7 @@
        value="1" />
     <group
        id="defaultwindowsize"
-       value="2" />
+       value="1" />
     <group
        id="arenatilescachesize"
        value="8192" />
@@ -938,17 +934,6 @@
          angle_x="30.0"
          angle_z="30.0"
          empspacing="5" />
-      <group
-         id="modular"
-         units="mm"
-         origin_x="0.0"
-         origin_y="0.0"
-         spacing_x="40.0"
-         spacing_y="40.0"
-         gapx="10"
-         gapy="10"
-         marginx="0"
-         marginy="0" />
     </group>
     <group
        id="workarounds"
@@ -959,7 +944,7 @@
        unitType="2" />
     <group
        id="boot"
-       theme="colorful"
+       theme="custom"
        enabled="0">
       <group
          id="shown"
@@ -971,6 +956,9 @@
        id="threading" />
     <group
        id="ruler" />
+    <group
+       id="savedocviewport"
+       value="0" />
   </group>
   <group
      id="extensions"
@@ -985,7 +973,7 @@
        height="1"
        x="0"
        y="0"
-       maximized="1"
+       maximized="0"
        fullscreen="0"
        id="geometry" />
     <group
@@ -1110,7 +1098,7 @@
      symbolicDefaultHighColors="0"
      gtkTheme="Adwaita"
      iconTheme="multicolor"
-     syntax-color-theme="inkscape-dark">
+     menuIcons="1">
     <group
        id="multicolor"
        symbolicBaseColor="3958107135"
