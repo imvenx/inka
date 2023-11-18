@@ -151,13 +151,11 @@ app.whenReady().then(async () => {
   const windowSize = mainWindow?.getSize()
   ipcMain.handle('dock', () => {
     const windowSize = mainWindow?.getSize()
-    onTop()
     let heightOf = resetWindow()
-    inkscapeH.dock(heightOf * ConfigH.scaleFactor + 5)
+    inkscapeH.dock(ConfigH.workArea.x,ConfigH.workArea.y, ConfigH.workArea.width, ConfigH.workArea.height - (ConfigH.workArea.y + 5 + (heightOf * ConfigH.scaleFactor)))
     //app.relaunch()
   })
   ipcMain.handle('undock', () => {
-    onFloat()
     inkscapeH.undock()
   })
   mainWindow?.on('resize', () => {

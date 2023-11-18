@@ -15,7 +15,6 @@ export abstract class ConfigH {
     static configRootPath = path.join(electron.app.getPath('userData'), 'inkaConfig.json')
     static configInkDir = path.join(electron.app.getPath('userData'), 'inkscape')
     static configInkDirUI = path.join(electron.app.getPath('userData'), 'inkscape', 'ui')
-    static configInkCSS = path.join(electron.app.getPath('userData'), 'inkscape', 'ui', 'user.css')
     static configInkPREFS = path.join(electron.app.getPath('userData'), 'inkscape', 'preferences.xml')
     static configInkSRCPREFS = path.join('public','inka-inkscape-preferences-1.3.1.xml')
     private static config: InkaConfig = this.get()
@@ -64,6 +63,12 @@ export abstract class ConfigH {
     }
 
     static async resetInkscapePath() {
+      try {
+        p.copyFile(ConfigH.configInkSRCPREFS, ConfigH.configInkPREFS)
+      }
+      catch (e) {
+        logInkaError(e, 'Error on try set default css')
+      }
       this.config.inkscapePath = undefined
       await this.save()
     }
